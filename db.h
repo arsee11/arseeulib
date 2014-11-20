@@ -75,7 +75,7 @@ public:
 	
 	bool operator==(const my_t &rhs)
 	{
-		return row == rhs._row;
+		return _row == rhs._row;
 	}
 	
 	bool operator!=(const my_t &rhs)
@@ -113,17 +113,17 @@ private:
 
 
 ////////////////////////////////////////////////////////////////////////////////////////
+//只有一个result_set(结果集)
 template<class RETSULT_SET, class ROW>
 class ResultSetWrapp
 {
 	typedef ResultSetWrapp<RETSULT_SET, ROW> my_t;
 	
 public:
-	typedef std::shared_ptr<my_t> pointer;	
+	typedef std::auto_ptr<my_t> pointer;	
 	typedef RETSULT_SET result_set_t;	
 	typedef ROW db_row_t;
-	typedef DbRowIterator<my_t> iterator;
-	
+	typedef DbRowIterator<my_t> iterator;	
 	
 	ResultSetWrapp(RETSULT_SET &res)
 	{
@@ -192,9 +192,15 @@ public:
 	typedef typename ResultSetWrapp<typename db_t::result_set_t, db_row_t> result_set_t;	
 
 public:
-	bool Open(const char* db, const char *user, const char *pwd)
+	bool Open(const char *ip, unsigned short port, const char* db, const char *user, const char *pwd)
 	{
-		return _db.Open(db, user, pwd);
+		return _db.Open(ip, port, db, user, pwd);
+	}
+
+	template<class Handle>
+	void Open(Handle *h)
+	{
+		_db.Open(h);
 	}
 
 	result_set_t* ExecuteQuery(const char *query_str)
