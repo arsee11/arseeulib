@@ -13,8 +13,8 @@
 using namespace std;
 
 int i=0;
-//typename mutex_guard_t::lockable_t lock;
-critical_section_guard_t::lockable_t lock;
+typename mutex_guard_t::lockable_t lock;
+//critical_section_guard_t::lockable_t lock;
 
 
 fstream fs("r.log", ios::out);
