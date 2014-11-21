@@ -18,7 +18,7 @@
     <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="guarders_test.cpp">
+    <ClCompile Include="buffered_test.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

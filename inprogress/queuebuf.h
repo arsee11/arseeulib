@@ -10,8 +10,8 @@
 //****************************
 
 
-#ifndef BUFFERED_H
-#define BUFFERED_H
+#ifndef QUEUEBUF_H
+#define QUEUEBUF_H
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1200)
 # pragma once
@@ -19,6 +19,10 @@
 
 #include <queue>
 #include <memory>
+
+#ifndef BUFFERED_H
+#include "buffered.h"
+#endif
 
 using namespace std;
 
@@ -55,8 +59,6 @@ public:
 		_st_free = shared_ptr<BufferFreeState<my_t> >(new BufferFreeState<my_t>(this));
 		_st_full = shared_ptr<BufferFullState<my_t> >(new BufferFullState<my_t>(this));
 		_state = _st_empty;
-		_full_sem = CreateEvent(NULL, TRUE, FALSE, NULL);
-		_free_cond = CreateEvent(NULL, TRUE, TRUE, NULL);
 	}
 
 	//return size of buffer(used).
@@ -141,7 +143,7 @@ private:
 
 	shared_ptr<BufferState<my_t> > 	_state;
 
-	HANDLE _free_cond;
+	Condvar _free_cond;
 	typename guard_t::lockable_t _block_lock;
 
 	container_t _queue;
@@ -188,4 +190,4 @@ public:
 	}
 };
 
-#endif/*BUFFERED_H*/
+#endif/*QUEUEBUF_H*/

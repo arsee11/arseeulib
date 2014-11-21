@@ -1,11 +1,22 @@
 #include <thread>
 #include <iostream>
 #include <fstream>
-#include <buffered.h>
+#include <queuebuf.h>
 #include <guarders.h>
 #include <string>
 
+#if defined(__GNUC__)
+#include <time.h>
 
+unsigned long GetTickCount()
+{
+    struct timespec ts;
+
+    clock_gettime(CLOCK_MONOTONIC, &ts);
+
+    return (ts.tv_sec * 1000 + ts.tv_nsec / 1000000);
+}
+#endif
 
 struct obj
 {
@@ -42,7 +53,7 @@ struct obj
 
 };
 
-QueueBuffer<char*, mutex_guard_t > buf(10);
+QueueBuffer<char*, critical_section_guard_t > buf(10);
 
 critical_section_guard_t::lockable_t glck;
 int gi = 0;
@@ -83,13 +94,13 @@ void consumer(int id)
 
 	while (state)
 	{
-		char str[1000] = { 0 };
+		char *str=nullptr;
 		//f << id << ":Getting" << endl;
 		int r = -1;
 		cout << "c:" << endl;
 
 		//obj o;
-		buf.Pop(str);
+		buf.Pop(&str);
 		//dumps.push_back(str);
 		//f << id << ":Got" << endl;
 		f <<::GetTickCount()<<":"<< str << std::endl;
