@@ -53,7 +53,7 @@ class BufferEmptyState:
 {
 public:
 	BufferEmptyState(BUFFER* h)
-		:BufferState(h)
+		:BufferState<BUFFER>(h)
 	{}
 
 	void Full() override
@@ -183,8 +183,6 @@ public:
 		//_st_block = shared_ptr<BufferBlockState<my_t> >(new BufferBlockState<my_t>(this));
 		_st_full = shared_ptr<BufferFullState<my_t> >(new BufferFullState<my_t>(this));
 		_state = _st_empty;
-		_full_sem = CreateEvent(NULL, TRUE, FALSE, NULL);
-		_empty_sem = CreateEvent(NULL, TRUE, TRUE, NULL);
 	}
 	
 	~BufferItem()
@@ -230,8 +228,6 @@ public:
 	//shared_ptr<BufferBlockState<my_t> > _st_block;
 	shared_ptr<BufferFullState<my_t> > 	_st_full;
 	shared_ptr<BufferState<my_t> > 	_state;
-	HANDLE _full_sem;
-	HANDLE _empty_sem;
 };
 
 
