@@ -21,7 +21,7 @@ void f(int id)
 	{
 		mutex_guard_t g(&lock);
 		i++;
-		cout<<i<endl;
+		cout<<i<<endl;
 	}
 	
 	#if defined(__GNUC__)
