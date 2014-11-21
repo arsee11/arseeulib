@@ -19,6 +19,7 @@
 
 #include <queue>
 #include <memory>
+#include <string.h>
 
 #ifndef BUFFERED_H
 #include "buffered.h"
@@ -143,7 +144,8 @@ private:
 
 	shared_ptr<BufferState<my_t> > 	_state;
 
-	Condvar _free_cond;
+	//Condvar _free_cond;
+	HANDLE _free_cond;
 	typename guard_t::lockable_t _block_lock;
 
 	container_t _queue;

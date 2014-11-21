@@ -91,7 +91,7 @@ class BufferFullState :
 {
 public:
 	BufferFullState(BUFFER* h)
-		:BufferState(h)
+		:BufferState<BUFFER>(h)
 	{}
 
 	void Full() override
@@ -128,7 +128,7 @@ class BufferFreeState :
 {
 public:
 	BufferFreeState(BUFFER* h)
-		:BufferState(h)
+		:BufferState<BUFFER>(h)
 	{}
 
 	void Full() override
@@ -139,7 +139,7 @@ public:
 	
 	void Free() override
 	{
-		//_holder->_free_cond.NotifyOne();
+		_holder->_free_cond.NotifyOne();
 	}
 	
 	void Empty() override
