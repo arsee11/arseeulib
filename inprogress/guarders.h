@@ -119,7 +119,7 @@ private:
 
 
 ////////////////////////////////////////////////////////////
-#if defing(__GUNC__)
+#if defined(__GUNC__)
 class Condvar
 {
 public:
