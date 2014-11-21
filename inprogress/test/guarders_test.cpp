@@ -36,4 +36,5 @@ void test_guard()
 	thread t1(f,1);
 	thread t2(f,2);
 	t1.join();
+	cout<<"end"<<endl;
 }
