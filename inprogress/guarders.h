@@ -21,7 +21,7 @@
 #include <windows.h>
 #endif/*_MSC_VER*/
 
-#if defined(__GUNC__)
+#if defined(__GNUC__)
 #include <pthread.h>
 #endif
 
@@ -121,7 +121,7 @@ private:
 
 
 ////////////////////////////////////////////////////////////
-#if defined(__GUNC__)
+#if defined(__GNUC__)
 class Condvar
 {
 public:
@@ -204,7 +204,7 @@ mutex_t;
 		
 typedef Guard<mutex_t> mutex_guard_t;
 
-#endif /*__GUNC__*/
+#endif /*__GNUC__*/
 
 //////////////////////////////////////////////////
 #if defined(_MSC_VER)
