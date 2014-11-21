@@ -194,7 +194,7 @@ struct MutexUnlocker
 	}
 };
 
-typedef Lockable<pthread_mutex_t>
+typedef Lockable<pthread_mutex_t
 	, MutexIniter
 	, MutexDeleter
 	, MutexLocker

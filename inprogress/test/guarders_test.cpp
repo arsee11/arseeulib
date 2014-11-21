@@ -33,7 +33,7 @@ void f(int id)
 
 void test_guard()
 {
-	thread t1(1);
-	thread t2(2);
+	thread t1(f,1);
+	thread t2(f,2);
 	t1.jion();
 }
