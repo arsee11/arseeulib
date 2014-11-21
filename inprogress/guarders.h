@@ -136,7 +136,7 @@ public:
 	
 	~Condvar()
 	{
-		if( pthread_cond_destroy(&_cond, NULL) > 0)
+		if( pthread_cond_destroy(&_cond) > 0)
 		{
 			perror("pthread_cond_destroy");
 		}
@@ -145,7 +145,7 @@ public:
 	template<class Lockable>
 	void Wait(Lockable *lck)
 	{
-		pthread_cond_wait(&_cond, lock);
+		pthread_cond_wait(&_cond, lck);
 	}
 	
 	void NotityOne()
@@ -166,10 +166,11 @@ struct MutexIniter
 {
 	void operator()(pthread_mutex_t* mtx)
 	{
-		pthread_mutex_int(mtx, NULL);
+		pthread_mutex_init(mtx, NULL);
 	}
 };
 
+struct MutexDeleter
 struct MutexDeleter
 {
 	void operator()(pthread_mutex_t* mtx)
