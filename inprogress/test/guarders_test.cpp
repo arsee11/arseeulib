@@ -17,7 +17,7 @@ typename mutex_guard_t::lockable_t lock;
 
 void f(int id)
 {
-	while(i<10000)
+	while(i<1000)
 	{
 		cout<<"id:"<<id<<endl;
 		{
@@ -27,9 +27,9 @@ void f(int id)
 		}
 		
 		#if defined(__GNUC__)
-		usleep(rand()%50*1000);
+		usleep(rand()%100*1000);
 		#elif defined(_MSC_VER)
-		Sleep(rand()%50);
+		Sleep(rand()%100);
 		#endif
 	}
 };
