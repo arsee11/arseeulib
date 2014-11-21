@@ -4,14 +4,16 @@
 #include <iostream>
 #include <fstream>
 
-#if define(__GNUC__)
+#if defined(__GNUC__)
 	#include <unistd.h>
-#elif define(_MSC_VER)
+#elif defined(_MSC_VER)
 	#include <windows.h>
 #endif 
 	
+using namespace std;
+
 int i=0;
-mutex_guard_t::lockable_t lock;
+typename mutex_guard_t::lockable_t lock;
 
 void f(int id)
 {
@@ -22,9 +24,9 @@ void f(int id)
 		cout<<i<endl;
 	}
 	
-	#if define(__GNUC__)
+	#if defined(__GNUC__)
 	usleep(rand()%100*1000);
-	#elif define(_MSC_VER)
+	#elif defined(_MSC_VER)
 	Sleep(rand()%100);
 	#endif
 };

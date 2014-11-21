@@ -25,12 +25,14 @@
 #include <pthread.h>
 #endif
 
+#include <exception>
+#include <iostream>
+
 class lockexp:
 	public std::exception
 {
 public:
 	lockexp(const char *str)
-		:exception(str)
 	{
 	}
 	
