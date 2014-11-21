@@ -171,7 +171,6 @@ struct MutexIniter
 };
 
 struct MutexDeleter
-struct MutexDeleter
 {
 	void operator()(pthread_mutex_t* mtx)
 	{
