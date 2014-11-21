@@ -21,6 +21,9 @@
 #include <windows.h>
 #endif/*_MSC_VER*/
 
+#if defined(__GUNC__)
+#include <pthread.h>
+#endif
 
 class lockexp:
 	public std::exception
@@ -111,8 +114,7 @@ private:
 	InitHandler		_initer;
 	LockHandler		_deleter;
 	UnLockHanlder	_locker;
-	UnInitHandler	_unlocker;
-	
+	UnInitHandler	_unlocker;	
 };
 
 
@@ -126,7 +128,7 @@ public:
 		if( pthread_cond_init(&_cond, NULL) > 0)
 		{
 			perror("pthread_cond_init");
-			throw exception("pthread_cond_init");
+			throw lockexp("pthread_cond_init");
 		}
 	}
 	
@@ -157,57 +159,7 @@ public:
 private:
 	pthread_cond_t _cond;
 };
-#endif /*__GUNC__*/
 
-#if defined(_MSC_VER)
-
-//typedef void(*CSHandler)(CRITICAL_SECTION* cs);
-
-struct CSIniter
-{
-	void operator()(CRITICAL_SECTION* cs)
-	{
-		::InitializeCriticalSection(cs);
-	}
-};
-
-struct CSDeleter
-{
-	void operator()(CRITICAL_SECTION* cs)
-	{
-		::DeleteCriticalSection(cs);
-	}
-};
-
-struct CSLocker
-{
-	void operator()(CRITICAL_SECTION* cs)
-	{
-		::EnterCriticalSection(cs);
-	}
-};
-
-struct CSUnlocker
-{
-	void operator()(CRITICAL_SECTION* cs)
-	{
-		::LeaveCriticalSection(cs);
-	}
-};
-
-typedef Lockable<CRITICAL_SECTION
-	, CSIniter
-	, CSDeleter
-	, CSLocker
-	, CSUnlocker
->
-critical_section_t;
-		
-typedef Guard<critical_section_t> critical_section_guard_t;
-			
-#endif /*_MSC_VER*/
-
-#if defined(__GUNC__)
 struct MutexIniter
 {
 	void operator()(pthread_mutex_t* mtx)
@@ -252,6 +204,51 @@ typedef Guard<mutex_t> mutex_guard_t;
 
 #endif /*__GUNC__*/
 
+//////////////////////////////////////////////////
+#if defined(_MSC_VER)
+struct CSIniter
+{
+	void operator()(CRITICAL_SECTION* cs)
+	{
+		::InitializeCriticalSection(cs);
+	}
+};
+
+struct CSDeleter
+{
+	void operator()(CRITICAL_SECTION* cs)
+	{
+		::DeleteCriticalSection(cs);
+	}
+};
+
+struct CSLocker
+{
+	void operator()(CRITICAL_SECTION* cs)
+	{
+		::EnterCriticalSection(cs);
+	}
+};
+
+struct CSUnlocker
+{
+	void operator()(CRITICAL_SECTION* cs)
+	{
+		::LeaveCriticalSection(cs);
+	}
+};
+
+typedef Lockable<CRITICAL_SECTION
+	, CSIniter
+	, CSDeleter
+	, CSLocker
+	, CSUnlocker
+>
+critical_section_t;
+		
+typedef Guard<critical_section_t> critical_section_guard_t;
+			
+#endif /*_MSC_VER*/
 
 
 #endif /*GUARDERS_H*/
