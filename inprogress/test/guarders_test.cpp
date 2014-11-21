@@ -17,18 +17,21 @@ typename mutex_guard_t::lockable_t lock;
 
 void f(int id)
 {
-	cout<<"id:"<<id<<endl;
+	while(i<10000)
 	{
-		mutex_guard_t g(&lock);
-		i++;
-		cout<<i<<endl;
+		cout<<"id:"<<id<<endl;
+		{
+			mutex_guard_t g(&lock);
+			i++;
+			cout<<i<<endl;
+		}
+		
+		#if defined(__GNUC__)
+		usleep(rand()%50*1000);
+		#elif defined(_MSC_VER)
+		Sleep(rand()%50);
+		#endif
 	}
-	
-	#if defined(__GNUC__)
-	usleep(rand()%100*1000);
-	#elif defined(_MSC_VER)
-	Sleep(rand()%100);
-	#endif
 };
 
 void test_guard()
@@ -36,5 +39,6 @@ void test_guard()
 	thread t1(f,1);
 	thread t2(f,2);
 	t1.join();
+	t2.join();
 	cout<<"end"<<endl;
 }
