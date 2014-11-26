@@ -51,7 +51,9 @@ typedef struct member_list :public list< member_ptr_t >
 	string Name(){ return "memberlist"; }
 
 } member_list_t;
+
 typedef arsee::Object<member_list_t> member_list_obj_t;
+typedef arsee::ObjectsCollection<member_list_obj_t> objects_t;
 
 
 #endif /*MEMBER_H*/

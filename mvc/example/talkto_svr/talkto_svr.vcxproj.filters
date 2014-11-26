@@ -27,7 +27,7 @@
     <ClInclude Include="msg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="server.h">
+    <ClInclude Include="mysession.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

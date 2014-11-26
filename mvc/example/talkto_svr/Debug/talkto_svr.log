@@ -1,22 +1,30 @@
-﻿Build started 2014/11/26 10:15:21.
+﻿Build started 2014/11/26 16:53:41.
      1>Project "D:\mylib\mylib\mvc\example\talkto_svr\talkto_svr.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
-         C:\Program Files\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I../../ /IE:\work_svn\hlg\jsonlib /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt logics.cpp main.cpp member.cpp
-         member.cpp
-     1>d:\mylib\mylib\mvc\mvcobject.h(7): fatal error C1083: Cannot open include file: 'mvcresponse_abstr.h': No such file or directory
+         C:\Program Files\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I../../ /IE:\work_svn\hlg\jsonlib /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp
          main.cpp
-     1>d:\mylib\mylib\mvc\mvcresponse.h(7): fatal error C1083: Cannot open include file: 'mvcresponse_abstr.h': No such file or directory
-         logics.cpp
-     1>d:\mylib\mylib\mvc\globaldef.h(78): error C2143: syntax error : missing ';' before '<'
-     1>d:\mylib\mylib\mvc\globaldef.h(78): error C2059: syntax error : '<'
-     1>d:\mylib\mylib\mvc\globaldef.h(79): error C2143: syntax error : missing ';' before '{'
-     1>d:\mylib\mylib\mvc\globaldef.h(79): error C2447: '{' : missing function header (old-style formal list?)
-     1>d:\mylib\mylib\mvc\globaldef.h(89): error C2953: 'ArgIteration<T>' : class template has already been defined
-                 d:\mylib\mylib\mvc\globaldef.h(68) : see declaration of 'ArgIteration<T>'
-     1>d:\mylib\mylib\mvc\mvcrequest.h(15): fatal error C1083: Cannot open include file: 'params_dispatch.h': No such file or directory
-         Generating Code...
+     1>d:\mylib\mylib\mvc\mvcobject.h(120): warning C4290: C++ exception specification ignored except to indicate a function is not __declspec(nothrow)
+                 d:\mylib\mylib\mvc\mvcobject.h(174) : see reference to class template instantiation 'arsee::ObjectsCollection<OBJS...>' being compiled
+     1>d:\mylib\mylib\mvc\udpsock.h(122): warning C4290: C++ exception specification ignored except to indicate a function is not __declspec(nothrow)
+     1>d:\mylib\mylib\mvc\udpsock.h(123): warning C4290: C++ exception specification ignored except to indicate a function is not __declspec(nothrow)
+     1>d:\mylib\mylib\mvc\udpsock.h(124): warning C4290: C++ exception specification ignored except to indicate a function is not __declspec(nothrow)
+     1>d:\mylib\mylib\mvc\channel.h(250): warning C4290: C++ exception specification ignored except to indicate a function is not __declspec(nothrow)
+                 d:\mylib\mylib\mvc\channel.h(282) : see reference to class template instantiation 'arsee::ChannelStore<CHANNEL,WAITER>' being compiled
+     1>d:\mylib\mylib\mvc\mvcobject.h(109): warning C4520: 'arsee::Object<member_list_t>' : multiple default constructors specified
+                 d:\mylib\mylib\mvc\mvccontrol.h(169) : see reference to class template instantiation 'arsee::Object<member_list_t>' being compiled
+                 d:\mylib\mylib\mvc\example\talkto_svr\controls.h(37) : see reference to class template instantiation 'arsee::RControl<member_list_obj_t,MemberLogin,arsee::RRequest>' being compiled
+     1>d:\mylib\mylib\mvc\mvcobject.h(109): warning C4520: 'arsee::Object<Member>' : multiple default constructors specified
+                 d:\mylib\mylib\mvc\example\talkto_svr\main.cpp(18) : see reference to class template instantiation 'arsee::Object<Member>' being compiled
+     1>d:\mylib\mylib\mvc\mvcobject.h(109): warning C4520: 'arsee::Object<Msg>' : multiple default constructors specified
+                 d:\mylib\mylib\mvc\example\talkto_svr\main.cpp(20) : see reference to class template instantiation 'arsee::Object<Msg>' being compiled
+     1>d:\mylib\mylib\mvc\server.h(79): error C2039: 'RegistryHandler' : is not a member of 'Preactor'
+                 d:\mylib\mylib\mvc\example\talkto_svr\main.cpp(11) : see declaration of 'Preactor'
+                 d:\mylib\mylib\mvc\server.h(77) : while compiling class template member function 'arsee::PreactorServer<Preactor,Acceptor<MySession<objects_t,member_login_dispth,member_list_dispth>>>::PreactorServer(size_t,arsee::SockConfig &)'
+                 d:\mylib\mylib\mvc\example\talkto_svr\main.cpp(34) : see reference to function template instantiation 'arsee::PreactorServer<Preactor,Acceptor<MySession<objects_t,member_login_dispth,member_list_dispth>>>::PreactorServer(size_t,arsee::SockConfig &)' being compiled
+                 d:\mylib\mylib\mvc\example\talkto_svr\main.cpp(34) : see reference to class template instantiation 'arsee::PreactorServer<Preactor,Acceptor<MySession<objects_t,member_login_dispth,member_list_dispth>>>' being compiled
+     1>d:\mylib\mylib\mvc\server.h(79): error C2661: 'Acceptor<MySession<objects_t,member_login_dispth,member_list_dispth>>::Acceptor' : no overloaded function takes 2 arguments
      1>Done Building Project "D:\mylib\mylib\mvc\example\talkto_svr\talkto_svr.vcxproj" (Build target(s)) -- FAILED.
 
 Build FAILED.
 
-Time Elapsed 00:00:03.26
+Time Elapsed 00:00:00.88
