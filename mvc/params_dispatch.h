@@ -57,7 +57,7 @@ std::string ParamPlace<T, N>::name = "";
 //@N      : number of the params it want to accept,
 //@Derived: the Derived class Derive from it,
 //@Ts...  : params type of the Derived class want to accept, 
-//          they order from left to right.
+//          they ordered from left to right.
 template<int N, class Derived, class ...Ts>
 class BaseLogicTmpl;
 

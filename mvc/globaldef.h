@@ -74,19 +74,19 @@ struct ArgIteration<T>
 };
 
 
-template<class T, class... Args>
-struct ArgErase<T, Args...>
-{
-	typedef ArgPack<Args...>  result;
-	
-	
-};
+//template<class T, class... Args>
+//struct ArgErase<T, Args...>
+//{
+//	typedef ArgPack<Args...>  result;
+//	
+//	
+//};
 
-template<class T>
-struct ArgIteration<T>
-{
-	typedef T type;
-};
+//template<class T>
+//struct ArgIteration<T>
+//{
+//	typedef T type;
+//};
 
 //ArgIteration End
 ///////////////////////////////////////////////

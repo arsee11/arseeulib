@@ -69,70 +69,113 @@ private:
 };
 	
 
-template<class PACK, class CONNECTION>
-class Channel
+//template<class PACK, class CONNECTION>
+//class Channel
+//{
+//public:
+//	typedef Channel<PACK, CONNECTION> my_t;
+//	typedef PACK pack_t;
+//	typedef SockConfig config_t;
+//	typename pack_t::unserializer_t unserializer_t;
+//	typedef CONNECTION conn_t;
+//	
+//public:
+//	Channel() :_conn(nullptr){}
+//	Channel(conn_t *conn):_conn(conn){}
+//	
+//	//void BindIn(INPUT_EVENT &ine)
+//	//{
+//	//	_input_e = ine;
+//	//}
+//	//
+//	//void BindOut(INPUT_EVENT &ine)
+//	//{
+//	//	_output_e = ine;
+//	//}
+//	void Close()
+//	{
+//		_conn->Close();
+//	}
+//	
+//	void Input()
+//	{
+//		pack_t pack;
+//		_conn->Read(pack);
+//		_packs.push( std::move(pack) );
+//	}
+//	
+//	void Output()
+//	{
+//	}
+//
+//	const pack_t& Head()const{ return _packs.front(); };
+//	void Pop(){ return _packs.pop(); }
+//	
+//	template<typename INPUT_EVENT>
+//	void Input(INPUT_EVENT &_input_e, pack_t &pck)
+//	{
+//		_input_e(pck);
+//	}
+//	
+//	template<typename OUTPUT_EVENT>
+//	void Output(OUTPUT_EVENT &_output_e, const pack_t &src_pck) throw(std::exception)
+//	{
+//		try{
+//			std::vector<pack_t> pcks = _output_e(src_pck);
+//			for(auto &i:pcks)
+//				_conn->Write(i);
+//		}
+//		catch(std::exception &e){
+//			throw e;
+//		}		
+//	}	
+//		
+//private:
+//	std::queue<pack_t> _packs;
+//	conn_t *_conn;	
+//};
+
+template<class PACK>
+class UdpChannel
 {
 public:
-	typedef Channel<PACK, CONNECTION> my_t;
+	typedef UdpChannel<PACK> my_t;
 	typedef PACK pack_t;
-	typedef SockConfig config_t;
-	typename pack_t::unserializer_t unserializer_t;
-	typedef CONNECTION conn_t;
+	typedef SockConfig conf_t;
 	
 public:
-	Channel() :_conn(nullptr){}
-	Channel(conn_t *conn):_conn(conn){}
 	
-	//void BindIn(INPUT_EVENT &ine)
-	//{
-	//	_input_e = ine;
-	//}
-	//
-	//void BindOut(INPUT_EVENT &ine)
-	//{
-	//	_output_e = ine;
-	//}
+	void Init(conf_t &conf)
+	{
+		_udp = std::shared_ptr<UdpPeer>(UdpSock::Create(conf.lport));
+	}
+	
 	void Close()
 	{
-		_conn->Close();
-	}
-	
-	void Input()
-	{
-		pack_t pack;
-		_conn->Read(pack);
-		_packs.push( std::move(pack) );
-	}
-	
-	void Output()
-	{
+		_udp->Close();
 	}
 
-	const pack_t& Head()const{ return _packs.front(); };
-	void Pop(){ return _packs.pop(); }
-	
-	template<typename INPUT_EVENT>
-	void Input(INPUT_EVENT &_input_e, pack_t &pck)
+	void Read(pack_t &pck)
 	{
-		_input_e(pck);
+		UdpPeer::byte_t buf[1024];
+		_udp->Read(buf, 1024, _remote_addr);
+		typename pack_t::unserializer_t unserializer_t;
+		auto fuc = std::bind(unserializer_t, std::placeholders::_1);
+		pck = std::move( fuc( pack_t::stream_t(buf) ) );
 	}
-	
-	template<typename OUTPUT_EVENT>
-	void Output(OUTPUT_EVENT &_output_e, const pack_t &src_pck) throw(std::exception)
+
+	void Write(pack_t &pck)
 	{
-		try{
-			std::vector<pack_t> pcks = _output_e(src_pck);
-			for(auto &i:pcks)
-				_conn->Write(i);
-		}
-		catch(std::exception &e){
-			throw e;
-		}		
-	}	
-		
+		typename pack_t::serializer_t serializer_t;
+		auto fuc = std::bind(serializer_t, pck, std::placeholders::_1);
+		size_t len = 0;
+		typename pack_t::stream_t stream = fuc(len);
+		_udp->Write(stream.c_str(), len, _remote_addr);
+	}
+
 private:
-	std::queue<pack_t> _packs;
-	conn_t *_conn;	
+	std::shared_ptr<UdpPeer> _udp;
+	AddrPair _remote_addr;
 };
 
 
@@ -142,27 +185,27 @@ class DefaultWaiter
 	int Wait(){ return 0; }
 };
 
-class UdpWaiter
-{
-public:
-	typedef Channel<Jpack, UdpConnection > chn_t;
-	typedef std::shared_ptr<chn_t> chn_ptr_t;
-	typedef std::hash_map<unsigned long, chn_ptr_t > chn_map_t;
-	
-	enum{ INPUT_EVENT, OUTPUT_EVENT, CLOSE_EVENT, ACCEPT_EVENT };
-	
-	int Wait(chn_map_t &chns, chn_ptr_t &chn)
-	{
-		chn_map_t::iterator i = chns.begin();
-		for(; i!=chns.end(); ++i)
-		{
-			chn = i->second;
-			return INPUT_EVENT;
-		}
-		
-		return -1;
-	}
-};
+//class UdpWaiter
+//{
+//public:
+//	typedef Channel<Jpack, UdpConnection > chn_t;
+//	typedef std::shared_ptr<chn_t> chn_ptr_t;
+//	typedef std::hash_map<unsigned long, chn_ptr_t > chn_map_t;
+//	
+//	enum{ INPUT_EVENT, OUTPUT_EVENT, CLOSE_EVENT, ACCEPT_EVENT };
+//	
+//	int Wait(chn_map_t &chns, chn_ptr_t &chn)
+//	{
+//		chn_map_t::iterator i = chns.begin();
+//		for(; i!=chns.end(); ++i)
+//		{
+//			chn = i->second;
+//			return INPUT_EVENT;
+//		}
+//		
+//		return -1;
+//	}
+//};
 
 template<class CHANNEL, class WAITER = DefaultWaiter>
 class ChannelStore
@@ -238,10 +281,11 @@ private:
 
 };
 
+
 void NullLoop(Jpack &pack){}
 
-typedef Channel<Jpack, UdpConnection > udpchannel_t;
-typedef ChannelStore<udpchannel_t, UdpWaiter> udpchannelstore_t;
+typedef UdpChannel<Jpack> udpchn_t;
+//typedef ChannelStore<udpchannel_t, UdpWaiter> udpchannelstore_t;
 
 NAMESP_END
 

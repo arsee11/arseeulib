@@ -50,10 +50,10 @@ template<template<class...>class Other, class...Us>
 struct TransType
 {	
 	
-	//typedef typename mt<ArgCounter<Us...>::value, Other, Us...>::a_t result;
-	typedef T type	
-	typedef Other<type> result;
-	typedef ArgIteration<Args...>::type types;
+	typedef typename mt<ArgCounter<Us...>::value, Other, Us...>::a_t result;
+	//typedef T type	
+	//typedef Other<type> result;
+	//typedef ArgIteration<Args...>::type types;
 	
 };
 

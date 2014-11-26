@@ -11,6 +11,11 @@
 #include "globaldef.h"
 #endif
 
+
+#ifndef TYPE_TRANSFOR_H
+#include "type_transfor.h"
+#endif
+
 NAMESP_BEGIN
 
 
@@ -149,7 +154,7 @@ public:
 
 //////////////////////////////////////////////
 //Remote Control.
-//Inter proccess.
+//Inter-proccess.
 template<class SOURCE
 	,class REQUEST_LOGIC
 	,template<class, class> class REQUEST 
@@ -243,40 +248,40 @@ template<class SOURCE
 const std::string RControl<SOURCE, REQUEST_LOGIC, REQUEST>::rqt_name = RControl<SOURCE, REQUEST_LOGIC, REQUEST>::rqt_logic_t::name;
 
 //////////////////////////////////////////////////////
-template<class CHANNEL_STORE, class...Dispachters>
-class ControlServer
-{
-	//typedef std::tuple<Dispachters...> dispth_map_t;
-	typedef CHANNEL_STORE chn_store_t;
-	
-public:
-	typedef typename chn_store_t::chn_t chn_t;
-	typedef typename chn_store_t::chn_ptr_t chn_ptr_t;
-	typedef typename TransType<ObjectsCollection, Dispachters...>::result objs_colletion_t;
-	//typedef typename chn_t::pack_t pack_t;
-
-public:
-	ControlServer(){}
-	
-	bool Run(typename chn_t::config_t &conf)throw(...)
-	{
-		_chn_store.Store(conf);
-		chn_ptr_t chn(nullptr);
-		while (_chn_store.Opening(chn))
-		{
-			ArgIteration<Dispachters...>::Handle(objs_colletion_t::Instance(), *(chn.get()));
-			chn->Pop();
-		}
-		
-		return true;
-	}
-		
-private:
-	enum{ DispatcherCount = ArgCounter<Dispachters...>::value };
-	
-private:
-	chn_store_t _chn_store;
-};
+//template<class CHANNEL_STORE, class...Dispachters>
+//class ControlServer
+//{
+//	//typedef std::tuple<Dispachters...> dispth_map_t;
+//	typedef CHANNEL_STORE chn_store_t;
+//	
+//public:
+//	typedef typename chn_store_t::chn_t chn_t;
+//	typedef typename chn_store_t::chn_ptr_t chn_ptr_t;
+//	typedef typename TransType<ObjectsCollection, Dispachters...>::result objs_colletion_t;
+//	//typedef typename chn_t::pack_t pack_t;
+//
+//public:
+//	ControlServer(){}
+//	
+//	bool Run(typename chn_t::config_t &conf)throw(...)
+//	{
+//		_chn_store.Store(conf);
+//		chn_ptr_t chn(nullptr);
+//		while (_chn_store.Opening(chn))
+//		{
+//			ArgIteration<Dispachters...>::Handle(objs_colletion_t::Instance(), *(chn.get()));
+//			chn->Pop();
+//		}
+//		
+//		return true;
+//	}
+//		
+//private:
+//	enum{ DispatcherCount = ArgCounter<Dispachters...>::value };
+//	
+//private:
+//	chn_store_t _chn_store;
+//};
 
 NAMESP_END;
 
