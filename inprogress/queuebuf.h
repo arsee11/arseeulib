@@ -28,8 +28,83 @@
 #ifndef GUARDERS_H
 #include "guarders.h"
 #endif
+
 using namespace std;
 
+///////////////////////////////////////////////
+//CharPtrWrapper.
+//Wrapper the char* type. 
+struct CharPtrWrapper
+{
+	void Copy(const char* src, size_t size)
+	{
+		if (this->buf != nullptr && this->size != size)
+		{
+			delete[] this->buf;
+			this->buf = nullptr;
+		}
+
+		this->buf = new char[size];
+		memcpy(buf, src, size);
+		this->size = size;
+	}
+
+	CharPtrWrapper(){}
+
+	CharPtrWrapper(const CharPtrWrapper& rhs) = delete;
+	
+
+	CharPtrWrapper(CharPtrWrapper&& rhs)
+	{
+		//cout << "move contr" << endl;
+		if (this != &rhs)
+		{
+			if (this->buf != nullptr)
+			{
+				delete[] buf;
+				this->buf = nullptr;
+			}
+
+			this->buf = rhs.buf;
+			this->size = rhs.size;
+			rhs.buf = nullptr;
+			rhs.size = 0;
+		}
+	}
+
+	CharPtrWrapper& operator=(const CharPtrWrapper& rhs) = delete;
+
+	CharPtrWrapper& operator=(CharPtrWrapper&& rhs)
+	{
+		//cout << "move assign" << endl;
+		if (this != &rhs)
+		{
+			if (this->buf != nullptr)
+			{
+				delete[] buf;
+				this->buf = nullptr;
+			}
+
+			this->buf = rhs.buf;
+			this->size = rhs.size;
+			rhs.buf = nullptr;
+			rhs.size = 0;
+		}
+		return (*this);
+	}
+
+	~CharPtrWrapper()
+	{
+		if (this->buf != nullptr)
+		{
+			delete[] buf;
+			buf = nullptr;
+		}
+	}
+
+	char *buf	= nullptr;
+	size_t size	= 0;
+};
 
 ///////////////////////////////////////////////////////////////////////////
 //FIFO buffer, adapt producer-consumer mode.

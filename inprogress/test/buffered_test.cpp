@@ -1,12 +1,12 @@
 #include <thread>
 #include <iostream>
 #include <fstream>
-#include <queuebuf.h>
-#include <guarders.h>
+#include "queuebuf.h"
 #include <string>
 
 #if defined(__GNUC__)
 #include <time.h>
+#include <unistd.h>
 
 unsigned long GetTickCount()
 {
@@ -53,7 +53,7 @@ struct obj
 
 };
 
-QueueBuffer<char*, critical_section_guard_t> buf(10);
+QueueBuffer<char*, mutex_guard_t> buf(10);
 
 critical_section_guard_t::lockable_t glck;
 int gi = 0;
@@ -61,7 +61,7 @@ int gi = 0;
 void productor(int id)
 {
 	char fname[256];
-	sprintf_s(fname, "%dp.log", id);
+	sprintf(fname, "%dp.log", id);
 	fstream f(fname, ios::out);
 	//while (true)
 	{
@@ -74,9 +74,9 @@ void productor(int id)
 			//o.i = 111;
 			buf.Push(str, strlen(str));
 			f << ::GetTickCount() << ":" << str << endl;
-			Sleep(rand() % 10);
+			usleep(rand() % 10);
 
-			critical_section_guard_t g(&glck);
+			mutex_guard_t g(&glck);
 			gi++;
 		}
 		
@@ -87,7 +87,7 @@ bool state = true;
 void consumer(int id)
 {
 	char fname[256];
-	sprintf_s(fname, "%d.log", id);
+	sprintf(fname, "%d.log", id);
 	fstream f(fname, ios::out);
 	int i = 0;
 	vector<string> dumps;
@@ -105,7 +105,7 @@ void consumer(int id)
 		//f << id << ":Got" << endl;
 		f <<::GetTickCount()<<":"<< str << std::endl;
 		i++;
-		Sleep(rand() % 50);
+		usleep(rand() % 50);
 	}
 
 	for (auto &i:dumps)
@@ -113,7 +113,8 @@ void consumer(int id)
 	
 }
 
-void test_start()
+//void test_start()
+int main()
 {
 	try{
 		std::thread tp1(productor, 1);
@@ -136,5 +137,5 @@ void test_start()
 
 	}
 	
-	
+	return 0;	
 }

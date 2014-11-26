@@ -17,7 +17,6 @@
 # pragma once
 #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
 
-//#include <Windows.h>
 #include <memory>
 #include <string.h>
 
@@ -32,17 +31,22 @@ protected:
 	typedef typename BUFFER::value_ptr_t value_ptr_t;
 	typedef typename BUFFER::item_ptr_t item_ptr_t;
 	typedef BufferState<BUFFER> base_t;
-	
+
 public:
 	BufferState(BUFFER *h)
 		:_holder(h)
 	{}
 
-	virtual void Full() = 0;
-	virtual void Free() = 0;
-	virtual void Empty() = 0;
-	virtual value_t& Get(value_t& value) = 0;
-	virtual void Put(value_t& value) = 0;
+	//virtual void Full() = 0;
+	virtual void Full(){}
+	virtual void Free(){}
+	//virtual void Free() = 0;
+	//virtual void Empty() = 0;
+	virtual void Empty(){}
+//	virtual value_t& Get(value_t& value) = 0;
+	virtual value_t& Get(value_t& value){}
+	//virtual void Put(value_t& value) = 0;
+	virtual void Put(value_t& value){}
 
 protected:
 	BUFFER *_holder;
@@ -74,7 +78,7 @@ public:
 	{
 	}
 	
-	value_t& Get(value_t &value) override
+	base_t::value_t& Get(value_t &value) override
 	{
 		_holder->_free_cond.Wait(_holder->_block_lock.get());
 		return _holder->Pop(value);
@@ -234,81 +238,6 @@ public:
 };
 
 
-
-///////////////////////////////////////////////
-//CharPtrWrapper.
-//Wrapper the char* type. 
-struct CharPtrWrapper
-{
-	void Copy(const char* src, size_t size)
-	{
-		if (this->buf != nullptr && this->size != size)
-		{
-			delete[] this->buf;
-			this->buf = nullptr;
-		}
-
-		this->buf = new char[size];
-		memcpy(buf, src, size);
-		this->size = size;
-	}
-
-	CharPtrWrapper(){}
-
-	CharPtrWrapper(const CharPtrWrapper& rhs) = delete;
-	
-
-	CharPtrWrapper(CharPtrWrapper&& rhs)
-	{
-		//cout << "move contr" << endl;
-		if (this != &rhs)
-		{
-			if (this->buf != nullptr)
-			{
-				delete[] buf;
-				this->buf = nullptr;
-			}
-
-			this->buf = rhs.buf;
-			this->size = rhs.size;
-			rhs.buf = nullptr;
-			rhs.size = 0;
-		}
-	}
-
-	CharPtrWrapper& operator=(const CharPtrWrapper& rhs) = delete;
-
-	CharPtrWrapper& operator=(CharPtrWrapper&& rhs)
-	{
-		//cout << "move assign" << endl;
-		if (this != &rhs)
-		{
-			if (this->buf != nullptr)
-			{
-				delete[] buf;
-				this->buf = nullptr;
-			}
-
-			this->buf = rhs.buf;
-			this->size = rhs.size;
-			rhs.buf = nullptr;
-			rhs.size = 0;
-		}
-		return (*this);
-	}
-
-	~CharPtrWrapper()
-	{
-		if (this->buf != nullptr)
-		{
-			delete[] buf;
-			buf = nullptr;
-		}
-	}
-
-	char *buf	= nullptr;
-	size_t size	= 0;
-};
 
 
 
