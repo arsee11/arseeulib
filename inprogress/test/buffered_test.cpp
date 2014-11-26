@@ -53,9 +53,9 @@ struct obj
 
 };
 
-QueueBuffer<char*, mutex_guard_t > buf(10);
+QueueBuffer<char*, critical_section_guard_t> buf(10);
 
-mutex_guard_t::lockable_t glck;
+critical_section_guard_t::lockable_t glck;
 int gi = 0;
 
 void productor(int id)

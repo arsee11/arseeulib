@@ -109,7 +109,7 @@ public:
 		_unlocker(&lock);
 	}	
 	
-	T* get()const{ return &lock; }
+	const T* get()const{ return &lock; }
 	
 private:
 	T lock;
@@ -249,6 +249,47 @@ typedef Lockable<CRITICAL_SECTION
 critical_section_t;
 		
 typedef Guard<critical_section_t> critical_section_guard_t;
+
+class Condvar
+{
+public:
+	Condvar()
+	{
+		//if (pthread_cond_init(&_cond, NULL) > 0)
+		{
+			perror("pthread_cond_init");
+			throw lockexp("pthread_cond_init");
+		}
+	}
+
+	~Condvar()
+	{
+		//if (pthread_cond_destroy(&_cond) > 0)
+		{
+			perror("pthread_cond_destroy");
+		}
+	}
+
+	template<class Lockable>
+	void Wait(Lockable *lck)
+	{
+		//pthread_cond_wait(&_cond, lck);
+	}
+
+	void NotifyOne()
+	{
+		//pthread_cond_signal(&_cond);
+	}
+
+	void NotityAll()
+	{
+		//pthread_cond_broadcast(&_cond);
+	}
+
+private:
+	//pthread_cond_t _cond;
+};
+
 			
 #endif /*_MSC_VER*/
 

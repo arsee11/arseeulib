@@ -19,6 +19,7 @@
 
 //#include <Windows.h>
 #include <memory>
+#include <string.h>
 
 using namespace std;
 
@@ -30,6 +31,7 @@ protected:
 	typedef typename BUFFER::value_t value_t;
 	typedef typename BUFFER::value_ptr_t value_ptr_t;
 	typedef typename BUFFER::item_ptr_t item_ptr_t;
+	typedef BufferState<BUFFER> base_t;
 	
 public:
 	BufferState(BUFFER *h)
@@ -228,6 +230,7 @@ public:
 	//shared_ptr<BufferBlockState<my_t> > _st_block;
 	shared_ptr<BufferFullState<my_t> > 	_st_full;
 	shared_ptr<BufferState<my_t> > 	_state;
+	size_t _size = 0;
 };
 
 

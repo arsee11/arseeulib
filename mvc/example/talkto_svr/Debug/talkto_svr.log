@@ -1,5 +1,22 @@
-﻿Build started 2014/10/9 13:39:31.
+﻿Build started 2014/11/26 10:15:21.
+     1>Project "D:\mylib\mylib\mvc\example\talkto_svr\talkto_svr.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I../../ /IE:\work_svn\hlg\jsonlib /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt logics.cpp main.cpp member.cpp
+         member.cpp
+     1>d:\mylib\mylib\mvc\mvcobject.h(7): fatal error C1083: Cannot open include file: 'mvcresponse_abstr.h': No such file or directory
+         main.cpp
+     1>d:\mylib\mylib\mvc\mvcresponse.h(7): fatal error C1083: Cannot open include file: 'mvcresponse_abstr.h': No such file or directory
+         logics.cpp
+     1>d:\mylib\mylib\mvc\globaldef.h(78): error C2143: syntax error : missing ';' before '<'
+     1>d:\mylib\mylib\mvc\globaldef.h(78): error C2059: syntax error : '<'
+     1>d:\mylib\mylib\mvc\globaldef.h(79): error C2143: syntax error : missing ';' before '{'
+     1>d:\mylib\mylib\mvc\globaldef.h(79): error C2447: '{' : missing function header (old-style formal list?)
+     1>d:\mylib\mylib\mvc\globaldef.h(89): error C2953: 'ArgIteration<T>' : class template has already been defined
+                 d:\mylib\mylib\mvc\globaldef.h(68) : see declaration of 'ArgIteration<T>'
+     1>d:\mylib\mylib\mvc\mvcrequest.h(15): fatal error C1083: Cannot open include file: 'params_dispatch.h': No such file or directory
+         Generating Code...
+     1>Done Building Project "D:\mylib\mylib\mvc\example\talkto_svr\talkto_svr.vcxproj" (Build target(s)) -- FAILED.
 
-Build succeeded.
+Build FAILED.
 
-Time Elapsed 00:00:00.22
+Time Elapsed 00:00:03.26
