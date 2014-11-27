@@ -134,7 +134,7 @@ public:
 	struct Work
 	{
 		Work(my_t *ctrl)
-			:_ctrl(ctrl)
+			:ctrl(ctrl)
 		{
 		}
 		

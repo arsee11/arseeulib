@@ -77,8 +77,9 @@ public:
 
 public:
 	PreactorServer(size_t max_session, SockConfig &conf)
+		:_preactor(max_session)
 	{
-		_preactor.RegistryHandler(new Acceptor(conf.lip, conf.lport));
+		_preactor.RegistryHandler(new Acceptor(conf.lip.c_str(), conf.lport));
 	}
 
 	bool Run()throw()
