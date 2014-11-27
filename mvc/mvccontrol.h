@@ -13,7 +13,7 @@
 
 
 #ifndef TYPE_TRANSFOR_H
-#include "type_transfor.h"
+//#include "type_transfor.h"
 #endif
 
 NAMESP_BEGIN
@@ -103,7 +103,7 @@ public:
 	template<class... Ts>
 	int Execute(Ts*... ts) const
 	{
-		int r = _rqt->Execute(ts);
+		int r = _rqt->Execute(ts...);
 		if (r == 0 && _rsp != nullptr)
 			r = _rsp->Update();
 
@@ -141,9 +141,9 @@ public:
 		template<class... Ts>
 		void operator()(Ts&... ts)
 		{
-			int r = _ctrl->_rqt->Execute(ts...);
-			if( r == 0 && _ctrl->_rsp != nullptr )
-				_ctrl->_rsp->Update();			
+			int r = ctrl->_rqt->Execute(ts...);
+			if( r == 0 && ctrl->_rsp != nullptr )
+				ctrl->_rsp->Update();			
 		}
 		
 		my_t *ctrl;

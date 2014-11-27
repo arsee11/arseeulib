@@ -22,51 +22,51 @@ NAMESP_BEGIN
 
 
 //@SOCK a socket type.
-class UdpConnection
-{
-	typedef UdpPeer::byte_t byte_t;
-	
-public:
-	UdpConnection(std::shared_ptr<UdpPeer> &p)
-		:_peer(p)
-	{
-	}
-	
-	UdpConnection(unsigned short port)
-	{
-		_peer = std::shared_ptr<UdpPeer>( UdpSock::Create(port) );
-	}
-	
-	template<class PACK>
-	bool Write(const PACK &pck)
-	{
-		typename PACK::serializer_t serializer_t;
-		auto fuc = std::bind(serializer_t, pck, std::placeholders::_1);
-		size_t len=0;
-		typename PACK::stream_t stream = fuc(len);
-		return (_peer->Write((byte_t*)stream.c_str(), len, _addr) == len);
-	}
-	
-	template<class PACK>
-	bool Read(PACK &pck)
-	{
-		typename PACK::unserializer_t unserializer_t;
-		auto fuc = std::bind(unserializer_t, std::placeholders::_1);
-		byte_t bytes[UdpPeer::MAX_LEN] = { 0 };
-		if (_peer->Read(bytes, UdpPeer::MAX_LEN, _addr)< 0)
-			return false;
-		
-		pck = std::move( fuc( PACK::stream_t((char*)bytes) ) );
-		return true;
-	}
-	
-	void Close(){ _peer->Close(); }
-	
-private:
-	std::shared_ptr<UdpPeer> _peer;
-	typedef UdpPeer::addr_t addr_t;
-	addr_t _addr;
-};
+//class UdpConnection
+//{
+//	typedef UdpPeer::byte_t byte_t;
+//	
+//public:
+//	UdpConnection(std::shared_ptr<UdpPeer> &p)
+//		:_peer(p)
+//	{
+//	}
+//	
+//	UdpConnection(unsigned short port)
+//	{
+//		_peer = std::shared_ptr<UdpPeer>( UdpSock::Create(port) );
+//	}
+//	
+//	template<class PACK>
+//	bool Write(const PACK &pck)
+//	{
+//		typename PACK::serializer_t serializer_t;
+//		auto fuc = std::bind(serializer_t, pck, std::placeholders::_1);
+//		size_t len=0;
+//		typename PACK::stream_t stream = fuc(len);
+//		return (_peer->Write((byte_t*)stream.c_str(), len, _addr) == len);
+//	}
+//	
+//	template<class PACK>
+//	bool Read(PACK &pck)
+//	{
+//		typename PACK::unserializer_t unserializer_t;
+//		auto fuc = std::bind(unserializer_t, std::placeholders::_1);
+//		byte_t bytes[UdpPeer::MAX_LEN] = { 0 };
+//		if (_peer->Read(bytes, UdpPeer::MAX_LEN, _addr)< 0)
+//			return false;
+//		
+//		pck = std::move( fuc( PACK::stream_t((char*)bytes) ) );
+//		return true;
+//	}
+//	
+//	void Close(){ _peer->Close(); }
+//	
+//private:
+//	std::shared_ptr<UdpPeer> _peer;
+//	typedef UdpPeer::addr_t addr_t;
+//	addr_t _addr;
+//};
 	
 
 //template<class PACK, class CONNECTION>
@@ -207,79 +207,79 @@ class DefaultWaiter
 //	}
 //};
 
-template<class CHANNEL, class WAITER = DefaultWaiter>
-class ChannelStore
-{
-public:
-	typedef ChannelStore<WAITER, CHANNEL> my_t;
-	typedef SockConfig config_t;
-	typedef CHANNEL  chn_t;
-	typedef std::shared_ptr<chn_t> chn_ptr_t;
-	typedef typename WAITER::chn_map_t storage_t;
-	
-public:
-	ChannelStore(){}
-	
-	void Store(const config_t &conf)
-	{
-		chn_ptr_t chn(new chn_t(new chn_t::conn_t(conf.lport)));
-		_storage[conf.Hash()] = chn;
-	}
-	
-	chn_ptr_t Drop(const config_t &conf)
-	{
-		auto i = _stroage.find( conf.Hash() );
-		if(i == _storage.end() )
-			return nullptr;
-		
-		chn_ptr_t chn = it->second;
-		_storage.erase(it);
-		return std::move( chn );
-	}
-	
-	chn_ptr_t Get(const config_t &conf)
-	{
-		auto i = _stroage.find( conf.Hash() );
-		if(i == _storage.end() )
-			return nullptr;
-		
-		return std::move( it->second );
-	}
-	
-	//reacted wait method.
-	bool Opening(chn_ptr_t &pchn) throw(std::exception)
-	{
-		switch( _waiter.Wait(_storage, pchn) )
-		{
-			case WAITER::ACCEPT_EVENT: break;
-			case WAITER::INPUT_EVENT:  pchn->Input(); break;
-			case WAITER::OUTPUT_EVENT: pchn->Output();break;
-			case WAITER::CLOSE_EVENT:  pchn->Close(); return false; break;
-			default :throw std::exception("wait io error");
-		}
-		
-		return true;
-	}
-	
-	//synchronous wait method.
-	//bool Wait(chn_ptr_t &chn) throw(std::exception)
-	//{
-	//	for(auto &i:_storage)
-	//	{
-	//		chn = i.second;
-	//		return true;
-	//	}
-	//	
-	//	chn = nullptr;
-	//	return false;
-	//}
-	
-private:
-
-	WAITER _waiter;
-	storage_t _storage;
-
-};
+//template<class CHANNEL, class WAITER = DefaultWaiter>
+//class ChannelStore
+//{
+//public:
+//	typedef ChannelStore<WAITER, CHANNEL> my_t;
+//	typedef SockConfig conf_t;
+//	typedef CHANNEL  chn_t;
+//	typedef std::shared_ptr<chn_t> chn_ptr_t;
+//	typedef typename WAITER::chn_map_t storage_t;
+//	
+//public:
+//	ChannelStore(){}
+//	
+//	void Store(const config_t &conf)
+//	{
+//		chn_ptr_t chn(new chn_t(new chn_t::conn_t(conf.lport)));
+//		_storage[conf.Hash()] = chn;
+//	}
+//	
+//	chn_ptr_t Drop(const config_t &conf)
+//	{
+//		auto i = _stroage.find( conf.Hash() );
+//		if(i == _storage.end() )
+//			return nullptr;
+//		
+//		chn_ptr_t chn = it->second;
+//		_storage.erase(it);
+//		return std::move( chn );
+//	}
+//	
+//	chn_ptr_t Get(const config_t &conf)
+//	{
+//		auto i = _stroage.find( conf.Hash() );
+//		if(i == _storage.end() )
+//			return nullptr;
+//		
+//		return std::move( it->second );
+//	}
+//	
+//	//reacted wait method.
+//	bool Opening(chn_ptr_t &pchn) throw(std::exception)
+//	{
+//		switch( _waiter.Wait(_storage, pchn) )
+//		{
+//			case WAITER::ACCEPT_EVENT: break;
+//			case WAITER::INPUT_EVENT:  pchn->Input(); break;
+//			case WAITER::OUTPUT_EVENT: pchn->Output();break;
+//			case WAITER::CLOSE_EVENT:  pchn->Close(); return false; break;
+//			default :throw std::exception("wait io error");
+//		}
+//		
+//		return true;
+//	}
+//	
+//	//synchronous wait method.
+//	//bool Wait(chn_ptr_t &chn) throw(std::exception)
+//	//{
+//	//	for(auto &i:_storage)
+//	//	{
+//	//		chn = i.second;
+//	//		return true;
+//	//	}
+//	//	
+//	//	chn = nullptr;
+//	//	return false;
+//	//}
+//	
+//private:
+//
+//	WAITER _waiter;
+//	storage_t _storage;
+//
+//};
 
 
 void NullLoop(Jpack &pack){}
