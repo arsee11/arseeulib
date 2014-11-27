@@ -25,6 +25,8 @@
 #endif
 
 #include "udpsock.h"
+#include <exception>
+
 
 
 NAMESP_BEGIN
@@ -42,7 +44,7 @@ public:
 		_chn.Init(conf);
 	}
 
-	bool Run()throw(...)
+	bool Run()throw(std::exception)
 	{
 		AddrPair addr;
 		pack_t pck;

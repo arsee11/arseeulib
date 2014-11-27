@@ -11,9 +11,21 @@
 #include <exception>
 #include <functional>
 
+#if defined(_MSC_VER)
 #include <winsock2.h>
+#endif
+
+#if defined(__GNUC__)
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <unistd.h>
+#endif
 
 NAMESP_BEGIN
+
+#if defined(__GNUC__)
+typedef int SOCKET;
+#endif
 
 class SockConfig
 {
@@ -103,7 +115,10 @@ public:
 
 	void Close()
 	{
+#if defined(_MSC_VER)
 		closesocket(_sock);
+#endif
+		close(_sock);
 	}
 
 private:

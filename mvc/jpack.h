@@ -8,9 +8,9 @@
 #endif
 
 #include <string>
-#include <hash_map>
+#include <map>
 
-#include "E:\lib\jsonlib\json.h"
+//#include "E:\lib\jsonlib\json.h"
 
 NAMESP_BEGIN
 
@@ -20,7 +20,7 @@ class Jpack
 {
 public:
 	typedef Jpack pack_t;
-	typedef std::hash_map<std::string, std::string> params_pack_t;
+	typedef std::map<std::string, std::string> params_pack_t;
 	typedef std::string stream_t;
 	
 	Jpack(){}

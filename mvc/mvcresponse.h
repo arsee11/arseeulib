@@ -25,7 +25,7 @@
 #include <list>
 #include <vector>
 #include <string>
-#include <hash_map>
+#include <map>
 
 NAMESP_BEGIN
 
@@ -111,7 +111,7 @@ public:
 	public:
 		typedef typename RResponse::source_t obj_t;
 		typedef typename RResponse::view_t view_t;
-		typedef std::hash_map<std::string, std::string> param_pack_t;
+		typedef std::map<std::string, std::string> param_pack_t;
 		
 		param_pack_t Filter(view_t view, obj_t *obj)
 		{	

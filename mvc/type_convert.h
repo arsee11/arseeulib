@@ -21,11 +21,14 @@ struct TypeConvertor
 		return Handle<DES,SRC>::Convert(src);
 	}
 
-	template<class DES, class SRC>
+	template<class HDES, class SRC>
 	struct Handle;
 	
+};
+
 	template<>
-	struct Handle<int, std::string>
+	template<>
+	struct TypeConvertor<int>::Handle<int, std::string>
 	{
 		static int Convert(std::string &src)
 		{
@@ -38,7 +41,8 @@ struct TypeConvertor
 	};
 
 	template<>
-	struct Handle<float, std::string>
+	template<>
+	struct TypeConvertor<float>::Handle<float, std::string>
 	{
 		static float Convert(std::string &src)
 		{
@@ -51,15 +55,14 @@ struct TypeConvertor
 	};
 
 	template<>
-	struct Handle<std::string, std::string>
+	template<>
+	struct TypeConvertor<std::string>::Handle<std::string, std::string>
 	{
 		static std::string Convert(std::string &src)
 		{
 			return src;
 		}
 	};
-};
-
 NAMESP_END
 
 #endif /*TYPE_CONVERT_H*/

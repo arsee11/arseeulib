@@ -4,6 +4,7 @@
 #define MVC_OBJECT_H
 
 #include<list>
+#include<algorithm>
 #include "mvcresponse_abstr.h"
 #include <memory>
 
@@ -11,7 +12,7 @@
 #include "globaldef.h"
 #endif
 
-#include <xutility>
+#include <utility>
 
 NAMESP_BEGIN
 
@@ -93,7 +94,7 @@ public:
 	
 	int Dettach( IResponse *rps)
 	{
-		auto it = find(_rsplst.begin(), _rsplst.end(), std::unique_ptr<IResponse>(rps) );
+		auto it = std::find(_rsplst.begin(), _rsplst.end(), std::unique_ptr<IResponse>(rps) );
 		if( it != _rsplst.end() )
 			_rsplst.erase( it );
 		return 0;
@@ -120,7 +121,7 @@ public:
 	static my_t& Instance() throw(std::exception)
 	{ 
 		if(_myself == nullptr) 
-			throw exception("Not Init!");
+			throw std::exception();
 			
 		return (*_myself.get()); 
 	}
@@ -143,11 +144,11 @@ private:
 		_objs = std::make_tuple(objs...);
 	}
 	
-	template<class...OBJS>
+	template<class...Args>
 	struct Trait
 	{
-		typedef std::tuple<OBJS*...> value;
-		enum{ Count = ArgCounter<OBJS*...>::value };
+		typedef std::tuple<Args*...> value;
+		enum{ Count = ArgCounter<Args*...>::value };
 	};
 	
 	typedef typename Trait<OBJS...>::value collection_t;

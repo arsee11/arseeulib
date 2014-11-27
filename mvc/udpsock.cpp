@@ -4,7 +4,14 @@
 #include "udpsock.h"
 #endif
 
+#if defined(_MSC_VER)
 #pragma comment(lib, "Ws2_32.lib")
+#endif
+
+#if defined(__GNUC__)
+#include <netinet/in.h>
+#include <string.h>
+#endif
 
 NAMESP_BEGIN
 
@@ -12,19 +19,24 @@ long SockConfig::sid=0;
 
 bool UdpSock::Init()
 {
+#if defined(_MSC_VER)
 	WSADATA wsaData;
 	int r = WSAStartup(MAKEWORD(2, 2), &wsaData);
-    if (r != NO_ERROR)
+	if (r != NO_ERROR)
 	{
-        return false;
-    }
-	
+       		return false;
+	}
+#endif	
 	return true;
 }
 
 bool UdpSock::UnInit()
 {
+#if defined(_MSC_VER)
 	return WSACleanup();
+#else
+	return true;
+#endif
 }
 
 UdpPeer* UdpSock::Create(const std::string &ip, unsigned short port) throw(std::exception)
