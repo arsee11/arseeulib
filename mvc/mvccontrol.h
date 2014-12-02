@@ -63,7 +63,6 @@ public:
 
 	Control(source_t *src, rqt_logic_t *logic)
 		:_src(src)
-		, _rsp(nullptr)
 	{
 		_rqt = std::unique_ptr<request_t>(new request_t());
 		_rqt->AttachSrc(_src);
@@ -71,8 +70,7 @@ public:
 	}
 	
 	Control(rqt_logic_t *logic, response_t *rsp)
-		:_src(nullptr)
-		, _rsp(rsp)
+		:_rsp(rsp)
 	{
 		_rqt = std::unique_ptr<request_t>(new request_t());
 		_rqt->AttachSrc(_src);
@@ -80,8 +78,6 @@ public:
 	}
 
 	Control(rqt_logic_t *logic)
-		:_src(nullptr)
-		, _rsp(nullptr)
 	{
 		_rqt = std::unique_ptr<request_t>(new request_t());
 		_rqt->AttachSrc(_src);
@@ -111,9 +107,9 @@ public:
 	}
 	
 private:
-	source_t *_src;
+	source_t *_src = nullptr;
 	std::unique_ptr<request_t> _rqt;
-	response_t *_rsp;
+	response_t *_rsp = nullptr;
 };
 
 //////////////////////////////////////////////
@@ -168,7 +164,7 @@ public:
 	typedef REQUEST<source_t, rqt_logic_t> request_t;
 	typedef typename source_t::response_t response_t;
 	
-	const static std::string rqt_name;
+	const static std::string rqt_name(){ return rqt_logic_t::name; }
 	
 	RControl(source_t *src, rqt_logic_t *logic, response_t *rsp)
 		:_src(src)
@@ -202,7 +198,8 @@ public:
 	template<class PACK>
 	bool Execute(PACK const& pck)
 	{
-		_state = _rqt->Execute( pck.Params() );
+		typename PACK::params_pack_t prams = std::move(pck.Params());
+		_state = _rqt->Execute( prams );
 				
 		return true;
 	}
@@ -235,17 +232,12 @@ public:
 	}
 
 private:
-	source_t *_src;
+	source_t *_src = nullptr;
 	std::shared_ptr<request_t> _rqt;
-	response_t *_rsp;
+	response_t *_rsp = nullptr;
 	int _state = 0;
 };
 
-template<class SOURCE
-	, class REQUEST_LOGIC
-	, template<class, class> class REQUEST
->
-const std::string RControl<SOURCE, REQUEST_LOGIC, REQUEST>::rqt_name = RControl<SOURCE, REQUEST_LOGIC, REQUEST>::rqt_logic_t::name;
 
 //////////////////////////////////////////////////////
 //template<class CHANNEL_STORE, class...Dispachters>

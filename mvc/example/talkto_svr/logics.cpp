@@ -1,11 +1,13 @@
 #include "logics.h"
 #include <algorithm>
-
+#include <iostream>
 //AddMember
 
 const string AddMember::name = "addmember";
-const string AddMember::_p1 = "Id";
-const string AddMember::_p2 = "Name";
+template<>
+const string AddMember::base_t::_p1 = "Id";
+template<>
+const string AddMember::base_t::_p2 = "Name";
 
 int AddMember::Execute(obj_t *obj)
 {
@@ -14,6 +16,7 @@ int AddMember::Execute(obj_t *obj)
 
 int AddMember::Execute(obj_t *obj, const string &id, const string& name)
 {
+	cout<<"AddMember::Execute"<<endl;
 	member_ptr_t mem = member_ptr_t(new member_obj_t(id, name));;
 	obj->ref().push_back(mem);
 	return 0;
@@ -23,8 +26,10 @@ int AddMember::Execute(obj_t *obj, const string &id, const string& name)
 
 //MemberLogin
 const string MemberLogin::name = "login";
-const string MemberLogin::_p1 = "Id";
-const string MemberLogin::_p2 = "Key";
+template<>
+const string MemberLogin::base_t::_p1 = "Id";
+template<>
+const string MemberLogin::base_t::_p2 = "Key";
 
 int MemberLogin::Execute(member_list_obj_t *obj, const string &id, const string& key)
 {

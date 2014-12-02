@@ -3,74 +3,79 @@
 #ifndef JPACK_H
 #define JPACK_H
 
+#include <utility>
+#include <json/json.h>
+
 #ifndef GLOBALDEF_H
 #include "globaldef.h"
 #endif
 
-#include <string>
-#include <map>
+#ifndef PACK_H
+#include "pack.h"
+#endif
 
-//#include "E:\lib\jsonlib\json.h"
 
 NAMESP_BEGIN
 
 //Json pack defines
 //{"source":"src","target":"t","action":"response", "params":[{"name":"name1","value":"value1"},{"name":"name2","value":"value2"}]}
-class Jpack
+class JSerializer
 {
 public:
-	typedef Jpack pack_t;
-	typedef std::map<std::string, std::string> params_pack_t;
-	typedef std::string stream_t;
-	
-	Jpack(){}
-	
-	class Serializer
+	template<class Pack>
+	typename Pack::stream_t operator()(const Pack &pck, size_t &stream_len)
 	{
-	public:
-		Jpack::stream_t operator()(const Jpack::pack_t &pck, size_t &stream_len);
-	};
-	
-	class UnSerializer
-	{
-	public:
-		Jpack::pack_t operator()(const Jpack::stream_t &stream);
-	};
-	
-	typedef UnSerializer unserializer_t;
-	typedef Serializer   serializer_t;
-	
-public:
-	Jpack(std::string src, std::string trgt, std::string act, std::string param)
-		:_source(src)
-		,_target(trgt)
-		,_action(act)
-	{
-		_params["msg"] = param;
-	}
-	
-	Jpack(std::string src, std::string trgt, std::string act, params_pack_t &params)
-		:_source(src)
-		,_target(trgt)
-		,_action(act)
-		,_params(params)
-	{
-	}
-	
-	std::string Action()const{ return std::move(_action); }
-	std::string Target()const{ return std::move(_target); }
-	std::string Source()const{ return std::move(_source); }
-	params_pack_t Params()const{return std::move(_params);}
+		pack_t pck;
+		Json::Reader rd;
+		Json::Value root;
+		
+		if( rd.parse( stream, root, false) )
+		{
+			pck._source = root["source"].asString();
+			pck._action = root["action"].asString();
+			pck._target = root["target"].asString();
+			Json::Value params = root["params"];
+			for(int i=0; i<params.size(); i++)
+			{
+				Json::Value param = params[i];
+				pck._params[ param["name"].asString() ] = param["value"].asString();
+			}
 
-private:
-	std::string _action="";
-	std::string _target="";
-	std::string _source="";
-	params_pack_t _params;
+			pck.Status(true);
+		}
+	}
 };
 
+class JUnSerializer
+{
+public:
+	template<class Pack>
+	Pack operator()(consti typename Pack::stream_t &stream)
+	{
+		Json::FastWriter wr;
+		Json::Value root;
+		root["source"] = pck._source;
+		root["target"] = pck._target;
+		root["action"] = pck._action;
+		Json::Value param;
+		Json::Value params;
+		for(auto &i : pck._params)
+		{
+			param["name"]  = i.first;
+			param["value"] = i.second;
+			params.append(param);
+		}
+				
+		root["params"] = params;
+		Jpack::stream_t stream = wr.write(root);
+		stream_len = stream.size();
+		return std::move( stream );
+	}
+};
+
+typedef Pack<JSerializer, JUnserializer> Jpack;
 
 
-NAMESP_END
+NAMESP_BEGIN
 
 #endif /*JPACK_H*/

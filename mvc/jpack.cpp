@@ -24,6 +24,8 @@ Jpack::pack_t Jpack::UnSerializer::operator()(const std::string &stream)
 			Json::Value param = params[i];
 			pck._params[ param["name"].asString() ] = param["value"].asString();
 		}
+
+		pck.Status(true);
 	}
 	
 	return std::move<pack_t&>(pck);

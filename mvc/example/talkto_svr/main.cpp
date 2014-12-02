@@ -7,11 +7,12 @@
 #include "logics.h"
 #include "controls.h"
 #include "mysession.h"
+#include "net/preactor.h"
+#include "net/acceptor.h"
+#include "net/fd.h"
+#include "net/selector.h"
 
-class Preactor{};
 
-template<class Session>
-class Acceptor{};
 
 int main(int argc, char **argv)
 {
@@ -24,14 +25,15 @@ int main(int argc, char **argv)
 	objects_t::Init(&mlobj);
 
 	udpchn_t::conf_t conf = { 11111, 0, "127.0.0.1", "" };
-	arsee::UdpServer<arsee::udpchn_t, objects_t, member_login_dispth, member_list_dispth> svr(conf);
+//	arsee::UdpServer<arsee::udpchn_t, objects_t, member_login_dispth, member_list_dispth> svr(conf);
 
-	PreactorServer < Preactor, 
+	typedef Preactor<FdHolder, true, Epoll> tcp_preactor_t;
+	PreactorServer < tcp_preactor_t, 
 		Acceptor<
-			MySession<objects_t, member_login_dispth, member_list_dispth> 
+			MySession<Jpack,objects_t, member_login_dispth, member_list_dispth> 
 		> 
 	> 
-	psvr(1024, conf);
+	svr(1024, conf);
 
 	try{
 		while (true)

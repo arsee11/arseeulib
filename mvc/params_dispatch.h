@@ -24,7 +24,7 @@ struct ParamTransfor
 	template<class T>
 	T ToType(PARAM_PACK &ppack, std::string &param_name)
 	{
-		return std::move<T>( TypeConvertor<T>::Convert( ppack[param_name] ) );
+		return std::move( TypeConvertor<T>::Convert( ppack[param_name] ) );
 	}
 
 	template<int N>
@@ -65,7 +65,8 @@ class BaseLogicTmpl;
 template<class Derived, class... Ts>
 class BaseLogicTmpl<1, Derived, Ts...> 
 {
-
+protected:
+	typedef BaseLogicTmpl<1, Derived, Ts...> base_t;
 public:
 	enum{ P1, PC };	
 	
@@ -78,6 +79,8 @@ public:
 template<class Derived, class... Ts>
 class BaseLogicTmpl<2, Derived, Ts...> 
 {
+protected:
+	typedef BaseLogicTmpl<2, Derived, Ts...> base_t;
 
 public:
 	enum{ P1, P2, PC };	
@@ -93,6 +96,8 @@ public:
 template<class Derived, class... Ts>
 class BaseLogicTmpl<3, Derived, Ts...> 
 {
+protected:
+	typedef BaseLogicTmpl<3, Derived, Ts...> base_t;
 
 public:
 	enum{ P1, P2, P3, PC };	
@@ -139,8 +144,9 @@ struct Invoker<1>
 			
 		_1pp::name = T::_p1;
 			
-		ParamTransfor<PARAM_PACK, _1pp> pt = {pp};
-		t->Execute(src, pt.Get<0>() );
+		ParamTransfor<param_pack_t, _1pp> pt = {pp};
+		//template specify Get<0> is a template.
+		t->Execute(src, pt.template Get<0>() );
 	}	
 };
 
@@ -160,8 +166,11 @@ struct Invoker<2>
 		_2pp::name = T::_p2;
 		//cout << T::_p1 << " " << T::_p2 << endl;
 		//cout << _1pp::name << " " << _2pp::name << endl;
-		ParamTransfor<PARAM_PACK, _1pp, _2pp> pt = {pp};
-		return t->Execute(src, pt.Get<0>(), pt.Get<1>() );
+		ParamTransfor<param_pack_t, _1pp, _2pp> pt = {pp};
+		return t->Execute(src
+			,pt.template Get<0>()
+			,pt.template Get<1>()
+		);
 	}	
 };
 
@@ -182,8 +191,12 @@ struct Invoker<3>
 		_2pp::name = T::_p2;
 		_3pp::name = T::_p3;
 		
-		ParamTransfor<PARAM_PACK, _1pp, _2pp, _3pp> pt = {pp};
-		return t->Execute(src, pt.Get<0>(), pt.Get<1>(), pt.Get<2>() );
+		ParamTransfor<param_pack_t, _1pp, _2pp, _3pp> pt = {pp};
+		return t->Execute(src
+			, pt.template Get<0>()
+			, pt.template Get<1>()
+			, pt.template Get<2>() 
+		);
 	}	
 };
 
