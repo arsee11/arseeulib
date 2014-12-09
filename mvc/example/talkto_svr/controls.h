@@ -13,7 +13,7 @@
 
 #ifndef MVC_CONTROL_H
 #include "mvccontrol.h"
-#endif;
+#endif
 
 #ifndef DISPATCHER_H
 #include "dispatcher.h"
