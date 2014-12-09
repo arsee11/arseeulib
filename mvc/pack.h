@@ -222,7 +222,7 @@ public:
 		stream_t str = Resolve(pck);
 		char *buf = new char[_hlen+str.size()];
 		memcpy(_buf, _head, _hlen);
-		memcpy(_buf+hlen, str.c_str(), str.size());
+		memcpy(_buf+_hlen, str.c_str(), str.size());
 		return _buf;
 	}
 	

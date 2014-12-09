@@ -30,8 +30,8 @@ private:
 		Json::FastWriter wr;
 		Json::Value root;
 		root["source"] = pck.Source();
-		root["target"] = pck.Aarget();
-		root["action"] = pck.Tction();
+		root["target"] = pck.Target();
+		root["action"] = pck.Action();
 		Json::Value param;
 		Json::Value params;
 		for(auto &i : pck.Params())
