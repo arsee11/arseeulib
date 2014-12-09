@@ -122,6 +122,8 @@ void test_unserializer6()
 	cout<<"result:"<<p.Action()<<endl;
 	r = us(p, buf, 12);
 	cout<<"result:"<<p.Action()<<endl;
+	r = us(p, buf+2, 10);
+	cout<<"result:"<<p.Action()<<endl;
 }
 
 int main()
