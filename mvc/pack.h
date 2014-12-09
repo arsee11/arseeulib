@@ -220,10 +220,11 @@ public:
 	{
 		_hlen = Header();
 		stream_t str = Resolve(pck);
-		_buf = new char[_hlen+str.size()];
+		char *buf = new char[_hlen+str.size()];
 		memcpy(_buf, _head, _hlen);
-		memcpy(_buf+_hlen, str.c_str(), str.size());
-		*len = _hlen+str.size();
+		long plen = str.size();
+		mempcy(_buf+_hlen, &plen, sizeof(long));
+		memcpy(_buf+_hlen+sizeof(long), str.c_str(), str.size());
 		return _buf;
 	}
 	

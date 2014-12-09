@@ -23,7 +23,8 @@ void test_serializ1()
 	Jpack::serial_t s;
 	size_t len;
 	const char *buf = s(pck, &len);
-	cout<<"result("<<len<<"):"<<buf<<endl;
+	cout<<"result("<<len<<"):"<<;
+	cout<<"head:"<<*(long*)buf<<"len:"<<*(long*)buf+sizeof(long)<<"payload:"<<buf+(2*sizeof(long)<<endl;
 }
 
 int main()
