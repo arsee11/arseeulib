@@ -101,6 +101,6 @@ public:
 typedef Pack<JSerializer, JUnSerializer> Jpack;
 
 
-NAMESP_BEGIN
+NAMESP_END
 
 #endif /*JPACK_H*/
