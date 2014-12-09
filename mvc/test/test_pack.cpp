@@ -31,7 +31,7 @@ public:
 			if(stream[i] == (char)0xFF && stream[i+1] == (char)0xFF)
 			{
 				*head_len = 2;
-				return stream + 2;
+				return stream + (i+2);
 			}
 		}
 
