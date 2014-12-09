@@ -65,14 +65,14 @@ public:
 		
 		if( rd.parse( stream, root, false) )
 		{
-			pck._source = root["source"].asString();
-			pck._action = root["action"].asString();
-			pck._target = root["target"].asString();
+			pck.Source( root["source"].asString()	);
+			pck.Action( root["action"].asString()	);
+			pck.Target(  root["target"].asString()	);
 			Json::Value params = root["params"];
 			for(int i=0; i<params.size(); i++)
 			{
 				Json::Value param = params[i];
-				pck._params[ param["name"].asString() ] = param["value"].asString();
+				pck.Param( param["name"].asString(), param["value"].asString());
 			}
 
 			pck.Status(true);

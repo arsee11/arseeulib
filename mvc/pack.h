@@ -30,9 +30,6 @@ public:
 	typedef UnSerializer unserial_t;
 	typedef Serializer serial_t;
 
-	friend class Serializer;
-	friend class UnSerializer;
-	
 	Pack(){}	
 	
 public:
