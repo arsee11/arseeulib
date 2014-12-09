@@ -120,7 +120,7 @@ void test_unserializer6()
 	strcpy(buf+2, "1234567890123");
 	int r = us(p, buf, 15);
 	cout<<"result:"<<p.Action()<<endl;
-	int r = us(p, buf, 12);
+	r = us(p, buf, 12);
 	cout<<"result:"<<p.Action()<<endl;
 }
 
