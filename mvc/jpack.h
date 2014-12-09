@@ -29,12 +29,12 @@ private:
 	{
 		Json::FastWriter wr;
 		Json::Value root;
-		root["source"] = pck._source;
-		root["target"] = pck._target;
-		root["action"] = pck._action;
+		root["source"] = pck.Source();
+		root["target"] = pck.Aarget();
+		root["action"] = pck.Tction();
 		Json::Value param;
 		Json::Value params;
-		for(auto &i : pck._params)
+		for(auto &i : pck.Params)
 		{
 			param["name"]  = i.first;
 			param["value"] = i.second;
