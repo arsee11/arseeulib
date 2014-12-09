@@ -30,9 +30,10 @@ public:
 	typedef UnSerializer unserial_t;
 	typedef Serializer serial_t;
 
-	Pack(){}
+	friend class Serializer;
+	friend class UnSerializer;
 	
-	
+	Pack(){}	
 	
 public:
 	Pack(stream_t &src, stream_t &trgt, stream_t &act, stream_t &param)
@@ -51,7 +52,7 @@ public:
 	{
 	}
 	
-	Pack(stream_t &src, stream_t &trgt, stream_t &act,)
+	Pack(stream_t &src, stream_t &trgt, stream_t &act)
 		:_source(src)
 		,_target(trgt)
 		,_action(act)
@@ -194,7 +195,7 @@ private:
 		return pbuf;
 	}
 
-private:
+protected:
 	char *_buf = nullptr;
 	size_t _pack_len = 1;
 	size_t _size = 0;
@@ -215,7 +216,7 @@ public:
 		_hlen = Header();
 	}
 	
-	virtual SerializerAbstr()
+	virtual ~SerializerAbstr()
 	{
 		if(_buf != nullptr )
 			delete[] _buf;
@@ -234,10 +235,10 @@ public:
 	}
 	
 protected:
-	virtual size_t Header(size_t *hlen)=0;
+	virtual size_t Header()=0;
 	virtual stream_t Resolve(const pack_t &pck)=0;
 	
-private:
+protected:
 	char *_buf=nullptr;
 	char *_head=nullptr;
 	size_t _hlen=0;

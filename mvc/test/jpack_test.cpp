@@ -2,6 +2,10 @@
 
 #include "../jpack.h"
 
+//-I/home/arsee_p/lib/jsoncpp-master/include/
+
+//-l/home/arsee_p/lib/jsoncpp-master/lib/
+
 //normal
 test_serializ1()
 {
@@ -21,3 +25,4 @@ int main()
 	test_serializ1();
 	return 0;
 }
+
