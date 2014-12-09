@@ -75,16 +75,6 @@ private:
 };
 
 
-class SerializerAbstr;
-
-//template<
-//	class Serializer,
-//	class UnSerializer
-//>
-//class PackImpl:public Pack
-//{
-//};
-
 template<class DeriveSerial, class DeriveUnSerial>
 class UnSerializerAbstr
 {
@@ -128,11 +118,13 @@ public:
 	//@len len of @stream,
 	//@head_len return pack header len,
 	//@return if nullptr means the header not found, 
-	//others pack header position pointer.
+	//otherwise ptr to pack stream except header.
 	virtual const char* Header(const char* stream, size_t len, size_t *head_len)=0;
 
 
 private:
+	//@return nullptr judge fail,
+	//otherwise ptr to pack stream except header.
 	const char* Judge(const char *stream, size_t len)
 	{
 		//make sure less memory copy
