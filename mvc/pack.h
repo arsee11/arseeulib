@@ -208,11 +208,6 @@ public:
 	typedef typename pack_t::stream_t stream_t;
 
 public:
-	SerializerAbstr()
-	{
-		_hlen = Header();
-	}
-	
 	virtual ~SerializerAbstr()
 	{
 		if(_buf != nullptr )
@@ -223,11 +218,11 @@ public:
 	
 	virtual const char* operator()(const pack_t &pck, size_t *len)
 	{
-		size_t hlen=0;
+		_hlen = Header();
 		stream_t str = Resolve(pck);
 		char *buf = new char[_hlen+str.size()];
 		memcpy(_buf, _head, _hlen);
-		memcpy(_buf+hlen, str, str.size());
+		memcpy(_buf+hlen, str.c_str(), str.size());
 		return _buf;
 	}
 	
