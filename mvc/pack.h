@@ -97,7 +97,7 @@ public:
 		_buf = nullptr;
 	}
 
-	
+	//@return >0 successed, otherwise failed.
 	int operator()(pack_t &pck, const char* stream, size_t len)
 	{
 		const char *pstream = nullptr;	

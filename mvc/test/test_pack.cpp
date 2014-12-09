@@ -119,11 +119,11 @@ void test_unserializer6()
 	char buf[15] = {0xff, 0xff};
 	strcpy(buf+2, "1234567890123");
 	int r = us(p, buf, 15);
-	cout<<"result:"<<p.Action()<<endl;
+	cout<<"result("<<r<<"):"<<p.Action()<<endl;
 	r = us(p, buf, 12);
-	cout<<"result:"<<p.Action()<<endl;
+	cout<<"result("<<r<<"):"<<p.Action()<<endl;
 	r = us(p, buf+2, 10);
-	cout<<"result:"<<p.Action()<<endl;
+	cout<<"result("<<r<<"):"<<p.Action()<<endl;
 }
 
 int main()
