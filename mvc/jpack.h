@@ -19,38 +19,13 @@ NAMESP_BEGIN
 
 //Json pack defines
 //{"source":"src","target":"t","action":"response", "params":[{"name":"name1","value":"value1"},{"name":"name2","value":"value2"}]}
-class JSerializer
-{
-public:
-	template<class Pack>
-	typename Pack::stream_t operator()(const Pack &pck, size_t &stream_len)
-	{
-		pack_t pck;
-		Json::Reader rd;
-		Json::Value root;
-		
-		if( rd.parse( stream, root, false) )
-		{
-			pck._source = root["source"].asString();
-			pck._action = root["action"].asString();
-			pck._target = root["target"].asString();
-			Json::Value params = root["params"];
-			for(int i=0; i<params.size(); i++)
-			{
-				Json::Value param = params[i];
-				pck._params[ param["name"].asString() ] = param["value"].asString();
-			}
+class JUnSerializer;
 
-			pck.Status(true);
-		}
-	}
-};
-
-class JUnSerializer
+class JSerializer:
+	public SerializerAbstr<JSerializer, JUnSerializer>
 {
-public:
-	template<class Pack>
-	Pack operator()(consti typename Pack::stream_t &stream)
+private:
+	stream_t Resolve(const pack_t &pck)override
 	{
 		Json::FastWriter wr;
 		Json::Value root;
@@ -67,9 +42,59 @@ public:
 		}
 				
 		root["params"] = params;
-		Jpack::stream_t stream = wr.write(root);
-		stream_len = stream.size();
-		return std::move( stream );
+		std::string str = wr.write(root);
+		return std::move(str);		
+	}
+	
+	size_t Header()override
+	{
+		_head = new char[sizeof(long)];
+		memset(_head, 0xff, sizeof(long));
+		return sizeof(long);
+	}
+};
+
+class JUnSerializer:
+	public UnSerializerAbstr<JSerializer, JUnSerializer>
+{
+public:
+	int Parse(pack_t &pck, const char *stream)override
+	{
+		Json::Reader rd;
+		Json::Value root;
+		
+		if( rd.parse( stream, root, false) )
+		{
+			pck._source = root["source"].asString();
+			pck._action = root["action"].asString();
+			pck._target = root["target"].asString();
+			Json::Value params = root["params"];
+			for(int i=0; i<params.size(); i++)
+			{
+				Json::Value param = params[i];
+				pck._params[ param["name"].asString() ] = param["value"].asString();
+			}
+
+			pck.Status(true);
+			return 1;
+		}
+		
+		return 0;
+	}
+	
+	const char* Header(const char* stream, size_t len, size_t *head_len)
+	{
+		long head = 0;
+		memset(&head, 0xff, sizeof(long);
+		*head_len = sizeof(long);
+		for(size_t i=0; i<len-sizeof(long)-1; ++i)
+		{
+			long tmp = *(long*)(stream+i);
+			if(tmp == head)
+				return tmp+4;
+		}
+
+		return nullptr;
 	}
 };
 

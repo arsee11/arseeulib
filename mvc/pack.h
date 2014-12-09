@@ -35,7 +35,7 @@ public:
 	
 	
 public:
-	Pack(stream_t src, stream_t trgt, stream_t act, stream_t param)
+	Pack(stream_t &src, stream_t &trgt, stream_t &act, stream_t &param)
 		:_source(src)
 		,_target(trgt)
 		,_action(act)
@@ -43,11 +43,41 @@ public:
 		_params["msg"] = param;
 	}
 	
-	Pack(stream_t src, stream_t trgt, stream_t act, params_pack_t &params)
+	Pack(stream_t &src, stream_t &trgt, stream_t &act, params_pack_t &params)
 		:_source(src)
 		,_target(trgt)
 		,_action(act)
 		,_params(params)
+	{
+	}
+	
+	Pack(stream_t &src, stream_t &trgt, stream_t &act,)
+		:_source(src)
+		,_target(trgt)
+		,_action(act)
+	{
+	}
+	
+	Pack(stream_t &&src, stream_t &&trgt, stream_t &&act, stream_t &&param)
+		:_source(src)
+		,_target(trgt)
+		,_action(act)
+	{
+		_params["msg"] = param;
+	}
+	
+	Pack(stream_t &&src, stream_t &&trgt, stream_t &&act, params_pack_t &&params)
+		:_source(src)
+		,_target(trgt)
+		,_action(act)
+		,_params(params)
+	{
+	}
+	
+	Pack(stream_t &&src, stream_t &&trgt, stream_t &&act)
+		:_source(src)
+		,_target(trgt)
+		,_action(act)
 	{
 	}
 	
@@ -80,7 +110,7 @@ class UnSerializerAbstr
 {
 protected:
 	typedef Pack<DeriveSerial, DeriveUnSerial> pack_t; 
-
+	
 public:
 	UnSerializerAbstr() = delete;
 
@@ -172,14 +202,45 @@ private:
 };
 
 
+template<class DeriveSerial, class DeriveUnSerial>
 class SerializerAbstr
 {
-protected:
-	typedef Pack<SerializerAbstr, SerializerAbstr> pack_t; 
+public:
+	typedef Pack<DeriveSerial, DeriveUnSerial> pack_t; 
+	typedef typename pack_t::stream_t stream_t;
 
 public:
-	virtual const char* operator()(const pack_t &pck, size_t &len)=0;
-
+	SerializerAbstr()
+	{
+		_hlen = Header();
+	}
+	
+	virtual SerializerAbstr()
+	{
+		if(_buf != nullptr )
+			delete[] _buf;
+		if(_head != nullptr)
+			delete _head;
+	}
+	
+	virtual const char* operator()(const pack_t &pck, size_t *len)
+	{
+		size_t hlen=0;
+		stream_t str = Resolve(pck);
+		char *buf = new char[_hlen+str.size()];
+		memcpy(_buf, _head, _hlen);
+		memcpy(_buf+hlen, str, str.size());
+		return _buf;
+	}
+	
+protected:
+	virtual size_t Header(size_t *hlen)=0;
+	virtual stream_t Resolve(const pack_t &pck)=0;
+	
+private:
+	char *_buf=nullptr;
+	char *_head=nullptr;
+	size_t _hlen=0;
 };
 
 NAMESP_END
