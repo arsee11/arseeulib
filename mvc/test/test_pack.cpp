@@ -21,6 +21,7 @@ public:
 	int Parse(pack_t &pack, const char *stream) override
 	{
 		pack.Action(pack_t::stream_t(stream));
+		return strlen(stream);
 	}
 
 	const char* Header(const char* stream, size_t len, size_t *head_len)override
