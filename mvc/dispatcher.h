@@ -55,10 +55,11 @@ public:
 	{
 		typedef Pack pack_t;
 		//cout << pck.Action() << endl;
-		if (pck.Action() == control_t::rqt_name)
+		if ( pck.Action() == control_t::rqt_name() )
 		{
 			control_t ctrl;
-			objs.GetObj(pck.Target(), ctrl);
+			std::string tname = pck.Target();
+			objs.GetObj(tname, ctrl);
 			ctrl.Execute(pck);
 			replies = ctrl.Reply(pck);
 		}
