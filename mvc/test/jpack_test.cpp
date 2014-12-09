@@ -1,13 +1,19 @@
 //test_jpack.cpp
 
 #include "../jpack.h"
+#include<iostream>
+
+
+
+using namespace arsee;
+using namespace std;
 
 //-I/home/arsee_p/lib/jsoncpp-master/include/
 
 //-l/home/arsee_p/lib/jsoncpp-master/lib/
 
 //normal
-test_serializ1()
+void test_serializ1()
 {
 	cout<<"test_serializ1:"<<endl;
 	Jpack pck("aaa", "bbb","ccc");

@@ -34,7 +34,7 @@ private:
 		root["action"] = pck.Tction();
 		Json::Value param;
 		Json::Value params;
-		for(auto &i : pck.Params)
+		for(auto &i : pck.Params())
 		{
 			param["name"]  = i.first;
 			param["value"] = i.second;
@@ -85,20 +85,20 @@ public:
 	const char* Header(const char* stream, size_t len, size_t *head_len)
 	{
 		long head = 0;
-		memset(&head, 0xff, sizeof(long);
+		memset(&head, 0xff, sizeof(long));
 		*head_len = sizeof(long);
 		for(size_t i=0; i<len-sizeof(long)-1; ++i)
 		{
 			long tmp = *(long*)(stream+i);
 			if(tmp == head)
-				return tmp+4;
+				return stream+4;
 		}
 
 		return nullptr;
 	}
 };
 
-typedef Pack<JSerializer, JUnserializer> Jpack;
+typedef Pack<JSerializer, JUnSerializer> Jpack;
 
 
 NAMESP_BEGIN
