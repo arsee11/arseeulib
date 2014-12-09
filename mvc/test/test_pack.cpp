@@ -26,10 +26,13 @@ public:
 
 	const char* Header(const char* stream, size_t len, size_t *head_len)override
 	{
-		if(stream[0] == (char)0xFF && stream[1] == (char)0xFF)
+		for(size_t i=0; i<len-1; ++i)
 		{
-			*head_len = 2;
-			return stream + 2;
+			if(stream[i] == (char)0xFF && stream[i+1] == (char)0xFF)
+			{
+				*head_len = 2;
+				return stream + 2;
+			}
 		}
 
 		return nullptr;
@@ -129,11 +132,11 @@ void test_unserializer6()
 
 int main()
 {
-	test_unserializer();
-	test_unserializer2();
-	test_unserializer3();
-	test_unserializer4();
-	test_unserializer5();
+	//test_unserializer();
+	//test_unserializer2();
+	//test_unserializer3();
+	//test_unserializer4();
+	//test_unserializer5();
 	test_unserializer6();
 	return 0;
 }
