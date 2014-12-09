@@ -131,5 +131,6 @@ int main()
 	test_unserializer3();
 	test_unserializer4();
 	test_unserializer5();
+	test_unserializer6();
 	return 0;
 }
