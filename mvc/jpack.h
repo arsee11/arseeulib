@@ -48,9 +48,7 @@ private:
 	
 	size_t Header()override
 	{
-		_head = new char[sizeof(long)];
-		memset(_head, 0xff, sizeof(long));
-		return sizeof(long);
+		return Head0xff(_head);
 	}
 };
 
@@ -84,17 +82,7 @@ public:
 	
 	const char* Header(const char* stream, size_t len, size_t *head_len)
 	{
-		long head = 0;
-		memset(&head, 0xff, sizeof(long));
-		*head_len = sizeof(long);
-		for(size_t i=0; i<len-sizeof(long)-1; ++i)
-		{
-			long tmp = *(long*)(stream+i);
-			if(tmp == head)
-				return stream+4;
-		}
-
-		return nullptr;
+		return Head0xff(stream, len, head_len);
 	}
 };
 

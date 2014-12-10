@@ -112,11 +112,11 @@ protected:
 public:
 	UnSerializerAbstr() = delete;
 
-	UnSerializerAbstr(size_t len)
-		:_pack_len(len)
+	UnSerializerAbstr(size_t buf_len)
+		:_buf_len(buf_len)
 	{
-		_buf = new char[3*_pack_len];
-		memset(_buf, 0, 3*_pack_len);
+		_buf = new char[3*_buf_len];
+		memset(_buf, 0, 3*_buf_len);
 	}
 
 	~UnSerializerAbstr()
@@ -149,7 +149,6 @@ public:
 	//otherwise ptr to pack stream except header.
 	virtual const char* Header(const char* stream, size_t len, size_t *head_len)=0;
 
-
 private:
 	//@return nullptr judge fail,
 	//otherwise ptr to pack stream except header.
@@ -161,20 +160,26 @@ private:
 		{
 			size_t head_len= 0;
 			pbuf = Header(stream, len, &head_len);
+			pbuf = Paylaod(pbuf, &_pack_len);
 			if(pbuf != nullptr)
 			{
-				if(_pack_len < len-head_len)
+				//head field, paylaod_len field.
+				size_t nleft = len-head_len-sizeof(long);
+				//more than pack
+				if(_pack_len < nleft)
 				{
-					size_t right_size = len - head_len - _pack_len;
+					size_t right_size = nleft - _pack_len;
 					memcpy(_buf, pbuf+_pack_len, right_size);
 					_size = right_size;
 				}
-				else if(_pack_len > len-head_len) 
+				//less than pack
+				else if(_pack_len > nleft) 
 				{
 					memcpy(_buf, pbuf, len);
 					_size = len;
 					pbuf = nullptr;
 				}
+				//complete pack
 			}
 		}
 		else
@@ -183,18 +188,26 @@ private:
 			memcpy(_buf+_size, stream, len);
 			_size += len;
 			pbuf = Header(_buf, _size, &head_len);
+			pbuf = Paylaod(pbuf, &_pack_len);
 			if(pbuf != nullptr)
 			{
-				_size -= (_pack_len+head_len);
+				_size -= (_pack_len+head_len+sizeof(long));
 			}
 		}
 
 		return pbuf;
 	}
 
+	const char* Payload(const char* stream, size_t *payload_len)
+	{
+		*paylaod_len = *(long)stream;
+		return stream+sizeof(long)
+	}
+
 protected:
 	char *_buf = nullptr;
-	size_t _pack_len = 1;
+	size_t _pack_len = 0;
+	size_t _buf_len;
 	size_t _size = 0;
 
 };
@@ -237,6 +250,28 @@ protected:
 	char *_head=nullptr;
 	size_t _hlen=0;
 };
+
+inline size_t Head0xff(const char &*head)
+{
+	head = new char[sizeof(long)];
+	memset(head, 0xff, sizeof(long));
+	return sizeof(long);
+}
+
+inline const char* Head0xff(const char *stream, size_t len, size_t *head_len)
+{
+	long head = 0;
+	memset(&head, 0xff, sizeof(long));
+	*head_len = sizeof(long);
+	for(size_t i=0; i<len-sizeof(long)-1; ++i)
+	{
+		long tmp = *(long*)(stream+i);
+		if(tmp == head)
+			return stream+4;
+	}
+
+	return nullptr;
+}
 
 NAMESP_END
 
