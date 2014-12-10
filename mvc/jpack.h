@@ -56,7 +56,12 @@ class JUnSerializer:
 	public UnSerializerAbstr<JSerializer, JUnSerializer>
 {
 public:
-	int Parse(pack_t &pck, const char *stream)override
+	JUnSerializer(size_t buf_len)
+		:UnSerializerAbstr<JSerializer, JUnSerializer>(buf_len)
+	{
+	}
+
+	int Parse(pack_t &pck, stream_t &stream)override
 	{
 		Json::Reader rd;
 		Json::Value root;

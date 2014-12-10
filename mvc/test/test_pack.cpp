@@ -11,17 +11,17 @@ using namespace std;
 class simpleS;
 
 class simple:
-	public UnSerializerAbstr<simple, simpleS>
+	public UnSerializerAbstr<simpleS, simple>
 {
 public:
-	simple(size_t len)
-		:UnSerializerAbstr(len)
+	simple()
+		:UnSerializerAbstr<simpleS, simple>(100)
 	{}
 
-	int Parse(pack_t &pack, const char *stream) override
-	{
+	int Parse(pack_t &pack, stream_t &stream) override 
+	{ 
 		pack.Action(pack_t::stream_t(stream));
-		return strlen(stream);
+		return stream.size();
 	}
 
 	const char* Header(const char* stream, size_t len, size_t *head_len)override
@@ -40,94 +40,120 @@ public:
 	
 };
 
-class simpleS:
-	public SerializerAbstr
-{
-public:
-	const char* operator()(const pack_t &pck, size_t &len)override
-	{
-	}
-};
 
 //less than pack
 void test_unserializer()
 {
 
 	cout<<"test_unserializer:"<<endl;
-	typedef Pack<simple, simpleS> spack_t;
-	spack_t::serial_t us(15);
+	typedef Pack<simpleS, simple> spack_t;
+	spack_t::unserial_t us;
 	spack_t p;
-	char buf[10] = {0xff, 0xff, 'h','e','l','l','o','.','.','.'};
-	int r = us(p, buf, 10);
-	cout<<"result:"<<p.Action()<<endl;
+	char buf[20] = {0xff, 0xff};
+	long len = 10;
+	memcpy(buf+2, &len, sizeof(long)); 
+	strcpy(buf+2+sizeof(long), "1234567890");
+	int r = us(p, buf, 15);
+	cout<<"result("<<r<<"):"<<p.Action()<<endl;
 }
 
 //completed pack
 void test_unserializer2()
 {
 	cout<<"test_unserializer2:"<<endl;
-	typedef Pack<simple, simpleS> spack_t;
-	spack_t::serial_t us(10);
+	typedef Pack<simpleS, simple> spack_t;
+	spack_t::unserial_t us;
 	spack_t p;
-	char buf[10] = {0xff, 0xff, 'h','e','l','l','o','.','.','.'};
-	int r = us(p, buf, 10);
-	cout<<"result:"<<p.Action()<<endl;
+	char buf[20] = {0xff, 0xff};
+	long len = 10;
+	memcpy(buf+2, &len, sizeof(long)); 
+	strcpy(buf+2+sizeof(long), "1234567890");
+	int r = us(p, buf, 20);
+	cout<<"result("<<r<<"):"<<p.Action()<<endl;
 }
 
 //more than pack 
 void test_unserializer3()
 {
 	cout<<"test_unserializer3:"<<endl;
-	typedef Pack<simple, simpleS> spack_t;
-	spack_t::serial_t us(10);
+	typedef Pack<simpleS, simple> spack_t;
+	spack_t::unserial_t us;
 	spack_t p;
-	char buf[13] = {0xff, 0xff};
-	strcpy(buf+2, "1234567890");
-	int r = us(p, buf, 12);
-	cout<<"result:"<<p.Action()<<endl;
-}
-
-//more than pack len
-void test_unserializer4()
-{
-	cout<<"test_unserializer4:"<<endl;
-	typedef Pack<simple, simpleS> spack_t;
-	spack_t::serial_t us(10);
-	spack_t p;
-	char buf[15] = {0xff, 0xff};
-	strcpy(buf+2, "1234567890123");
-	int r = us(p, buf, 12);
-	cout<<"result:"<<p.Action()<<endl;
+	char buf[25] = {0xff, 0xff};
+	long len = 10;
+	memcpy(buf+2, &len, sizeof(long)); 
+	strcpy(buf+2+sizeof(long), "12345678901234");
+	int r = us(p, buf, 25);
+	cout<<"result("<<r<<"):"<<p.Action()<<endl;
 }
 
 //header fail
 void test_unserializer5()
 {
 	cout<<"test_unserializer5:"<<endl;
-	typedef Pack<simple, simpleS> spack_t;
-	spack_t::serial_t us(10);
+	typedef Pack<simpleS, simple> spack_t;
+	spack_t::unserial_t us;
 	spack_t p;
 	char buf[15] = {0xaa, 0xff};
 	strcpy(buf+2, "1234567890123");
 	int r = us(p, buf, 12);
-	cout<<"result:"<<p.Action()<<endl;
+	cout<<"result("<<r<<"):"<<p.Action()<<endl;
 }
 
 //size > 0 two pack
 void test_unserializer6()
 {
 	cout<<"test_unserializer6:"<<endl;
-	typedef Pack<simple, simpleS> spack_t;
-	spack_t::serial_t us(10);
+	typedef Pack<simpleS, simple> spack_t;
+	spack_t::unserial_t us;
 	spack_t p;
-	char buf[15] = {0xff, 0xff};
-	strcpy(buf+2, "1234567890123");
-	int r = us(p, buf, 15);
+	char buf[25] = {0xff, 0xff};
+	long len = 10;
+	memcpy(buf+2, &len, sizeof(long)); 
+	strcpy(buf+2+sizeof(long), "12345678901234");
+	int r = us(p, buf, 25);
 	cout<<"result("<<r<<"):"<<p.Action()<<endl;
-	r = us(p, buf, 12);
+	r = us(p, buf, 25);
 	cout<<"result("<<r<<"):"<<p.Action()<<endl;
-	r = us(p, buf+2, 10);
+	r = us(p, buf+2, 12);
 	cout<<"result("<<r<<"):"<<p.Action()<<endl;
+}
+
+//one byte 
+void test_unserializer7()
+{
+	cout<<"test_unserializer7:"<<endl;
+	typedef Pack<simpleS, simple> spack_t;
+	spack_t::unserial_t us;
+	spack_t p;
+	char byte = (char)0xff;
+	int r = us(p, &byte, 1);
+	cout<<"result1("<<r<<"):"<<p.Action()<<endl;
+
+	r = us(p, &byte, 1);
+	cout<<"result2("<<r<<"):"<<p.Action()<<endl;
+
+	long len = 10;
+	char *buf = (char*)&len;
+	r = us(p, buf, 1);
+	cout<<"result3("<<r<<"):"<<p.Action()<<endl;
+	r = us(p, buf+1, 1);
+	cout<<"result4("<<r<<"):"<<p.Action()<<endl;
+	r = us(p, buf+2, 1);
+	cout<<"result5("<<r<<"):"<<p.Action()<<endl;
+	r = us(p, buf+3, 1);
+	cout<<"result6("<<r<<"):"<<p.Action()<<endl;
+	r = us(p, buf+4, 1);
+	cout<<"result7("<<r<<"):"<<p.Action()<<endl;
+	r = us(p, buf+5, 1);
+	cout<<"result8("<<r<<"):"<<p.Action()<<endl;
+	r = us(p, buf+6, 1);
+	cout<<"result9("<<r<<"):"<<p.Action()<<endl;
+	r = us(p, buf+7, 1);
+
+	char *payload ="12345678901234";
+	r = us(p, payload, 14);
+	cout<<"result10("<<r<<"):"<<p.Action()<<endl;
 }
 
 int main()
@@ -135,8 +161,8 @@ int main()
 	//test_unserializer();
 	//test_unserializer2();
 	//test_unserializer3();
-	//test_unserializer4();
 	//test_unserializer5();
-	test_unserializer6();
+	//test_unserializer6();
+	test_unserializer7();
 	return 0;
 }

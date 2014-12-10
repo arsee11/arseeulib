@@ -108,6 +108,7 @@ class UnSerializerAbstr
 {
 protected:
 	typedef Pack<DeriveSerial, DeriveUnSerial> pack_t; 
+	typedef typename pack_t::stream_t stream_t;
 	
 public:
 	UnSerializerAbstr() = delete;
@@ -131,7 +132,8 @@ public:
 		const char *pstream = nullptr;	
 		if( ( pstream = Judge(stream, len) ) != nullptr )
 		{
-			return Parse(pck, pstream); 
+			stream_t s(pstream, _payload_len);
+			return Parse(pck, s); 
 		}
 
 		return -1;
@@ -139,7 +141,7 @@ public:
 
 	//parse the raw @stream
 	//@return >0 success, otherwise failed.
-	virtual int Parse(pack_t &pack, const char *stream)=0;
+	virtual int Parse(pack_t &pack, stream_t &stream)=0;
 
 	//check the pack header, derive classes must override this method.
 	//@stream the raw stream input,
@@ -160,26 +162,32 @@ private:
 		{
 			size_t head_len= 0;
 			pbuf = Header(stream, len, &head_len);
-			pbuf = Paylaod(pbuf, &_pack_len);
+
 			if(pbuf != nullptr)
 			{
+				pbuf = Payload(pbuf, len-head_len, &_payload_len);
 				//head field, paylaod_len field.
 				size_t nleft = len-head_len-sizeof(long);
 				//more than pack
-				if(_pack_len < nleft)
+				if(_payload_len < nleft)
 				{
-					size_t right_size = nleft - _pack_len;
-					memcpy(_buf, pbuf+_pack_len, right_size);
+					size_t right_size = nleft - _payload_len;
+					memcpy(_buf, pbuf+_payload_len, right_size);
 					_size = right_size;
 				}
 				//less than pack
-				else if(_pack_len > nleft) 
+				else if(_payload_len > nleft) 
 				{
 					memcpy(_buf, pbuf, len);
 					_size = len;
 					pbuf = nullptr;
 				}
 				//complete pack
+			}
+			else
+			{
+				memcpy(_buf, stream, len);
+				_size = len;
 			}
 		}
 		else
@@ -188,25 +196,35 @@ private:
 			memcpy(_buf+_size, stream, len);
 			_size += len;
 			pbuf = Header(_buf, _size, &head_len);
-			pbuf = Paylaod(pbuf, &_pack_len);
 			if(pbuf != nullptr)
 			{
-				_size -= (_pack_len+head_len+sizeof(long));
+				pbuf = Payload(pbuf, len-head_len, &_payload_len);
+				size_t plen = (_payload_len+head_len+sizeof(long));
+				if(_size < plen)
+					pbuf = nullptr;
+				else
+					_size -= plen; 
 			}
 		}
 
 		return pbuf;
 	}
 
-	const char* Payload(const char* stream, size_t *payload_len)
+	const char* Payload(const char* stream, size_t len, size_t *payload_len)
 	{
-		*paylaod_len = *(long)stream;
-		return stream+sizeof(long)
+		if(len < sizeof(long))
+		{
+			*payload_len=0;
+			return stream;
+		}
+
+		*payload_len = *(long*)stream;
+		return stream+sizeof(long);
 	}
 
 protected:
 	char *_buf = nullptr;
-	size_t _pack_len = 0;
+	size_t _payload_len = 0;
 	size_t _buf_len;
 	size_t _size = 0;
 
@@ -238,6 +256,7 @@ public:
 		long plen = str.size();
 		memcpy(_buf+_hlen, &plen, sizeof(long));
 		memcpy(_buf+_hlen+sizeof(long), str.c_str(), str.size());
+		*len = _hlen+sizeof(long)+plen;
 		return _buf;
 	}
 	
@@ -251,7 +270,7 @@ protected:
 	size_t _hlen=0;
 };
 
-inline size_t Head0xff(const char &*head)
+inline size_t Head0xff(char *&head)
 {
 	head = new char[sizeof(long)];
 	memset(head, 0xff, sizeof(long));
@@ -267,7 +286,7 @@ inline const char* Head0xff(const char *stream, size_t len, size_t *head_len)
 	{
 		long tmp = *(long*)(stream+i);
 		if(tmp == head)
-			return stream+4;
+			return stream+sizeof(long);
 	}
 
 	return nullptr;
