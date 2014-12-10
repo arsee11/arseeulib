@@ -6,7 +6,6 @@ namespace net
 }
 
 //#include "net/session.h"
-#include "jpack.h"
 #include "controls.h"
 #include "globaldef.h"
 #include "net/session.h"
