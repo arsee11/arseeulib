@@ -1,4 +1,13 @@
 //file: jpack.h
+//copyright	: Copyright (c) 2014 arsee.
+//license	: GNU GPL v2.
+//author	: arsee
+
+//****************************
+//modify	
+//data	: 2014-12-10
+//log	: modify 
+//****************************
 
 #ifndef JPACK_H
 #define JPACK_H

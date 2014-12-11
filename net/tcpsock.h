@@ -1,60 +1,54 @@
 //file:tcpsock.h
+//copyright	: Copyright (c) 2014 arsee.
+//license	: GNU GPL v2.
+//author	: arsee
 
+//****************************
+//modify	
+//data	: 2014-12-11
+//log	: modify 
+//****************************
 
-#ifndef UDPSOCK_H
-#define UDPSOCK_H
+#ifndef TCPSOCK_H
+#define TCPSOCK_H
 
-#ifndef GLOBALDEF_H
-#include "globaldef.h"
+#ifndef NAMESPDEF_H
+#include "../namespdef.h"
 #endif
 
-#include <string>
-#include <exception>
-
-#if define(MVC_VER)
-#include <winsock2.h>
+#ifndef ADDR_H
+#include "addr.h"
 #endif
+
+#include <memory>
 
 NAMESP_BEGIN
-
-struct SockConfig
-{
-	unsigned short lport;
-	unsigned short rport;
-	std::string 	 lip;
-	std::string 	 rip;		
-};
-
-struct AddrPair
-{
-	unsigned short 	port;
-	std::string 	ip;
-};
 
 class RemotePeer
 {
 	typedef RemotePeer my_t;
 public:
-	RemotePeer(){}
+	RemotePeer()=delete;
 
 	RemotePeer(SOCKET s, const SockConfig &conf)
 		:_sock(s)
+		,_conf(conf)
+	{}
+	
+	RemotePeer(SOCKET s, const SockConfig &&conf)
+		:_sock(s)
+		,_conf(conf)
+	{}
+	
+	~RemotePeer()
 	{
-		memset(&_raddr, 0, sizeof(_raddr));
-		_raddr.sin_family = AF_INET;
-		_raddr.sin_addr.s_addr = inet_addr(conf.rip.c_str());
-		_raddr.sin_port = htons(conf.rport);
-
-		memset(&_laddr, 0, sizeof(_laddr));
-		_laddr.sin_family = AF_INET;
-		_laddr.sin_addr.s_addr = inet_addr(conf.lip.c_str());
-		_laddr.sin_port = htons(conf.lport);
+		Close();
 	}
 	
 	int Read(char *buf, int len);
 	int Write(const char *buf, int len);
 
-	SOCKET SOCK(){ return _sock; }
+	SOCKET sock(){ return _sock; }
 
 	bool operator==(const my_t &rhs)
 	{
@@ -66,17 +60,20 @@ public:
 	
 	void Close()
 	{
-		closesocket(_sock);
+		if(_sock != INVALID_SOCKET)
+		{
+#if defined(_MSC_VER)
+			closesocket(_sock);
+#else
+			close(_sock);
+#endif
+			_sock = INVALID_SOCKET;
+		}
 	}
 
 private:
 	SOCKET _sock;
-
-	std::string _ip;
-	unsigned short _port;
-	SOCKADDR_IN _laddr;
-	SOCKADDR_IN _raddr;
-
+	SockConfig _conf;
 };
 
 
@@ -85,22 +82,26 @@ class LocalPeer
 {
 	typedef LocalPeer my_t;
 public:
-	LocalPeer(){}
+	LocalPeer()=delete;
 
 	LocalPeer(SOCKET s, const std::string &ip, unsigned short port)
 		:_sock(s)
 		,_ip(ip)
 		,_port(port)
 	{
-		memset(&_laddr, 0, sizeof(_laddr));
-		_laddr.sin_family = AF_INET;
-		_laddr.sin_addr.s_addr = inet_addr(ip.c_str());
-		_laddr.sin_port = htons(port);
+	}
+	
+	LocalPeer(SOCKET s, const std::string &&ip, unsigned short port)
+		:_sock(s)
+		,_ip(ip)
+		,_port(port)
+	{
 	}
 
-	RemotePeer Accept(char *buf, int len);
+	//new RemotePeer, 
+	RemotePeer* Accept(char *buf, int len);
 
-	SOCKET SOCK(){ return _sock; }
+	SOCKET sock(){ return _sock; }
 
 	bool operator==(const my_t &rhs)
 	{
@@ -113,12 +114,19 @@ public:
 	
 	void Close()
 	{
-		closesocket(_sock);
+		if(_sock != INVALID_SOCKET)
+		{
+#if defined(_MSC_VER)
+			closesocket(_sock);
+#else
+			close(_sock);
+#endif
+			_sock = INVALID_SOCKET;
+		}
 	}
 
 private:
 	SOCKET _sock;
-
 	std::string _ip;
 	unsigned short _port;
 	SOCKADDR_IN _laddr;
@@ -134,10 +142,11 @@ public:
 public:
 	static bool Init();
 	static bool UnInit();
-	static rpeer_ptr_t CreateClient(const std::string &ip, unsigned short port) throw(std::exception);	
+	static rpeer_ptr_t CreateClient(unsigned short lport,const std::string &&rip, unsigned short port) throw(std::exception);	
+	static rpeer_ptr_t CreateClient(const std::string &&rip, unsigned short port) throw(std::exception);	
 	static lpeer_ptr_t CreateServer(const std::string &ip, unsigned short port) throw(std::exception);	
 };
 
 NAMESP_END
 
-#endif /*UDPSOCK_H*/
+#endif /*TCPSOCK_H*/

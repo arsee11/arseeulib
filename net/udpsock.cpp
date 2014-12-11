@@ -1,4 +1,13 @@
 //file: udpsock.cpp
+//copyright	: Copyright (c) 2014 arsee.
+//license	: GNU GPL v2.
+//author	: arsee
+
+//****************************
+//modify	
+//data	: 2014-12-11
+//log	: modify 
+//****************************
 
 #ifndef UDPSOCK_H
 #include "udpsock.h"
@@ -108,8 +117,6 @@ UdpPeer* UdpSock::Create() throw(std::exception)
 
 	return new UdpPeer(sock);
 }
-
-
 
 int UdpPeer::Read(byte_t *buf, int len, AddrPair &addr)
 {

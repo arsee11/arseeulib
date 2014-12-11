@@ -1,75 +1,28 @@
 //file: udpsock.h
+//copyright	: Copyright (c) 2014 arsee.
+//license	: GNU GPL v2.
+//author	: arsee
+
+//****************************
+//modify	
+//data	: 2014-12-11
+//log	: modify 
+//****************************
 
 #ifndef UDPSOCK_H
 #define UDPSOCK_H
 
-#ifndef GLOBALDEF_H
-#include "globaldef.h"
+#ifndef NAMESPDEF_H
+#include "../namespdef.h"
 #endif
 
-#include <string>
-#include <exception>
+#ifndef ADDR_H
+#include "addr.h"
+#endif
+
 #include <functional>
 
-#if defined(_MSC_VER)
-#include <winsock2.h>
-#endif
-
-#if defined(__GNUC__)
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <unistd.h>
-#endif
-
 NAMESP_BEGIN
-
-#if defined(__GNUC__)
-typedef int SOCKET;
-#endif
-
-class SockConfig
-{
-public:
-	SockConfig(unsigned short inlport, unsigned short inrport, std::string inlip, std::string inrip)
-		:lport(inlport)
-		, rport(inrport)
-		, lip(inlip)
-		, rip(inrip)
-	{
-		sid++;
-		id = sid;
-	}
-	
-
-	static long sid;
-	unsigned long Hash()const
-	{
-		//std::hash<unsigned short> h1;
-		//std::hash<std::string> h2;
-		//std::hash<unsigned long> h3;
-		//
-		//return h3( h1(lport)+h1(rport)+h2(lip)+h2(rip) );
-		return id;
-	}
-	
-	unsigned short lport;
-	unsigned short rport;
-	std::string 	 lip;
-	std::string 	 rip;	
-
-private:
-	long id;
-	SockConfig(const SockConfig &other);
-	SockConfig& operator=(const SockConfig& rhs);
-};
-
-struct AddrPair
-{
-	unsigned short 	port;
-	std::string 	ip;
-};
-
-
 
 class UdpPeer
 {
@@ -111,19 +64,20 @@ public:
 	int Read(byte_t *buf, int len, AddrPair &addr);
 	int Write(const byte_t *buf, int len, const AddrPair &addr);
 		
-	SOCKET Socket(){ return _sock; }
+	SOCKET sock(){ return _sock; }
 
 	void Close()
 	{
 #if defined(_MSC_VER)
 		closesocket(_sock);
-#endif
+#else
 		close(_sock);
+#endif
+		_sock = INVALID_SOCKET;
 	}
 
 private:
 	SOCKET _sock;
-
 	std::string _ip;
 	unsigned short _port;
 
