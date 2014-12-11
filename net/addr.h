@@ -79,7 +79,7 @@ inline bool SockInit()
 	return true;
 }
 
-inline bool SockUnInit()
+inline bool SockUninit()
 {
 #if defined(_MSC_VER)
 	return WSACleanup();

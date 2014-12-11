@@ -129,7 +129,6 @@ private:
 	SOCKET _sock;
 	std::string _ip;
 	unsigned short _port;
-	SOCKADDR_IN _laddr;
 };
 
 
@@ -142,9 +141,9 @@ public:
 public:
 	static bool Init();
 	static bool UnInit();
-	static rpeer_ptr_t CreateClient(unsigned short lport,const std::string &&rip, unsigned short port) throw(std::exception);	
-	static rpeer_ptr_t CreateClient(const std::string &&rip, unsigned short port) throw(std::exception);	
-	static lpeer_ptr_t CreateServer(const std::string &ip, unsigned short port) throw(std::exception);	
+	static rpeer_ptr_t CreateClient(unsigned short lport,const std::string &&rip, unsigned short port) throw(sockexcpt);	
+	static rpeer_ptr_t CreateClient(const std::string &&rip, unsigned short port) throw(sockexcpt);	
+	static lpeer_ptr_t CreateServer(const std::string &ip, unsigned short port) throw(sockexcpt);	
 };
 
 NAMESP_END
