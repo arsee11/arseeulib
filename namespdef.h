@@ -9,4 +9,4 @@
 
 
 
-#endif NAMESPDEF_H
+#endif /*NAMESPDEF_H*/
