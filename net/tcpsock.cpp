@@ -39,7 +39,7 @@ TcpSock::rpeer_ptr_t TcpSock::CreateClient(unsigned short lport, const std::stri
 	addr.sin_addr.s_addr = INADDR_ANY;
 	if (bind(s, (sockaddr *)&addr, sizeof(addr)) == SOCKET_ERROR)
 	{
-		throw sockexcpt();
+		throw sockexcpt("bind");
 	}
 	
 	sockaddr_in raddr;
@@ -49,7 +49,7 @@ TcpSock::rpeer_ptr_t TcpSock::CreateClient(unsigned short lport, const std::stri
 	raddr.sin_addr.s_addr = inet_addr(rip.c_str());
 	if (connect(s, (sockaddr *)&raddr, sizeof(raddr)) == SOCKET_ERROR)
 	{
-		throw sockexcpt();
+		throw sockexcpt("connect");
 	}
 		
 	return  rpeer_ptr_t(new RemotePeer(s, SockConfig(0, rport, "", rip)));

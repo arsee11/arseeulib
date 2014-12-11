@@ -14,7 +14,16 @@ int main()
 	SockInit();
 	
 	string buf;
-	TcpSock::rpeer_ptr_t peer = TcpSock::CreateClient("127.0.0.1", 11111);
+	TcpSock::rpeer_ptr_t peer;
+
+	try{
+		peer = TcpSock::CreateClient("127.0.0.1", 11111);
+	}
+	catch(sockexcpt &e){
+		perror(e.what());
+		return 0;
+	}
+
 	while( buf != "q")
 	{
 		cout<<"input something(q to quit):";

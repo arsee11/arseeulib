@@ -29,6 +29,9 @@
 #include <unistd.h>
 #endif
 
+#include <string>
+#include <stdio.h>
+
 
 NAMESP_BEGIN
 
@@ -40,6 +43,18 @@ typedef int SOCKET;
 
 class sockexcpt:public std::exception
 {
+public:
+	sockexcpt(const char *str)
+		:_str(str)
+	{}
+
+	const char* what()const throw()
+	{
+		return _str.c_str();
+	}
+
+private:
+	std::string _str;
 };
 
 class SockConfig
