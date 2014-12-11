@@ -48,6 +48,14 @@ public:
 		,_params(params)
 	{
 	}
+
+	Pack(stream_t &src, stream_t &&trgt, stream_t &&act, params_pack_t &params)
+		:_source(src)
+		,_target(trgt)
+		,_action(act)
+		,_params(params)
+	{
+	}
 	
 	Pack(stream_t &src, stream_t &trgt, stream_t &act)
 		:_source(src)
@@ -79,6 +87,27 @@ public:
 	{
 	}
 	
+	Pack(stream_t &src, stream_t &&trgt, stream_t &&act)
+		:_source(src)
+		,_target(trgt)
+		,_action(act)
+	{
+	}
+
+	Pack(stream_t &&src, stream_t &trgt, stream_t &&act)
+		:_source(src)
+		,_target(trgt)
+		,_action(act)
+	{
+	}
+
+	Pack(stream_t &&src, stream_t &&trgt, stream_t &act)
+		:_source(src)
+		,_target(trgt)
+		,_action(act)
+	{
+	}
+
 	bool Status()const{ return _status; }
 	void Status(bool val){ _status = val; }
 

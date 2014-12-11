@@ -173,7 +173,7 @@ public:
 		cout<<"OutpuEvent::Notify"<<endl;
 #endif
 		_handler->OutputHandle();
-		char *buf = _handler->outbuf();
+		const char *buf = _handler->outbuf();
 		int len = _handler->out_bufsize();
 		if( len > 0 )
 			write(_fd, buf, len);

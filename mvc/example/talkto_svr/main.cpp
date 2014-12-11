@@ -11,9 +11,11 @@
 #include "net/acceptor.h"
 #include "net/fd.h"
 #include "net/selector.h"
-#inlcude "jpack.h"
+#include "jpack.h"
 
 
+
+typedef UdpChannel<Jpack> udpchn_t;
 
 int main(int argc, char **argv)
 {

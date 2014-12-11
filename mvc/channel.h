@@ -7,12 +7,12 @@
 #include "globaldef.h"
 #endif
 
-#ifndef JPACK_H
-#include "jpack.h"
+#ifndef PACK_H
+#include "pack.h"
 #endif
 
 #ifndef UDPSOCK_H
-#include "udpsock.h"
+#include "../net/udpsock.h"
 #endif
 
 #include <functional>
@@ -159,14 +159,14 @@ public:
 	{
 		UdpPeer::byte_t buf[1024];
 		_udp->Read(buf, 1024, _remote_addr);
-		typename pack_t::unserializer_t unserializer_t;
+		typename pack_t::unserial_t unserializer_t;
 		auto fuc = std::bind(unserializer_t, std::placeholders::_1);
 		pck = std::move( fuc( pack_t::stream_t(buf) ) );
 	}
 
 	void Write(pack_t &pck)
 	{
-		typename pack_t::serializer_t serializer_t;
+		typename pack_t::serial_t serializer_t;
 		auto fuc = std::bind(serializer_t, pck, std::placeholders::_1);
 		size_t len = 0;
 		typename pack_t::stream_t stream = fuc(len);
@@ -282,9 +282,9 @@ class DefaultWaiter
 //};
 
 
-void NullLoop(Jpack &pack){}
+//void NullLoop(Pack &pack){}
 
-typedef UdpChannel<Jpack> udpchn_t;
+//typedef UdpChannel<Pack> udpchn_t;
 //typedef ChannelStore<udpchannel_t, UdpWaiter> udpchannelstore_t;
 
 NAMESP_END

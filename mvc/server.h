@@ -24,10 +24,9 @@
 #include "globaldef.h"
 #endif
 
-#include "udpsock.h"
 #include <exception>
 
-
+#include "../net/udpsock.h"
 
 NAMESP_BEGIN
 

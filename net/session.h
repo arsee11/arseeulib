@@ -40,15 +40,15 @@ public:
 #ifdef DEBUG
 		cout << "read("<<len<<"):"<< _inbuf <<endl;
 #endif
-		_pck.Parse(_buf, len);
 	}
 
 	virtual void OutputHandle()
 	{
 #ifdef DEBUG
 		cout<<"out handling..."<<endl;
-		bzero(_outbuf, _outbuf_size);
-		strcpy(_outbuf, "hello, ");
+		char *outbuf = new char[6];
+		strcpy(outbuf, "hello, ");
+		_outbuf = outbuf;
 		_outbuf_size = 6;
 #endif
 	}
@@ -64,7 +64,7 @@ public:
 	char *inbuf(){ return _inbuf; }
 	size_t in_bufsize(){ return insize; }
 
-	char *outbuf(){ return _outbuf; }
+	const char *outbuf(){ return _outbuf; }
 	size_t out_bufsize(){ return _outbuf_size; }
 
 protected:
@@ -73,7 +73,7 @@ protected:
 	fd_t _fd = -1;
 	char _inbuf[insize] = {0};
 	//size_t _inbuf_size = 1024;
-	char *_outbuf = nullptr;
+	const char *_outbuf = nullptr;
 	size_t _outbuf_size = 0;
 };
 

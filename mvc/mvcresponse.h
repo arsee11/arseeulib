@@ -150,9 +150,9 @@ public:
 	std::vector<PACK> Reply()
 	{
 		std::vector<PACK> pcks;
-		for(auto &i:_views)
+		for(auto i:_views)
 		{			
-			pcks.push_back( std::move<PACK>( PACK(i, _src->Name(), "response", _params) ) );
+			pcks.push_back( std::move( PACK(i, _src->Name(), "response", _params) ) );
 		}
 		
 		return std::move<std::vector<PACK>& >(pcks);

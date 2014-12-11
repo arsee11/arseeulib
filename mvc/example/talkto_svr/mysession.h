@@ -15,7 +15,7 @@ using namespace arsee;
 template<class Pack, class ObjCollection, class... Dispachters>
 class MySession :
 	//public net::Session
-	public Session
+	public Session<1024>
 {
 	typedef Pack pack_t;
 	
@@ -25,9 +25,12 @@ public:
 	{}
 	void InputHandle(size_t len)
 	{
-		typename pack_t::unserializer_t unserializer_t;
-		auto fuc = std::bind(unserializer_t, std::placeholders::_1);
-		pack_t pck = std::move(fuc(typename pack_t::stream_t(_inbuf)));
+#ifdef DEBUG
+		cout<<"recv("<<len<<"):"<<_inbuf<<endl;
+#endif
+		typename pack_t::unserial_t userial(1024);
+		pack_t pck;
+		userial(pck, _inbuf, len);
 		if(pck.Status() )
 		{
 			ArgIteration<Dispachters...>::Handle(ObjCollection::Instance(), pck, _replies);
@@ -38,12 +41,8 @@ public:
 	{
 		for (auto &ip : _replies)
 		{
-			typename pack_t::serializer_t serializer_t;
-			auto fuc = std::bind(serializer_t, ip, std::placeholders::_1);
-			size_t len = 0;
-			typename pack_t::stream_t stream = fuc(len);
-			_outbuf = const_cast<char*>(stream.c_str());
-			_outbuf_size = len;
+			typename pack_t::serial_t serial;
+			_outbuf = serial(ip, &_outbuf_size);
 		}
 	}
 

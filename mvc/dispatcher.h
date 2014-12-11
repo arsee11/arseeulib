@@ -7,9 +7,6 @@
 #include "globaldef.h"
 #endif
 
-#ifndef JPACK_H
-#include "jpack.h"
-#endif
 
 NAMESP_BEGIN
 
