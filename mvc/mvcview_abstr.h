@@ -7,6 +7,10 @@
 #include "globaldef.h"
 #endif
 
+#ifndef GLOBALDEF_H
+#include "../namespdef.h"
+#endif
+
 NAMESP_BEGIN
 
 class IView

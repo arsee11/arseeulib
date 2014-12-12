@@ -11,6 +11,9 @@
 #include "globaldef.h"
 #endif
 
+#ifndef GLOBALDEF_H
+#include "../namespdef.h"
+#endif
 
 #ifndef TYPE_TRANSFOR_H
 //#include "type_transfor.h"

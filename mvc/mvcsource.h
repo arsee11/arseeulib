@@ -3,6 +3,10 @@
 #ifndef MVC_SOURCE_H
 #define MVC_SOURCE_H
 
+#ifndef GLOBALDEF_H
+#include "../namespdef.h"
+#endif
+
 NAMESP_BEGIN
 
 

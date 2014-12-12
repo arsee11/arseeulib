@@ -7,6 +7,10 @@
 #include "globaldef.h"
 #endif
 
+#ifndef GLOBALDEF_H
+#include "../namespdef.h"
+#endif
+
 #ifndef TYPE_CONVERT_H
 #include "type_convert.h"
 #endif

@@ -3,10 +3,6 @@
 #ifndef GLOBALDEF_H
 #define GLOBALDEF_H
 
-#define NAMESP_BEGIN namespace arsee{
-
-#define NAMESP_END }
-
 ///////////////////////////////////////////////
 //ArgCounter Begin
 template<class... args>

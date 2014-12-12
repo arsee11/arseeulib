@@ -5,7 +5,7 @@
 #define PACK_H
 
 #ifndef GLOBALDEF_H
-#include "globaldef.h"
+#include "../namespdef.h"
 #endif
 
 #include <string>

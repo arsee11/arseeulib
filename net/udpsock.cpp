@@ -14,7 +14,6 @@
 #endif
 
 #if defined(_MSC_VER)
-#pragma comment(lib, "Ws2_32.lib")
 typedef int socklen_t;
 #endif
 
@@ -29,37 +28,12 @@ typedef int socklen_t;
 
 NAMESP_BEGIN
 
-long SockConfig::sid=0;
-
-bool UdpSock::Init()
-{
-#if defined(_MSC_VER)
-	WSADATA wsaData;
-	int r = WSAStartup(MAKEWORD(2, 2), &wsaData);
-	if (r != NO_ERROR)
-	{
-       		return false;
-	}
-#endif	
-	return true;
-}
-
-bool UdpSock::UnInit()
-{
-#if defined(_MSC_VER)
-	return WSACleanup();
-#else
-	return true;
-#endif
-}
-
-UdpPeer* UdpSock::Create(const std::string &ip, unsigned short port) throw(std::exception)
+UdpPeer* UdpSock::Create(const std::string &ip, unsigned short port) throw(sockexcpt)
 {
 	SOCKET sock;
 	if ((sock=socket(AF_INET, SOCK_DGRAM,0))== INVALID_SOCKET)
 	{ 
-		//throw std::exception("invalid_socket");
-		throw std::exception();
+		throw sockexcpt("bind");
 	} 
 	sockaddr_in addr;
 	memset(&addr, 0, sizeof(addr));
@@ -68,19 +42,17 @@ UdpPeer* UdpSock::Create(const std::string &ip, unsigned short port) throw(std::
 	addr.sin_addr.s_addr = inet_addr( ip.c_str() );
 	if (bind(sock, (sockaddr *)&addr, sizeof(addr)) == SOCKET_ERROR)
 	{
-		//throw std::exception("bind error");
-		throw std::exception();
+		throw sockexcpt("bind");
 	}
 	
 	return new UdpPeer(sock, ip, port);
 }
-UdpPeer* UdpSock::Create(unsigned short port) throw(std::exception)
+UdpPeer* UdpSock::Create(unsigned short port) throw(sockexcpt)
 {
 	SOCKET sock;
 	if ((sock = socket(AF_INET, SOCK_DGRAM, 0)) == INVALID_SOCKET)
 	{
-		//throw std::exception("invalid_socket");
-		throw std::exception();
+		throw sockexcpt("socket");
 	}
 	sockaddr_in addr;
 	memset(&addr, 0, sizeof(addr));

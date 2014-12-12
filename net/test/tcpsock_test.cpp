@@ -5,6 +5,11 @@
 #endif
 
 #include <iostream>
+#include <stdio.h>
+
+#if defined(_MSC_VER)
+#pragma comment(lib, "../../lib/libmynetd")
+#endif
 
 using namespace arsee;
 using namespace std;

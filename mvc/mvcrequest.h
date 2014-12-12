@@ -11,6 +11,10 @@
 #include "globaldef.h"
 #endif
 
+#ifndef GLOBALDEF_H
+#include "../namespdef.h"
+#endif
+
 #ifndef PARAMS_DISPATCH_H
 #include "params_dispatch.h"
 #endif

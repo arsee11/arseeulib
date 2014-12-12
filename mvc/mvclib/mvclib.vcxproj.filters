@@ -27,18 +27,12 @@
     <ClInclude Include="..\jpack.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\udpsock.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\jpack.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\udpsock.cpp">
+    <ClCompile Include="jpack.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

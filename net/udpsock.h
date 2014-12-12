@@ -86,11 +86,9 @@ private:
 class UdpSock
 {
 public:
-	static bool Init();
-	static bool UnInit();
-	static UdpPeer* Create(const std::string &lip, unsigned short lport) throw(std::exception);	
-	static UdpPeer* Create(unsigned short lport) throw(std::exception);	
-	static UdpPeer* Create() throw(std::exception);	
+	static UdpPeer* Create(const std::string &lip, unsigned short lport) throw(sockexcpt);	
+	static UdpPeer* Create(unsigned short lport) throw(sockexcpt);	
+	static UdpPeer* Create() throw(sockexcpt);	
 };
 
 

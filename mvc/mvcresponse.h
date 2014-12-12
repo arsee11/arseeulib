@@ -11,6 +11,10 @@
 #include "globaldef.h"
 #endif
 
+#ifndef GLOBALDEF_H
+#include "../namespdef.h"
+#endif
+
 #include <string>
 #include <memory>
 

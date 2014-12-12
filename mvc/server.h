@@ -24,6 +24,10 @@
 #include "globaldef.h"
 #endif
 
+#ifndef GLOBALDEF_H
+#include "../namespdef.h"
+#endif
+
 #include <exception>
 
 #include "../net/udpsock.h"
