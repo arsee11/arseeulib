@@ -4,7 +4,7 @@
 #ifndef PACK_H
 #define PACK_H
 
-#ifndef GLOBALDEF_H
+#ifndef NAMESPDEF_H
 #include "../namespdef.h"
 #endif
 

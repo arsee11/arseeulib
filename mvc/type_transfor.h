@@ -1,5 +1,8 @@
 //type_transfor.h
 #include "globaldef.h"
+#ifndef NAMESPDEF_H
+#include "../namespdef.h"
+#endif
 
 #ifndef TYPE_TRANSFOR_H
 #define TYPE_TRANSFOR_H

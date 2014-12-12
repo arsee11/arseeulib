@@ -24,7 +24,7 @@
 #include "globaldef.h"
 #endif
 
-#ifndef GLOBALDEF_H
+#ifndef NAMESPDEF_H
 #include "../namespdef.h"
 #endif
 

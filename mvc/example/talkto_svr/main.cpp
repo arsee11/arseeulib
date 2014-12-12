@@ -24,7 +24,7 @@ int main(int argc, char **argv)
 	msg_obj_t msg_obj;
 	msg_list_t msgl_obj;
 
-	UdpSock::Init();
+	SockInit();
 	objects_t::Init(&mlobj);
 
 	udpchn_t::conf_t conf = { 11111, 0, "127.0.0.1", "" };
@@ -46,7 +46,7 @@ int main(int argc, char **argv)
 		cout << e.what() << endl;
 	}
 
-	UdpSock::UnInit();
+	SockUninit();
 	return 0;
 
 }

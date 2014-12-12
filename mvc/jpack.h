@@ -15,7 +15,7 @@
 #include <utility>
 #include <json/json.h>
 
-#ifndef GLOBALDEF_H
+#ifndef NAMESPDEF_H
 #include "../namespdef.h"
 #endif
 
