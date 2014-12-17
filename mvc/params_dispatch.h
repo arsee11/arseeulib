@@ -71,7 +71,15 @@ class BaseLogicTmpl<1, Derived, Ts...>
 {
 protected:
 	typedef BaseLogicTmpl<1, Derived, Ts...> base_t;
+	IResponse *_rsp;
+	
 public:
+	BaseLogicTmpl(IResponse *rsp)
+		:_rsp(rsp)
+	{}
+	
+	BaseLogicTmpl()=delete;
+	
 	enum{ P1, PC };	
 	
 	typedef typename ArgAt<0, Ts...>::result 	p1_t;
@@ -85,8 +93,15 @@ class BaseLogicTmpl<2, Derived, Ts...>
 {
 protected:
 	typedef BaseLogicTmpl<2, Derived, Ts...> base_t;
+	IResponse *_rsp;
 
 public:
+	BaseLogicTmpl(IResponse *rsp)
+		:_rsp(rsp)
+	{}
+	
+	BaseLogicTmpl()=delete;
+	
 	enum{ P1, P2, PC };	
 	
 	typedef typename ArgAt<0, Ts...>::result 	p1_t;
@@ -102,8 +117,15 @@ class BaseLogicTmpl<3, Derived, Ts...>
 {
 protected:
 	typedef BaseLogicTmpl<3, Derived, Ts...> base_t;
+	IResponse *_rsp;
 
 public:
+	BaseLogicTmpl(IResponse *rsp)
+		:_rsp(rsp)
+	{}
+	
+	BaseLogicTmpl()=delete;
+	
 	enum{ P1, P2, P3, PC };	
 	
 	typedef typename ArgAt<0, Ts...>::result 	p1_t;
@@ -113,6 +135,8 @@ public:
 	static const std::string _p1;
 	static const std::string _p2;
 	static const std::string _p3;
+	
+	
 	
 };
 

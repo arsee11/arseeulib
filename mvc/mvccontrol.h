@@ -1,4 +1,13 @@
-//file: mvccontrol.h
+//mvccontrol.h
+//copyright	: Copyright (c) 2014 arsee.
+//license	: GNU GPL v2.
+//author	: arsee
+
+//****************************
+//modify:	
+//2014-12-15
+//record 
+//****************************
 
 #ifndef MVC_CONTROL_H
 #define MVC_CONTROL_H
@@ -13,6 +22,14 @@
 
 #ifndef NAMESPDEF_H
 #include "../namespdef.h"
+#endif
+
+#ifndef MVC_RESPONSE_H
+#include "mvcresponse.h"
+#endif
+
+#ifndef MVC_REQUEST_H
+#include "mvcrequest.h"
 #endif
 
 #ifndef TYPE_TRANSFOR_H
@@ -37,246 +54,207 @@ NAMESP_BEGIN
 
 ///////////////////////////////////////
 //Normal Control.
-template<class SOURCE,
-	class REQUEST_LOGIC,
-	template<class, class> class REQUEST
->
-class Control
-{
-public:
-	typedef SOURCE source_t;
-	typedef REQUEST_LOGIC rqt_logic_t;
-	typedef REQUEST<source_t, rqt_logic_t> request_t;
-	typedef typename source_t::response_t response_t;
-	
-	//template<class VIEW> 
-	//using rsp_filter_t = typename response_t::FilterT<VIEW>;
-	
-public:
-	Control(source_t *src, rqt_logic_t *logic, response_t *rsp)
-		:_src(src)
-		,_rsp(rsp)
-	{
-		_rqt = std::unique_ptr<request_t>(new request_t());
-		_rqt->AttachSrc(_src);
-		_rqt->AttachLogic(logic);
-		_rsp->SetSrc(_src);
-		_src->Attach(rsp);
-	}
-
-	Control(source_t *src, rqt_logic_t *logic)
-		:_src(src)
-	{
-		_rqt = std::unique_ptr<request_t>(new request_t());
-		_rqt->AttachSrc(_src);
-		_rqt->AttachLogic(logic);
-	}
-	
-	Control(rqt_logic_t *logic, response_t *rsp)
-		:_rsp(rsp)
-	{
-		_rqt = std::unique_ptr<request_t>(new request_t());
-		_rqt->AttachSrc(_src);
-		_rqt->AttachLogic(logic);
-	}
-
-	Control(rqt_logic_t *logic)
-	{
-		_rqt = std::unique_ptr<request_t>(new request_t());
-		_rqt->AttachSrc(_src);
-		_rqt->AttachLogic(logic);
-	}
-
-	void AttachView(typename response_t::view_t *view){ _rsp->AttachView(view); }
-	
-	template<class... Ts>
-	int Execute(Ts&... ts) const
-	{
-		int r = _rqt->Execute(ts...);
-		if( r == 0 && _rsp != nullptr )
-			r = _rsp->Update();
-			
-		return r;
-	}
-
-	template<class... Ts>
-	int Execute(Ts*... ts) const
-	{
-		int r = _rqt->Execute(ts...);
-		if (r == 0 && _rsp != nullptr)
-			r = _rsp->Update();
-
-		return r;
-	}
-	
-private:
-	source_t *_src = nullptr;
-	std::unique_ptr<request_t> _rqt;
-	response_t *_rsp = nullptr;
-};
-
-//////////////////////////////////////////////
-//Asynchronous Control.
-//Inter threads.
-template<class SOURCE
-	,class REQUEST_LOGIC
-	,template<class, class> class REQUEST 
->
-class AsynControl
-{
-public:
-	typedef SOURCE source_t;
-	typedef REQUEST_LOGIC rqt_logic_t;
-	typedef REQUEST<source_t, rqt_logic_t> request_t;
-	typedef typename source_t::response_t response_t;
-	typedef AsynControl<source_t, rqt_logic_t, REQUEST> my_t;
-	struct Work
-	{
-		Work(my_t *ctrl)
-			:ctrl(ctrl)
-		{
-		}
-		
-		template<class... Ts>
-		void operator()(Ts&... ts)
-		{
-			int r = ctrl->_rqt->Execute(ts...);
-			if( r == 0 && ctrl->_rsp != nullptr )
-				ctrl->_rsp->Update();			
-		}
-		
-		my_t *ctrl;
-	};
-	
-	friend struct Work;
-};
+//template<class OBJECT,
+//	class REQUEST_LOGIC,
+//	template<class, class> class REQUEST
+//>
+//class Control
+//{
+//public:
+//	typedef OBJECT object_t;
+//	typedef REQUEST_LOGIC rqt_logic_t;
+//	typedef REQUEST<object_t, rqt_logic_t> request_t;
+//	typedef typename object_t::response_t response_t;
+//	
+//	//template<class VIEW> 
+//	//using rsp_filter_t = typename response_t::FilterT<VIEW>;
+//	
+//public:
+//	Control(object_t *obj, rqt_logic_t *logic, response_t *rsp)
+//		:_obj(obj)
+//		,_rsp(rsp)
+//	{
+//		_rqt.AttachSrc(_obj);
+//		_rqt.AttachLogic(logic);
+//		_rsp->SetSrc(_obj);
+//		_obj->Attach(rsp);
+//	}
+//
+//	Control(object_t *obj, rqt_logic_t *logic)
+//		:_obj(obj)
+//	{
+//		_rqt = std::unique_ptr<request_t>(new request_t());
+//		_rqt.AttachSrc(_obj);
+//		_rqt.AttachLogic(logic);
+//	}
+//	
+//	Control(rqt_logic_t *logic, response_t *rsp)
+//		:_rsp(rsp)
+//	{
+//		_rqt = std::unique_ptr<request_t>(new request_t());
+//		_rqt.AttachSrc(_obj);
+//		_rqt.AttachLogic(logic);
+//	}
+//
+//	Control(rqt_logic_t *logic)
+//	{
+//		_rqt = std::unique_ptr<request_t>(new request_t());
+//		_rqt.AttachSrc(_obj);
+//		_rqt.AttachLogic(logic);
+//	}
+//
+//	void AttachView(typename response_t::view_t *view){ _rsp->AttachView(view); }
+//	
+//	template<class... Ts>
+//	int Execute(Ts&... ts) const
+//	{
+//		int r = _rqt.Execute(ts...);
+//		if( r == 0 && _rsp != nullptr )
+//			r = _rsp->Update();
+//			
+//		return r;
+//	}
+//
+//	template<class... Ts>
+//	int Execute(Ts*... ts) const
+//	{
+//		int r = _rqt.Execute(ts...);
+//		if (r == 0 && _rsp != nullptr)
+//			r = _rsp->Update();
+//
+//		return r;
+//	}
+//	
+//private:
+//	object_t *_obj = nullptr;
+//	request_t _rqt;
+//	response_t *_rsp = nullptr;
+//};
+//
+////////////////////////////////////////////////
+////Asynchronous Control.
+////Inter threads.
+//template<class OBJECT
+//	,class REQUEST_LOGIC
+//	,template<class, class> class REQUEST 
+//>
+//class AsynControl
+//{
+//public:
+//	typedef OBJECT object_t;
+//	typedef REQUEST_LOGIC rqt_logic_t;
+//	typedef REQUEST<object_t, rqt_logic_t> request_t;
+//	typedef typename object_t::response_t response_t;
+//	typedef AsynControl<object_t, rqt_logic_t, REQUEST> my_t;
+//	struct Work
+//	{
+//		Work(my_t *ctrl)
+//			:ctrl(ctrl)
+//		{
+//		}
+//		
+//		template<class... Ts>
+//		void operator()(Ts&... ts)
+//		{
+//			int r = ctrl->_rqt.Execute(ts...);
+//			if( r == 0 && ctrl->_rsp != nullptr )
+//				ctrl->_rsp->Update();			
+//		}
+//		
+//		my_t *ctrl;
+//	};
+//	
+//	friend struct Work;
+//};
 
 //////////////////////////////////////////////
 //Remote Control.
 //Inter-proccess.
-template<class SOURCE
-	,class REQUEST_LOGIC
-	,template<class, class> class REQUEST 
+//@PACK inter pack.
+//@OBJECT model.
+//@LOGIC request method.
+template<class PACK, 
+	class OBJECT
+	,class LOGIC
 >
 class RControl
 {
 
 public:
-	typedef SOURCE source_t;
-	typedef REQUEST_LOGIC rqt_logic_t;
-	typedef REQUEST<source_t, rqt_logic_t> request_t;
-	typedef typename source_t::response_t response_t;
+	typedef PACK pack_t;
+	typedef pack_t::params_pack_t 	params_pack_t;
+	typedef pack_t::pack_ptr_t  	pack_ptr_t;
+	typedef pack_t::pack_list_t 	pack_list_t;
 	
-	const static std::string rqt_name(){ return rqt_logic_t::name; }
+	typedef OBJECT object_t;
+	typedef LOGIC logic_t;
+	typedef RRequest<object_t, logic_t> request_t;
+	typedef RResponse<pack_t> response_t;
 	
-	RControl(source_t *src, rqt_logic_t *logic, response_t *rsp)
-		:_src(src)
-		,_rsp(rsp)
+	
+	const static std::string rqt_name(){ return logic_t::name; }
+	
+	RControl(object_t *obj, logic_t *logic)
+		:obj(obj)
+		,_rsp(obj->Name())
 	{
-		_rqt = std::shared_ptr<request_t>(new request_t);
-		_rqt->AttachSrc(_src);
-		_rqt->AttachLogic(logic);
-		_rsp->SetSrc(_src);
-		_src->Attach(rsp);
+		_rqt.AttachSrc(obj);
+		_rqt.AttachLogic(logic);
 	}
 	
 	RControl()
 	{
-		_rqt = std::shared_ptr<request_t>(new request_t);
-		_rqt->AttachSrc(_src);
-		_rqt->AttachLogic( new rqt_logic_t );
-		//_rsp->SetSrc(_src);
-		//_src->Attach(_rsp);
+		_rqt.AttachLogic( new logic_t(&_rsp) );
 	}
 	
-	void AttachSrc(source_t *src)
+	void AttachObj(object_t *obj)
 	{
-		_src = src;
-		if(_rsp != nullptr)
-			_rsp->SetSrc(_src);
-			
-		_rqt->AttachSrc(_src);
+		_obj = obj
+		_rsp.SetSrc(_obj);			
+		_rqt.AttachSrc(_obj);
 	}
 
-	template<class PACK>
-	bool Execute(PACK const& pck)
+	bool Execute(pack_t const& pck)
 	{
-		typename PACK::params_pack_t prams = std::move(pck.Params());
-		_state = _rqt->Execute( prams );
+		typename pack_t::params_pack_t prams = std::move(pck.Params());
+		_state = _rqt.Execute( prams );
 				
 		return true;
 	}
 	
-	template<class PACK>
-	std::vector<PACK> Reply(const PACK &src_pck )
+	pack_list_t Reply(const pack_t &src_pck )
 	{
-		typedef PACK pack_t;
-		std::vector<pack_t> pcks;
-		if(_state == 0)
+		pack_list_t pcks;
+		pack_ptr_t pck( _rsp.Reply(src_pck) );
+		if(pck!=nullptr && pck->Status())
+			pcks.push_back(pck);
+		else
 		{
-			if( _rsp != nullptr )
+			if(_state == 0)
 			{
-				_rsp->Update();
-				std::vector<pack_t> pcks= _rsp->Reply<pack_t>();
-				for (auto &i:pcks)
-					pcks.push_back(i);
+				pcks.push_back( pack_ptr_t(
+					new pack_t(src_pck.Target(), src_pck.Source(), "response", "Resqust OK")
+					)
+				);
 			}
 			else
 			{
-				pcks.push_back(pack_t(src_pck.Target(), src_pck.Source(), "response", "Resqust OK"));
+				pcks.push_back(pack_ptr_t(
+					new pack_t(src_pck.Target(), src_pck.Source(), "response", "Resqust Failed")
+					)
+				);
 			}
 		}
-		else
-		{
-			pcks.push_back(pack_t(src_pck.Target(), src_pck.Source(), "response", "Resqust Failed"));
-		}
-		
+				
 		return std::move( pcks );
 	}
 
 private:
-	source_t *_src = nullptr;
-	std::shared_ptr<request_t> _rqt;
-	response_t *_rsp = nullptr;
+	object_t *_obj = nullptr;
+	request_t  _rqt;
+	response_t _rsp;
 	int _state = 0;
 };
-
-
-//////////////////////////////////////////////////////
-//template<class CHANNEL_STORE, class...Dispachters>
-//class ControlServer
-//{
-//	//typedef std::tuple<Dispachters...> dispth_map_t;
-//	typedef CHANNEL_STORE chn_store_t;
-//	
-//public:
-//	typedef typename chn_store_t::chn_t chn_t;
-//	typedef typename chn_store_t::chn_ptr_t chn_ptr_t;
-//	typedef typename TransType<ObjectsCollection, Dispachters...>::result objs_colletion_t;
-//	//typedef typename chn_t::pack_t pack_t;
-//
-//public:
-//	ControlServer(){}
-//	
-//	bool Run(typename chn_t::config_t &conf)throw(...)
-//	{
-//		_chn_store.Store(conf);
-//		chn_ptr_t chn(nullptr);
-//		while (_chn_store.Opening(chn))
-//		{
-//			ArgIteration<Dispachters...>::Handle(objs_colletion_t::Instance(), *(chn.get()));
-//			chn->Pop();
-//		}
-//		
-//		return true;
-//	}
-//		
-//private:
-//	enum{ DispatcherCount = ArgCounter<Dispachters...>::value };
-//	
-//private:
-//	chn_store_t _chn_store;
-//};
 
 NAMESP_END;
 

@@ -29,7 +29,7 @@ public:
 class IResponse
 {
 public:
-	virtual int Update() = 0;
+	virtual int Push() = 0;
 	virtual ~IResponse(){}
 };
 

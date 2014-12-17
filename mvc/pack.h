@@ -1,5 +1,13 @@
+//pack.h
+//copyright	: Copyright (c) 2014 arsee.
+//license	: GNU GPL v2.
+//author	: arsee
 
-//file: pack.h
+//****************************
+//modify:	
+//2014-12-15
+//record 
+//****************************
 
 #ifndef PACK_H
 #define PACK_H
@@ -11,6 +19,7 @@
 #include <string>
 #include <string.h>
 #include <map>
+#include <vector>
 
 NAMESP_BEGIN
 
@@ -24,6 +33,8 @@ class Pack
 {
 public:
 	typedef Pack pack_t;
+	typedef std::shared_ptr<pack_t> pack_ptr_t;
+	typedef std::vector<pack_ptr_t> pack_list_t;
 	typedef std::string stream_t;
 	typedef std::map<stream_t, stream_t> params_pack_t;
 	

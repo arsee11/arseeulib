@@ -1,4 +1,13 @@
-//file: mvcview.h
+//mvcview.h
+//copyright	: Copyright (c) 2014 arsee.
+//license	: GNU GPL v2.
+//author	: arsee
+
+//****************************
+//modify:	
+//2014-12-17
+//record 
+//****************************
 
 #ifndef MVC_VIEW_H
 #define MVC_VIEW_H
@@ -15,6 +24,7 @@
 #include "../namespdef.h"
 #endif
 
+#include <string>
 #include <utility>
 
 NAMESP_BEGIN
@@ -72,6 +82,9 @@ public:
 private:
 	T _t;
 };
+
+
+typedef std::string view_t;
 
 NAMESP_END;
 

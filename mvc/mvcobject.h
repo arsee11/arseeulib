@@ -1,12 +1,22 @@
-//file: mvcrobject.h
+//mvcrobject.h
+//copyright	: Copyright (c) 2014 arsee.
+//license	: GNU GPL v2.
+//author	: arsee
+
+//****************************
+//modify:	
+//2014-12-15
+//record 
+//****************************
 
 #ifndef MVC_OBJECT_H
 #define MVC_OBJECT_H
 
 #include<list>
 #include<algorithm>
-#include "mvcresponse_abstr.h"
 #include <memory>
+
+#include "mvcresponse_abstr.h"
 
 #ifndef GLOBALDEF_H
 #include "globaldef.h"
@@ -35,12 +45,12 @@ class Object//:
 	//public IObject
 {
 	typedef SOURCE source_t;
-
+		
 public:
 	typedef RResponse<Object<source_t> > response_t;
+	typedef response_t::view_t view_t;
 	
 public:
-
 	Object()
 		:_src()
 	{}
@@ -48,7 +58,7 @@ public:
 	template<class... Us>
 	Object(Us*... us)
 	{
-		_src = std::move<source_t>(source_t(us...));
+		_src = std::move(source_t(us...));
 	}
 	
 	template<class... Us>
@@ -77,31 +87,32 @@ public:
 		return (*this);
 	}
 	
-	int Update()
+	template<class Param>
+	int Update(const Param &param)
 	{
 		auto i = _rsplst.begin();
 
 		for(;i!=_rsplst.end(); ++i)
-			(*i)->Update();
+			(*i)->Push(param);
 			
 		return 0;
 	}
 	
-	std::string Name(){ return std::move<std::string>( _src.Name() ); }
+	std::string Name(){ return std::move( _src.Name() ); }
 	
-	//own ther IReponse,manage it's lifetime. 
-	int Attach( IResponse *rps)
+	int Attach( const view_t &view)
 	{
-		_rsplst.push_back(std::unique_ptr<IResponse>(rps));
-		return 0;
+		_rsp->push_back(view);
 	}
 	
-	int Dettach( IResponse *rps)
+	void Attach( const view_t &&view)
 	{
-		auto it = std::find(_rsplst.begin(), _rsplst.end(), std::unique_ptr<IResponse>(rps) );
-		if( it != _rsplst.end() )
-			_rsplst.erase( it );
-		return 0;
+		Attach(view);
+	}
+	
+	void Detach( const view_t &view)
+	{
+		_rsp->Detach(view);
 	}
 	
 	source_t& ref(){ return _src; }
@@ -110,7 +121,7 @@ public:
 	
 private:
 	source_t _src;	
-	std::list< std::unique_ptr<IResponse> > _rsplst;
+	std::unique_ptr<IResponse> > _rsp = std::unique_ptr<IResponse> >( new response_t(this));
 };
 
 

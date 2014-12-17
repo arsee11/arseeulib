@@ -56,9 +56,9 @@ public:
 		std::vector<pack_t> replies;
 		ArgIteration<Dispachters...>::Handle(ObjCollection::Instance(), pck, replies);
 
-		for (auto &ip : replies)
+		for (auto &i : replies)
 		{
-			_chn.Write(ip);
+			_chn.Write(i);
 		}
 		return true;
 	}
