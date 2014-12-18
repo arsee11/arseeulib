@@ -81,6 +81,7 @@ public:
 			ntohs(addr.sin_port)
 		);
 
+		s->preactor(_preactor);
 		_preactor->RegistryHandler(s);
 	}
 
