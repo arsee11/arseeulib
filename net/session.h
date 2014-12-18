@@ -75,7 +75,10 @@ public:
 		_preactor->PostSend(_fd); 
 	}
 
-	fd_t fd(){return _fd;}
+	fd_t fd()const {return _fd;}
+	std::string remote_ip()const { return std::move(_remote_ip); }
+	unsigned short remote_port()const { return _remote_port; }
+	
 	char *inbuf(){ return _inbuf; }
 	size_t in_bufsize(){ return insize; }
 

@@ -22,18 +22,55 @@
 template<class SessionT>
 class SessionContainer
 {
+	struct Key{
+		std::string ip;
+		unsigned short port;
+		bool operator<(const Key& rhs)
+		{
+			if( ip < rhs.ip )
+				return true;
+				
+			if( ip>rhs.ip )
+				return false;
+				
+			if(ip == rhs.ip )
+				return port<rhs.port;
+		}
+	};
+	
 public:
 	typedef std::shared_ptr<SessionT> session_ptr_t; 
-	typedef fd_t key_t;
+	typedef Key key_t;
 	std::map<key_t, session_ptr_t>::iterator iterator;
 
 public:
-	session_ptr_t get(const key_t &key)
+	session_ptr_t get(const key_t& key)
 	{
 		return _sessions[key];
 	}
+	
+	session_ptr_t get(const key_t&& key)
+	{
+		return _sessions[key];
+	}
+	
+	session_ptr_t get(const std::string& ip, unsigned short port)
+	{
+		key_t key = {ip, port};
+		return _sessions[key];
+	}
+	
+	session_ptr_t get(const std::string&& ip, unsigned short port)
+	{
+		key_t key = {ip, port};
+		return _sessions[key];
+	}
 
-	void Put(session_ptr_t ss){ _sessions[ss->fd()] = ss; }
+	void put(session_ptr_t ss)
+	{ 
+		key_t key = {ss->remote_ip(), ss->remote_port()};
+		_sessions[key] = ss; 
+	}
 
 	iterator& begin(){ return _sessions.begin(); }
 	iterator& end(){ return _sessions.end(); }
@@ -91,7 +128,9 @@ public:
 #ifdef DEBUG
 		cout<<"new session:"<<"ip="<<ip<<",port="<<port<<endl;
 #endif
-		return session_ptr_t(new SESSION(newfd, ip, port) );	
+		session_ptr_t ss(new SESSION(newfd, ip, port) );
+		_ss_container->put(ss);
+		return ss;
 	}
 
 
