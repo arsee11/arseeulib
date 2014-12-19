@@ -18,8 +18,8 @@
 
 #include "mvcresponse_abstr.h"
 
-#ifndef GLOBALDEF_H
-#include "globaldef.h"
+#ifndef UTILITY_H
+#include "utility.h"
 #endif
 
 #ifndef NAMESPDEF_H
@@ -98,7 +98,7 @@ public:
 		return 0;
 	}
 	
-	std::string Name(){ return std::move( _src.Name() ); }
+	const std::string Name(){ return std::move( _src.Name() ); }
 	
 	int Attach( const view_t &view)
 	{
@@ -174,7 +174,10 @@ private:
 		template<class ACCEPTER>
 		void operator()(std::string &name, ACCEPTER &acc)
 		{
-			if ( std::get<N>( my_t::Instance()._objs )->Name() == name )
+			//if ( std::get<N>( my_t::Instance()._objs )->Name() == name )
+			//	acc.AttachSrc( std::get<N>(my_t::Instance()._objs) );
+				
+			if ( ArgAt<N, OBJS>::result::name() == name )
 				acc.AttachSrc( std::get<N>(my_t::Instance()._objs) );
 		}
 	};	

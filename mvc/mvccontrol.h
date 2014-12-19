@@ -16,8 +16,8 @@
 #include "mvcobject.h"
 #endif
 
-#ifndef GLOBALDEF_H
-#include "globaldef.h"
+#ifndef UTILITY_H
+#include "utility.h"
 #endif
 
 #ifndef NAMESPDEF_H
@@ -192,7 +192,8 @@ public:
 	typedef RResponse<pack_t> response_t;
 	
 	
-	const static std::string rqt_name(){ return logic_t::name; }
+	const static std::string rqt_name()const { return logic_t::name(); }
+	const static std::string target()const { return logic_t::target(); }
 	
 	RControl(object_t *obj, logic_t *logic)
 		:obj(obj)

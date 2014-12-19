@@ -16,8 +16,8 @@
 #include "mvcresponse_abstr.h"
 #endif
 
-#ifndef GLOBALDEF_H
-#include "globaldef.h"
+#ifndef UTILITY_H
+#include "utility.h"
 #endif
 
 #ifndef NAMESPDEF_H

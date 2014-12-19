@@ -44,7 +44,7 @@ public:
 	Pack(){}	
 	
 public:
-	Pack(stream_t &src, stream_t &trgt, stream_t &act, stream_t &param)
+	Pack(const stream_t &src, const stream_t &trgt, const stream_t &act, const stream_t &param)
 		:_source(src)
 		,_target(trgt)
 		,_action(act)
@@ -52,7 +52,7 @@ public:
 		_params["msg"] = param;
 	}
 	
-	Pack(stream_t &src, stream_t &trgt, stream_t &act, params_pack_t &params)
+	Pack(const stream_t &src, const stream_t &trgt, const stream_t &act, const params_pack_t &params)
 		:_source(src)
 		,_target(trgt)
 		,_action(act)
@@ -60,7 +60,7 @@ public:
 	{
 	}
 
-	Pack(stream_t &src, stream_t &&trgt, stream_t &&act, params_pack_t &params)
+	Pack(const stream_t &src, stream_t &&trgt, stream_t &&act, const params_pack_t &params)
 		:_source(src)
 		,_target(trgt)
 		,_action(act)
@@ -68,20 +68,7 @@ public:
 	{
 	}
 	
-	Pack(stream_t &src, stream_t &trgt, stream_t &act)
-		:_source(src)
-		,_target(trgt)
-		,_action(act)
-	{
-	}
 	
-	Pack(stream_t &&src, stream_t &&trgt, stream_t &&act, stream_t &&param)
-		:_source(src)
-		,_target(trgt)
-		,_action(act)
-	{
-		_params["msg"] = param;
-	}
 	
 	Pack(stream_t &&src, stream_t &&trgt, stream_t &&act, params_pack_t &&params)
 		:_source(src)
@@ -91,30 +78,50 @@ public:
 	{
 	}
 	
-	Pack(stream_t &&src, stream_t &&trgt, stream_t &&act)
+	Pack(const stream_t &src, const stream_t &trgt, const stream_t &act)
 		:_source(src)
 		,_target(trgt)
 		,_action(act)
+	{
+	} 
+	
+	Pack(stream_t &&src, stream_t &&trgt, stream_t &&act)
+		:Pack(src, trgt, act)
 	{
 	}
 	
-	Pack(stream_t &src, stream_t &&trgt, stream_t &&act)
-		:_source(src)
-		,_target(trgt)
-		,_action(act)
+	Pack(const stream_t &src, stream_t &&trgt, stream_t &&act)
+		:Pack(src, trgt, act)
 	{
 	}
 
-	Pack(stream_t &&src, stream_t &trgt, stream_t &&act)
-		:_source(src)
-		,_target(trgt)
-		,_action(act)
+	Pack(stream_t &&src, const stream_t &trgt, stream_t &&act)
+		:Pack(src, trgt, act)
 	{
 	}
 
-	Pack(stream_t &&src, stream_t &&trgt, stream_t &act)
+	Pack(stream_t &&src, stream_t &&trgt, const stream_t &act)
+		:Pack(src, trgt, act)
+	{
+	}
+
+	Pack(stream_t &&src, const stream_t &act)
+		:Pack(src, act)
+	{
+	}
+	
+	Pack(stream_t &&src, stream_t &&act)
+		:Pack(src, act)
+	{
+	}
+	
+	Pack(const stream_t &src, stream_t &&act)
+		:Pack(src, act)
+	{
+	}
+	
+	Pack(const stream_t &src, const stream_t &act)
 		:_source(src)
-		,_target(trgt)
 		,_action(act)
 	{
 	}

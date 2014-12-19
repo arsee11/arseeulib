@@ -12,8 +12,8 @@
 #ifndef DISPATCHER_H
 #define DISPATCHER_H
 
-#ifndef GLOBALDEF_H
-#include "globaldef.h"
+#ifndef UTILITY_H
+#include "utility.h"
 #endif
 
 #ifndef NAMESPDEF_H
@@ -41,13 +41,16 @@ public:
 		if ( pck.Action() == control_t::rqt_name() )
 		{
 			control_t ctrl;
-			std::string tname = pck.Target();
+			//std::string tname = pck.Target();
+			std::string tname = control_t::target();
 			objs.GetObj(tname, ctrl);
 			ctrl.Execute(pck);
 			replies = ctrl.Reply(pck);
 		}
 	}
 };
+
+
 NAMESP_END
 
 #endif /*DISPATCHER_H*/
