@@ -3,9 +3,6 @@
 #ifndef MVCVIEW_ABSTR_H
 #define MVCVIEW_ABSTR_H
 
-#ifndef GLOBALDEF_H
-#include "globaldef.h"
-#endif
 
 #ifndef NAMESPDEF_H
 #include "../namespdef.h"

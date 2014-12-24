@@ -12,12 +12,12 @@
 #ifndef MVC_RESPONSE_H
 #define MVC_RESPONSE_H
 
-#ifndef MVCRESPONSE_ABSTR_H
-#include "mvcresponse_abstr.h"
-#endif
-
 #ifndef UTILITY_H
 #include "utility.h"
+#endif
+
+#ifndef STRINGEX_H
+#include "../stringex.h"
 #endif
 
 #ifndef NAMESPDEF_H
@@ -39,86 +39,84 @@
 
 NAMESP_BEGIN
 
-template<class REQUEST_SOURCE>
-class Response:
-	public IResponse
-{
-public:
-	typedef IView view_t;
-	typedef REQUEST_SOURCE source_t;
-	
-	template<class VIEW>
-	class FilterT:
-		public IFilter<source_t>
-	{
-	public:
-		typedef VIEW view_t;
-		typedef source_t obj_t;
-			
-		bool Filter(IView *basev, obj_t *obj) override
-		{	
-			view_t *view = (view_t *)basev;		
-			return Transform( view, obj );
-		}
-		
-		virtual bool Transform(view_t * view, obj_t *obj)=0;
-	};
-	
-public:
-	template<class VIEW>
-	Response(source_t *psrc, FilterT<VIEW> *filter)
-		:_src(psrc)
-		,_filter(filter)
-	{
-	}
-	
-	template<class VIEW>
-	Response(FilterT<VIEW> *filter)
-		:_src(nullptr)
-		,_filter(filter)
-	{
-	}
-	
-	void SetSrc(source_t *src){ _src = src; }
-	void AttachView(view_t *view){ _views.push_back(view); }
-	
-	int Update() override
-	{
-		for( auto &i:_views )
-		{
-			if( _filter->Filter( i, _src) )	
-				i->Output();
-		}
-		return 0;
-	}
-	
-	
-	//bool Serialize();
-	//bool UnSerialize();
-
-	
-protected:
-	std::shared_ptr<IFilter<source_t> > _filter;
-	std::list<view_t* > _views;
-	source_t *_src;
-};
+//template<class REQUEST_SOURCE>
+//class Response:
+//	public IResponse
+//{
+//public:
+//	typedef REQUEST_SOURCE source_t;
+//	
+//	template<class VIEW>
+//	class FilterT:
+//		public IFilter<source_t>
+//	{
+//	public:
+//		typedef VIEW view_t;
+//		typedef source_t obj_t;
+//			
+//		bool Filter(IView *basev, obj_t *obj) override
+//		{	
+//			view_t *view = (view_t *)basev;		
+//			return Transform( view, obj );
+//		}
+//		
+//		virtual bool Transform(view_t * view, obj_t *obj)=0;
+//	};
+//	
+//public:
+//	template<class VIEW>
+//	Response(source_t *psrc, FilterT<VIEW> *filter)
+//		:_src(psrc)
+//		,_filter(filter)
+//	{
+//	}
+//	
+//	template<class VIEW>
+//	Response(FilterT<VIEW> *filter)
+//		:_src(nullptr)
+//		,_filter(filter)
+//	{
+//	}
+//	
+//	void SetSrc(source_t *src){ _src = src; }
+//	void AttachView(view_t *view){ _views.push_back(view); }
+//	void DetachView(view_t *view){ throw exception(); }
+//	
+//	int Update() override
+//	{
+//		for( auto &i:_views )
+//		{
+//			if( _filter->Filter( i, _src) )	
+//				i->Output();
+//		}
+//		return 0;
+//	}
+//	
+//	
+//	//bool Serialize();
+//	//bool UnSerialize();
+//
+//	
+//protected:
+//	std::shared_ptr<IFilter<source_t> > _filter;
+//	std::list<view_t* > _views;
+//	source_t *_src;
+//};
 
 
 
 /////////////////////////////////////////////////
 //RResponse
 //Remote Response
-template<class PACK>
-class RResponse:
-	public IResponse
+template<class Pack>
+class RResponse
 {
 public:
-	typedef REQUEST_SOURCE source_t;
-	typedef ::view_t view_t;
-	typedef PACK pack_t;
-	typedef pack_t::params_pack_t 	params_pack_t;
-	typedef pack_t::pack_ptr_t  	pack_ptr_t;
-	typedef pack_t::pack_list_t 	pack_list_t;
+	typedef std::string  view_t;
+	typedef Pack pack_t;
+	typedef typename pack_t::params_pack_t 	params_pack_t;
+	typedef typename pack_t::pack_ptr_t  	pack_ptr_t;
+	typedef typename pack_t::pack_list_t 	pack_list_t;
 	
 public:
 	RResponse(const std::string &src)
@@ -142,29 +140,42 @@ public:
 			_views.erase( it );
 	}
 	
-	void AddParam(std::string pname, std::pvalue){ _params[panme] = pvalue; }
+	void ReplyAdd(std::string pname, std::string pvalue){ _params[pname] = pvalue; }
 	
-	
-	template<class Session>
-	int Push(const params_pack_t &params, Session &ss) override
+	template<class T>	
+	int PushAdd(const std::string& key, const T& value)
 	{
+		string strval =StringBuilder(value);
+		params_pack_t params;
+		params[key] = strval;
 		for(auto i:_views)
 		{			
-			_pcks.push_back( std::move( pack_t(i, _src, "push", params) ) );
+			_pcks.push_back( 
+				pack_ptr_t( new pack_t(i
+					,_src
+					,"push"
+					,params
+				) )
+			);
 		}
+	}
 		
+	template<class Sender>	
+	int Push(Sender& ss)
+	{
 		typename pack_t::serial_t serial;
-		for(auto &i : _packs)
+		for(auto &i : _pcks)
 		{
 			size_t outbuf_size=0;
-			char * _outbuf = serial(ip, &outbuf_size);
-			ss.PostOutput(out_buf, outbuf_size);
+			const char * outbuf = serial(i, &outbuf_size);
+			ss(outbuf, outbuf_size);
 		}
 		
 		return 0;
 	}
 	
-	pack_t *Reply(pack_t &src_pck)
+
+	pack_t *Reply(const pack_t &src_pck)
 	{
 		if(_params.size() > 0)
 			return new pack_t(src_pck.Source(), _src, "response", _params);
@@ -173,7 +184,6 @@ public:
 	}
 				
 protected:
-	std::shared_ptr<FilterT > _filter;
 	std::vector<view_t> _views;
 	params_pack_t _params;
 	pack_list_t _pcks;

@@ -37,6 +37,7 @@ class JSerializer:
 {
 private:
 	stream_t Resolve(const pack_t &pck)override;	
+	stream_t Resolve(const pack_ptr_t &pck)override;	
 	size_t Header()override;
 };
 

@@ -36,24 +36,22 @@ NAMESP_BEGIN
 //	virtual int Update()=0;
 //};
 
-template<class T>
-class RResponse;
 
 //@SOURCE the data object 
-template<class SOURCE>
+template<class SOURCE, class RspImpl>
 class Object//:
 	//public IObject
 {
 	typedef SOURCE source_t;
-		
 public:
-	typedef RResponse<Object<source_t> > response_t;
-	typedef response_t::view_t view_t;
+	typedef typename RspImpl::view_t view_t;
 	
 public:
 	Object()
 		:_src()
-	{}
+		,_rsp("")
+	{
+	}
 	
 	template<class... Us>
 	Object(Us*... us)
@@ -87,13 +85,10 @@ public:
 		return (*this);
 	}
 	
-	template<class Param>
-	int Update(const Param &param)
+	template<class Sender> 
+	int Update(const Sender& ss)
 	{
-		auto i = _rsplst.begin();
-
-		for(;i!=_rsplst.end(); ++i)
-			(*i)->Push(param);
+		//_rsp->Push(param);
 			
 		return 0;
 	}
@@ -102,7 +97,7 @@ public:
 	
 	int Attach( const view_t &view)
 	{
-		_rsp->push_back(view);
+		_rsp.AttachView(view);
 	}
 	
 	void Attach( const view_t &&view)
@@ -112,16 +107,19 @@ public:
 	
 	void Detach( const view_t &view)
 	{
-		_rsp->Detach(view);
+		_rsp.DetachView(view);
 	}
 	
 	source_t& ref(){ return _src; }
 
 	const source_t& ref()const { return _src; }
+
+	static const std::string name(){ return source_t::name();}
 	
 private:
 	source_t _src;	
-	std::unique_ptr<IResponse> > _rsp = std::unique_ptr<IResponse> >( new response_t(this));
+	//std::unique_ptr<IResponse>  _rsp = nullptr; 
+	RspImpl _rsp;
 };
 
 
@@ -147,10 +145,10 @@ public:
 			_myself = std::unique_ptr<my_t>( new my_t(objs...) );		
 	}
 	
-	template<class ACCEPTER>
-	static void GetObj(std::string &name, ACCEPTER &acc)
+	template<class Invoker, class... Args >
+	static void GetObj(std::string &name, Invoker &func, Args&... args)
 	{
-		Iteration<Count, GetObjT>::Handle(name, acc);
+		Iteration<Count, GetObjT>::Handle(name, func, args...);
 	}
 	
 private:
@@ -171,14 +169,14 @@ private:
 	template<int N>
 	struct GetObjT
 	{
-		template<class ACCEPTER>
-		void operator()(std::string &name, ACCEPTER &acc)
+		template<class Invoker, class... Args>
+		void operator()(std::string &name, Invoker &func, Args&... args)
 		{
 			//if ( std::get<N>( my_t::Instance()._objs )->Name() == name )
 			//	acc.AttachSrc( std::get<N>(my_t::Instance()._objs) );
 				
-			if ( ArgAt<N, OBJS>::result::name() == name )
-				acc.AttachSrc( std::get<N>(my_t::Instance()._objs) );
+			if ( ArgAt<N, OBJS...>::result::name() == name )
+				func.Execute(std::get<N>( my_t::Instance()._objs ), args...);
 		}
 	};	
 	

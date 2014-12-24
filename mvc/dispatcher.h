@@ -28,24 +28,23 @@ class Dispatcher
 {
 public:
 	typedef CONTROL control_t;
-	typedef typename control_t::source_t trans_t;
+	//typedef typename control_t::source_t trans_t;
 	//typedef typename control_t::chn_t chn_t;
 	//typedef typename chn_t::pack_t pack_t;
 
 public:
-	template<class OBJECTS_COLLECTION, class Pack>
-	static void Execute(OBJECTS_COLLECTION &objs, Pack &pck, std::vector<Pack> &replies)
+	template<class Receiver, class OBJECTS_COLLECTION, class Pack>
+	static void Execute(Receiver& rev, OBJECTS_COLLECTION &objs, Pack &pck, typename Pack::pack_list_t &replies)
 	{
 		typedef Pack pack_t;
 		//cout << pck.Action() << endl;
 		if ( pck.Action() == control_t::rqt_name() )
 		{
-			control_t ctrl;
 			//std::string tname = pck.Target();
 			std::string tname = control_t::target();
-			objs.GetObj(tname, ctrl);
-			ctrl.Execute(pck);
-			replies = ctrl.Reply(pck);
+			control_t ctrl(tname, &rev);
+			objs.GetObj(tname, ctrl, pck);
+			ctrl.Reply(pck, replies );
 		}
 	}
 };

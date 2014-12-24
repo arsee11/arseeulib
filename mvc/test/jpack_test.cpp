@@ -8,9 +8,9 @@
 using namespace arsee;
 using namespace std;
 
-//-I/home/arsee_p/lib/jsoncpp-master/include/
 
-//-l/home/arsee_p/lib/jsoncpp-master/lib/
+//jpack_test -I/home/arsee_p/lib/jsoncpp-master/include/ -L/home/arsee_p/lib/jsoncpp-master/lib/\
+-std=c++11 jpack_test.cpp ../mvclib/jpack.cpp -ljsoncpp 
 
 //normal
 void test_serializ1()

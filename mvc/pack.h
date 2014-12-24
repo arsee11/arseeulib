@@ -20,6 +20,7 @@
 #include <string.h>
 #include <map>
 #include <vector>
+#include <memory>
 
 NAMESP_BEGIN
 
@@ -156,6 +157,7 @@ class UnSerializerAbstr
 protected:
 	typedef Pack<DeriveSerial, DeriveUnSerial> pack_t; 
 	typedef typename pack_t::stream_t stream_t;
+	typedef typename pack_t::pack_ptr_t pack_ptr_t;
 	
 public:
 	UnSerializerAbstr() = delete;
@@ -284,6 +286,7 @@ class SerializerAbstr
 public:
 	typedef Pack<DeriveSerial, DeriveUnSerial> pack_t; 
 	typedef typename pack_t::stream_t stream_t;
+	typedef typename pack_t::pack_ptr_t pack_ptr_t;
 
 public:
 	virtual ~SerializerAbstr()
@@ -294,10 +297,26 @@ public:
 			delete _head;
 	}
 	
-	virtual const char* operator()(const pack_t &pck, size_t *len)
+	const char* operator()(const pack_t &pck, size_t *len)
+	{
+		stream_t str = Resolve(pck);
+		return Build(str, len);
+	}
+
+	const char* operator()(const pack_ptr_t &pck, size_t *len)
+	{
+		stream_t str = Resolve(pck);
+		return Build(str, len);
+	}
+	
+protected:
+	virtual size_t Header()=0;
+	virtual stream_t Resolve(const pack_t &pck)=0;
+	virtual stream_t Resolve(const pack_ptr_t &pck)=0;
+	
+	const char* Build(stream_t &str, size_t* len)
 	{
 		_hlen = Header();
-		stream_t str = Resolve(pck);
 		_buf = new char[_hlen+str.size()];
 		memcpy(_buf, _head, _hlen);
 		long plen = str.size();
@@ -306,11 +325,7 @@ public:
 		*len = _hlen+sizeof(long)+plen;
 		return _buf;
 	}
-	
-protected:
-	virtual size_t Header()=0;
-	virtual stream_t Resolve(const pack_t &pck)=0;
-	
+
 protected:
 	char *_buf=nullptr;
 	char *_head=nullptr;
@@ -329,11 +344,14 @@ inline const char* Head0xff(const char *stream, size_t len, size_t *head_len)
 	long head = 0;
 	memset(&head, 0xff, sizeof(long));
 	*head_len = sizeof(long);
-	for(size_t i=0; i<len-sizeof(long)-1; ++i)
+	if( len > sizeof(long) )
 	{
-		long tmp = *(long*)(stream+i);
-		if(tmp == head)
-			return stream+sizeof(long);
+		for(size_t i=0; i<=len-sizeof(long); ++i)
+		{
+			long tmp = *(long*)(stream+i);
+			if(tmp == head)
+				return stream+sizeof(long);
+		}
 	}
 
 	return nullptr;

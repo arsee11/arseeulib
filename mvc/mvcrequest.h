@@ -74,38 +74,39 @@ private:
 	
 };
 
-template<class SOURCE, class LOGIC>
+template<class LOGIC, class Receiver>
 class RRequest
 {
 private:
-	typedef SOURCE source_t;
+	//typedef SOURCE source_t;
 	typedef LOGIC logic_t;
 	typedef std::unique_ptr<logic_t > logic_ptr_t;
 
 public:
 
-	void AttachSrc(source_t *src)
-	{
-		_src = src;
-	}
+//	void AttachSrc(source_t *src)
+//	{
+//		_src = src;
+//	}
 
+	void AttachReceiver(Receiver* rev){ _receiver = rev; }
 	void AttachLogic(logic_t *logic)
 	{
 		_logic = logic_ptr_t(logic);
 	}
 
 
-	template<class PARAMS_PACK>
-	int Execute(PARAMS_PACK &params)
+	template<class OBJECT, class PARAMS_PACK>
+	int Execute(OBJECT* obj, PARAMS_PACK &params)
 	{
-		return Invoker<logic_t::PC>::Invoke(_src, params, _logic.get()); 
+		return Invoker<logic_t::PC>::Invoke(_receiver, obj, params, _logic.get()); 
 		//return _logic->Execute(_src, params);
 	}
 
 private:
 	logic_ptr_t _logic;
-	source_t *_src;
-
+	//source_t *_src;
+	Receiver* _receiver = nullptr; 
 };
 template<class SOURCE>
 class MultiRequest

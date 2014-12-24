@@ -3,8 +3,9 @@
 #ifndef CHANNEL_H
 #define CHANNEL_H
 
-#ifndef GLOBALDEF_H
-#include "globaldef.h"
+
+#ifndef NAMESPDEF_H
+#include "../namespdef.h"
 #endif
 
 #ifndef PACK_H
