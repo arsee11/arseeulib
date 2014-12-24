@@ -13,7 +13,7 @@
 #define JPACK_H
 
 #include <utility>
-#include <json/json.h>
+
 
 #ifndef NAMESPDEF_H
 #include "../namespdef.h"

@@ -25,7 +25,7 @@ typedef int socklen_t;
 
 NAMESP_BEGIN
 
-TcpSock::rpeer_ptr_t TcpSock::CreateClient(unsigned short lport, const std::string &&rip, unsigned short rport) throw(sockexcpt)
+TcpSock::rpeer_ptr_t TcpSock::CreateClient(unsigned short lport, const std::string &rip, unsigned short rport) throw(sockexcpt)
 {
 	SOCKET s = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if(s ==INVALID_SOCKET)
@@ -54,9 +54,19 @@ TcpSock::rpeer_ptr_t TcpSock::CreateClient(unsigned short lport, const std::stri
 	return  rpeer_ptr_t(new RemotePeer(s, SockConfig(0, rport, "", rip)));
 }
 
-TcpSock::rpeer_ptr_t TcpSock::CreateClient(const std::string &&rip, unsigned short rport) throw(sockexcpt)
+TcpSock::rpeer_ptr_t TcpSock::CreateClient(unsigned short lport, std::string &&rip, unsigned short rport) throw(sockexcpt)
 {
-	return CreateClient(0, std::move(rip), rport);
+	return  CreateClient(lport, rip, rport);
+}
+
+TcpSock::rpeer_ptr_t TcpSock::CreateClient(std::string &&rip, unsigned short rport) throw(sockexcpt)
+{
+	return CreateClient(0, rip, rport);
+}
+
+TcpSock::rpeer_ptr_t TcpSock::CreateClient(const std::string &rip, unsigned short rport) throw(sockexcpt)
+{
+	return CreateClient(0, rip, rport);
 }
 
 TcpSock::lpeer_ptr_t TcpSock::CreateServer(const std::string &ip, unsigned short port) throw(sockexcpt)

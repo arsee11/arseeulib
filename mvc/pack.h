@@ -16,10 +16,17 @@
 #include "../namespdef.h"
 #endif
 
+#ifndef _STRING_
 #include <string>
+#endif
+
+#ifndef _INC_STRING
 #include <string.h>
+#endif
+
 #include <map>
 #include <vector>
+#include <memory>
 
 NAMESP_BEGIN
 
@@ -40,6 +47,9 @@ public:
 	
 	typedef UnSerializer unserial_t;
 	typedef Serializer serial_t;
+
+	static const short HeadField = 8;
+	static const short LenField = 8;
 
 	Pack(){}	
 	
@@ -140,6 +150,7 @@ public:
 
 	params_pack_t Params()const{return std::move(_params);} 
 	void Param(stream_t &&name, stream_t &&val){ _params[name] = val; }
+	void Param(const stream_t &name, const stream_t &val){ _params[name] = val; }
 
 private:
 	bool _status =false;
@@ -298,12 +309,15 @@ public:
 	{
 		_hlen = Header();
 		stream_t str = Resolve(pck);
-		_buf = new char[_hlen+str.size()];
+		_buf = new char[_hlen + pack_t::LenField + str.size()];
 		memcpy(_buf, _head, _hlen);
 		long plen = str.size();
-		memcpy(_buf+_hlen, &plen, sizeof(long));
-		memcpy(_buf+_hlen+sizeof(long), str.c_str(), str.size());
-		*len = _hlen+sizeof(long)+plen;
+		memcpy(_buf + _hlen, &plen, pack_t::LenField);
+		if (sizeof(long) == 4)
+			memset(_buf + _hlen+4, 0, 4);
+
+		memcpy(_buf + _hlen + pack_t::LenField, str.c_str(), str.size());
+		*len = _hlen + pack_t::LenField + plen;
 		return _buf;
 	}
 	
@@ -319,9 +333,9 @@ protected:
 
 inline size_t Head0xff(char *&head)
 {
-	head = new char[sizeof(long)];
-	memset(head, 0xff, sizeof(long));
-	return sizeof(long);
+	head = new char[8];
+	memset(head, 0xff, 8);
+	return 8;
 }
 
 inline const char* Head0xff(const char *stream, size_t len, size_t *head_len)

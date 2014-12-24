@@ -45,6 +45,15 @@ public:
 		Close();
 	}
 	
+	template<class Pack>
+	int Write(Pack &pck)
+	{
+		Pack::serial_t ss;
+		size_t len;
+		const char *buf = ss(pck, &len);
+		return Write(buf, len);
+	}
+	
 	int Read(char *buf, int len);
 	int Write(const char *buf, int len);
 
@@ -141,8 +150,10 @@ public:
 public:
 	static bool Init();
 	static bool UnInit();
-	static rpeer_ptr_t CreateClient(unsigned short lport,const std::string &&rip, unsigned short port) throw(sockexcpt);	
-	static rpeer_ptr_t CreateClient(const std::string &&rip, unsigned short port) throw(sockexcpt);	
+	static rpeer_ptr_t CreateClient(unsigned short lport, const std::string &rip, unsigned short rport) throw(sockexcpt);
+	static rpeer_ptr_t CreateClient(unsigned short lport, std::string &&rip, unsigned short rport) throw(sockexcpt);
+	static rpeer_ptr_t CreateClient(std::string &&rip, unsigned short rport) throw(sockexcpt);
+	static rpeer_ptr_t CreateClient(const std::string &rip, unsigned short rport) throw(sockexcpt);		
 	static lpeer_ptr_t CreateServer(const std::string &ip, unsigned short port) throw(sockexcpt);	
 };
 
