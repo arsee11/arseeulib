@@ -1,6 +1,6 @@
 SRC=./
 Inc=../
-JSONInc=-I/home/arsee_p/lib/jsoncpp-master/include/
+JSONInc=-I/home/arsee/lib/jsoncpp-master/include/
 JSONLib=json_reader.cpp.o json_value.cpp.o json_writer.cpp.o
 CXX=g++
 FLAGS=--std=c++11 

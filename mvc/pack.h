@@ -134,6 +134,7 @@ public:
 	void Status(bool val){ _status = val; }
 
 	stream_t Action()const{ return std::move(_action); }
+	void Action(const stream_t &val ){ _action=val; }
 	void Action(stream_t &&val ){ _action=val; }
 	
 	stream_t Target()const{ return std::move(_target); }
@@ -147,6 +148,7 @@ public:
 	void Param(const stream_t &name, const stream_t &val){ _params[name] = val; }
 	void Param(stream_t &&name, const stream_t &val){ _params[name] = val; }
 	void Param(const stream_t &name, stream_t &&val){ _params[name] = val; }
+	void Param(const char *name, stream_t &&val){ _params[name] = val; }
 
 private:
 	bool _status =false;
@@ -222,7 +224,7 @@ private:
 			{
 				pbuf = Payload(pbuf, len-head_len, &_payload_len);
 				//head field, paylaod_len field.
-				size_t nleft = len-head_len-LenField;
+				size_t nleft = len-head_len-pack_t::LenField;
 				//more than pack
 				if(_payload_len < nleft)
 				{
@@ -254,7 +256,7 @@ private:
 			if(pbuf != nullptr)
 			{
 				pbuf = Payload(pbuf, len-head_len, &_payload_len);
-				size_t plen = (_payload_len+head_len+LenField;
+				size_t plen = _payload_len + head_len + pack_t::LenField;
 				if(_size < plen)
 					pbuf = nullptr;
 				else
@@ -267,14 +269,14 @@ private:
 
 	const char* Payload(const char* stream, size_t len, size_t *payload_len)
 	{
-		if(len < LenField)
+		if(len < pack_t::LenField)
 		{
 			*payload_len=0;
 			return stream;
 		}
 
 		*payload_len = *(long*)stream;
-		return stream + LenField; 
+		return stream + pack_t::LenField; 
 	}
 
 protected:
@@ -323,7 +325,7 @@ protected:
 	const char* Build(stream_t &str, size_t* len)
 	{
 		_hlen = Header();
-		_buf = new char[_hlen+pack_t::LenFiled+str.size()];
+		_buf = new char[_hlen+pack_t::LenField+str.size()];
 		memcpy(_buf, _head, _hlen);
 		long plen = str.size();
 		memcpy(_buf+_hlen, &plen, pack_t::LenField); 
