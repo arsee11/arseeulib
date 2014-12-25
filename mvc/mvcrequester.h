@@ -39,7 +39,11 @@ public:
 	{
 	}
 
+#if defined(__GNUC__)
 	const char* what()const noexcept override
+#else
+	const char* what()const override
+#endif
 	{
 		return _str.c_str();
 	}
@@ -56,17 +60,14 @@ class RequesterTmp
 	typedef Pack pack_t;
 
 public:
-	RequesterTmp(const std::string &action)
-		:_action(action)
-	{
-		_pack.Action(_action);
-	}
-
 	void sender(const Sender &s)const{ _sender = s; }
-
+	RequesterTmp()=default;
 	virtual ~RequesterTmp(){};
 
-
+	void Action(const std::string& action){ _pack.Action(action); _pack.Reset(); }
+	void Action(std::string&& action){ Action(action); }
+	void Action(const char* action){ Action(std::string(action)); }
+	
 	void Param(const std::string &name, const std::string& value){ _pack.Param(name, value); }
 	void Param(std::string &&name, const std::string& value){ Param(name, value); }
 	void Param(const char* name, const std::string& value){ Param(std::string(name), value); }
@@ -108,17 +109,13 @@ class TcpRequester:
 {
 	typedef RequesterTmp<TcpSock::rpeer_ptr_t, Pack> base_t;
 public:
-	TcpRequester(const std::string& action)
-		:base_t(action)
-	{}
-
+	TcpRequester()=default;
 	~TcpRequester(){ base_t::Close(); }
 
 	void Open(const char* rip, unsigned short rport)throw(sockexcpt)
 	{
 		base_t::_sender = TcpSock::CreateClient(std::string(rip), rport);
 	}
-
 };
 
 

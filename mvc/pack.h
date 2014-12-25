@@ -48,17 +48,14 @@ public:
 	typedef UnSerializer unserial_t;
 	typedef Serializer serial_t;
 
-<<<<<<< HEAD
-	static const short HeadField = 8;
-	static const short LenField = 8;
-=======
+
 	static const short HeadFiled=4;
 	static const short LenField = 4;
->>>>>>> origin/master
 
-	Pack(){}	
+		
 	
 public:
+	Pack(){}
 	Pack(const stream_t &src, const stream_t &trgt, const stream_t &act, const stream_t &param)
 		:_source(src)
 		,_target(trgt)
@@ -161,6 +158,13 @@ public:
 	void Param(const stream_t &name, stream_t &&val){ _params[name] = val; }
 	void Param(const char *name, stream_t &&val){ _params[name] = val; }
 
+	void Reset()
+	{
+		_action="";
+		_target="";
+		_source="";
+		_params.clear();
+	}
 
 private:
 	bool _status =false;
