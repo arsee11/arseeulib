@@ -19,6 +19,24 @@
 
 NAMESP_BEGIN
 
+const char* Head0xff(const char *stream, size_t len, size_t *head_len)
+{
+	int head = 0;
+	memset(&head, 0xff, 4);
+	*head_len = 4;
+	if( len > 4 )
+	{
+		for(size_t i=0; i<=len-4; ++i)
+		{
+			int tmp = *(int*)(stream+i);
+			if(tmp == head)
+				return stream+i+4;
+		}
+	}
+
+	return nullptr;
+}
+
 JSerializer::stream_t JSerializer::Resolve(const pack_ptr_t &pck)
 {
 	Json::FastWriter wr;

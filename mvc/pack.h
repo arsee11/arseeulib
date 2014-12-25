@@ -60,6 +60,7 @@ public:
 		:_source(src)
 		,_target(trgt)
 		,_action(act)
+		,_status(true)
 	{
 		_params["msg"] = param;
 	}
@@ -69,24 +70,19 @@ public:
 		,_target(trgt)
 		,_action(act)
 		,_params(params)
+		,_status(true)
 	{
 	}
 
 	Pack(const stream_t &src, stream_t &&trgt, stream_t &&act, const params_pack_t &params)
-		:_source(src)
-		,_target(trgt)
-		,_action(act)
-		,_params(params)
+		:Pack(src, trgt, act, params)
 	{
 	}
 	
 	
 	
 	Pack(stream_t &&src, stream_t &&trgt, stream_t &&act, params_pack_t &&params)
-		:_source(src)
-		,_target(trgt)
-		,_action(act)
-		,_params(params)
+		:Pack(src, trgt, act, params)
 	{
 	}
 	
@@ -291,7 +287,8 @@ private:
 			return stream;
 		}
 
-		*payload_len = *(long*)stream;
+		//sizeof(int)==4
+		*payload_len = *(int*)stream;
 		return stream + pack_t::LenField; 
 	}
 
@@ -363,23 +360,7 @@ inline size_t Head0xff(char *&head)
 	return 4;
 }
 
-inline const char* Head0xff(const char *stream, size_t len, size_t *head_len)
-{
-	long head = 0;
-	memset(&head, 0xff, 4);
-	*head_len = 4;
-	if( len > 4 )
-	{
-		for(size_t i=0; i<=len-4; ++i) 
-		{
-			long tmp = *(long*)(stream+i);
-			if(tmp == head)
-				return stream+4;
-		}
-	}
-
-	return nullptr;
-}
+extern const char* Head0xff(const char *stream, size_t len, size_t *head_len);
 
 NAMESP_END
 

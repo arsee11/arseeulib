@@ -20,6 +20,9 @@
 #include "../namespdef.h"
 #endif
 
+#include <iostream>
+
+
 NAMESP_BEGIN
 
 
@@ -37,7 +40,7 @@ public:
 	static void Execute(Receiver& rev, OBJECTS_COLLECTION &objs, Pack &pck, typename Pack::pack_list_t &replies)
 	{
 		typedef Pack pack_t;
-		//cout << pck.Action() << endl;
+		//std::cout << pck.Action() << std::endl;
 		if ( pck.Action() == control_t::rqt_name() )
 		{
 			//std::string tname = pck.Target();
