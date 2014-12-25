@@ -48,8 +48,13 @@ public:
 	typedef UnSerializer unserial_t;
 	typedef Serializer serial_t;
 
+<<<<<<< HEAD
 	static const short HeadField = 8;
 	static const short LenField = 8;
+=======
+	static const short HeadFiled=4;
+	static const short LenField = 4;
+>>>>>>> origin/master
 
 	Pack(){}	
 	
@@ -140,6 +145,7 @@ public:
 	void Status(bool val){ _status = val; }
 
 	stream_t Action()const{ return std::move(_action); }
+	void Action(const stream_t &val ){ _action=val; }
 	void Action(stream_t &&val ){ _action=val; }
 	
 	stream_t Target()const{ return std::move(_target); }
@@ -151,6 +157,10 @@ public:
 	params_pack_t Params()const{return std::move(_params);} 
 	void Param(stream_t &&name, stream_t &&val){ _params[name] = val; }
 	void Param(const stream_t &name, const stream_t &val){ _params[name] = val; }
+	void Param(stream_t &&name, const stream_t &val){ _params[name] = val; }
+	void Param(const stream_t &name, stream_t &&val){ _params[name] = val; }
+	void Param(const char *name, stream_t &&val){ _params[name] = val; }
+
 
 private:
 	bool _status =false;
@@ -167,6 +177,7 @@ class UnSerializerAbstr
 protected:
 	typedef Pack<DeriveSerial, DeriveUnSerial> pack_t; 
 	typedef typename pack_t::stream_t stream_t;
+	typedef typename pack_t::pack_ptr_t pack_ptr_t;
 	
 public:
 	UnSerializerAbstr() = delete;
@@ -225,7 +236,7 @@ private:
 			{
 				pbuf = Payload(pbuf, len-head_len, &_payload_len);
 				//head field, paylaod_len field.
-				size_t nleft = len-head_len-sizeof(long);
+				size_t nleft = len-head_len-pack_t::LenField;
 				//more than pack
 				if(_payload_len < nleft)
 				{
@@ -257,7 +268,7 @@ private:
 			if(pbuf != nullptr)
 			{
 				pbuf = Payload(pbuf, len-head_len, &_payload_len);
-				size_t plen = (_payload_len+head_len+sizeof(long));
+				size_t plen = _payload_len + head_len + pack_t::LenField;
 				if(_size < plen)
 					pbuf = nullptr;
 				else
@@ -270,14 +281,14 @@ private:
 
 	const char* Payload(const char* stream, size_t len, size_t *payload_len)
 	{
-		if(len < sizeof(long))
+		if(len < pack_t::LenField)
 		{
 			*payload_len=0;
 			return stream;
 		}
 
 		*payload_len = *(long*)stream;
-		return stream+sizeof(long);
+		return stream + pack_t::LenField; 
 	}
 
 protected:
@@ -295,6 +306,7 @@ class SerializerAbstr
 public:
 	typedef Pack<DeriveSerial, DeriveUnSerial> pack_t; 
 	typedef typename pack_t::stream_t stream_t;
+	typedef typename pack_t::pack_ptr_t pack_ptr_t;
 
 public:
 	virtual ~SerializerAbstr()
@@ -305,26 +317,35 @@ public:
 			delete _head;
 	}
 	
-	virtual const char* operator()(const pack_t &pck, size_t *len)
+	const char* operator()(const pack_t &pck, size_t *len)
 	{
-		_hlen = Header();
 		stream_t str = Resolve(pck);
-		_buf = new char[_hlen + pack_t::LenField + str.size()];
-		memcpy(_buf, _head, _hlen);
-		long plen = str.size();
-		memcpy(_buf + _hlen, &plen, pack_t::LenField);
-		if (sizeof(long) == 4)
-			memset(_buf + _hlen+4, 0, 4);
+		return Build(str, len);
+	}
 
-		memcpy(_buf + _hlen + pack_t::LenField, str.c_str(), str.size());
-		*len = _hlen + pack_t::LenField + plen;
-		return _buf;
+	const char* operator()(const pack_ptr_t &pck, size_t *len)
+	{
+		stream_t str = Resolve(pck);
+		return Build(str, len);
 	}
 	
 protected:
 	virtual size_t Header()=0;
 	virtual stream_t Resolve(const pack_t &pck)=0;
+	virtual stream_t Resolve(const pack_ptr_t &pck)=0;
 	
+	const char* Build(stream_t &str, size_t* len)
+	{
+		_hlen = Header();
+		_buf = new char[_hlen+pack_t::LenField+str.size()];
+		memcpy(_buf, _head, _hlen);
+		long plen = str.size();
+		memcpy(_buf+_hlen, &plen, pack_t::LenField); 
+		memcpy(_buf+_hlen+pack_t::LenField, str.c_str(), str.size());
+		*len = _hlen+pack_t::LenField+plen;
+		return _buf;
+	}
+
 protected:
 	char *_buf=nullptr;
 	char *_head=nullptr;
@@ -333,21 +354,24 @@ protected:
 
 inline size_t Head0xff(char *&head)
 {
-	head = new char[8];
-	memset(head, 0xff, 8);
-	return 8;
+	head = new char[4];
+	memset(head, 0xff, 4);
+	return 4;
 }
 
 inline const char* Head0xff(const char *stream, size_t len, size_t *head_len)
 {
 	long head = 0;
-	memset(&head, 0xff, sizeof(long));
-	*head_len = sizeof(long);
-	for(size_t i=0; i<len-sizeof(long)-1; ++i)
+	memset(&head, 0xff, 4);
+	*head_len = 4;
+	if( len > 4 )
 	{
-		long tmp = *(long*)(stream+i);
-		if(tmp == head)
-			return stream+sizeof(long);
+		for(size_t i=0; i<=len-4; ++i)
+		{
+			long tmp = *(long*)(stream+i);
+			if(tmp == head)
+				return stream+4;
+		}
 	}
 
 	return nullptr;

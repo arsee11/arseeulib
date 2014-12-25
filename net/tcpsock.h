@@ -45,13 +45,13 @@ public:
 		Close();
 	}
 	
-	template<class Pack>
-	int Write(Pack &pck)
+	int Read(char *buf, int len, int timeout)
 	{
-		Pack::serial_t ss;
-		size_t len;
-		const char *buf = ss(pck, &len);
-		return Write(buf, len);
+		if(timeout == -1)
+			return Read(buf, len);
+
+		//ToDo:timeout handle
+		return -1;
 	}
 	
 	int Read(char *buf, int len);

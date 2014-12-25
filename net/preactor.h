@@ -13,12 +13,12 @@
 using namespace std;
 
 //////////////////////////////////////////////////////////////////////////////
-template<class FdHolder,
-	class SELECTOR
+template<class FdHolder
+	,class Selector
 >
 class PreactorBase
 {
-	typedef SELECTOR selector_t; 
+	typedef Selector selector_t; 
 	typedef FdHolder fd_holder_t;
 	typedef typename fd_holder_t::fd_ptr_t fd_ptr_t;
 	typedef typename fd_holder_t::fd_list_t fd_list_t;

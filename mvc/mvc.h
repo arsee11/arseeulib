@@ -13,33 +13,36 @@
 #define MVC_H
 
 #ifndef MVC_REQUEST_H
-#include "mvc/mvcrequest.h"
+#include "mvcrequest.h"
 #endif
 
 #ifndef MVC_CONTROL_H
-#include "mvc/mvccontrol.h"
+#include "mvccontrol.h"
 #endif
 
 #ifndef DISPATCHER_H
-#include "mvc/dispatcher.h"
+#include "dispatcher.h"
 #endif
 
 #ifndef NAMESPDEF_H
 #include "../namespdef.h"
 #endif
 
+#include <memory>
+
+
 
 NAMESP_BEGIN
 
-template<class Logic, class Object>
+template<class Pack, class Receiver, class Logic>
 class MvcTrait
 {
 private:
-	typedef RControl<Object, Logic> ctrl_t;
-	typedef member_login_ctrl_t::response_t rsp_t;
+	typedef RControl<Pack, Receiver, Logic> ctrl_t;
+	typedef typename ctrl_t::response_t rsp_t;
 	
 public:
-	typedef Dispatcher<member_login_ctrl_t> dispth_t;	
+	typedef Dispatcher<ctrl_t> dispth_t;	
 };
 
 NAMESP_END

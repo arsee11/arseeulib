@@ -5,26 +5,25 @@
 #include <string.h>
 #include <memory>
 #include <string>
-#include "preactor.h"
-#include "selector.h"
-#include "session.h"
-#include "acceptor.h"
+#include "../preactor.h"
+#include "../selector.h"
+#include "../session.h"
+#include "../acceptor.h"
 
 using namespace std;
 
 typedef Preactor<FdHolder, true, Epoll> tcp_preactor_t;
 
-
-typedef Acceptor< Session<1024, tcp_preactor_t> > acceptor_t;
-typedef acceptor_t::ss_container_t ss_container_t    
-ss_container_t _sessions;
+typedef Session<1024, tcp_preactor_t> session_t;
+typedef Acceptor< session_t> acceptor_t;
+typedef typename session_t::ss_container_t ss_container;
 
 class Server
 {
 public:
 	Server()
 	{
-		_reactor.RegistryAcceptor(new acceptor_t(11111, &_sessions));
+		_reactor.RegistryAcceptor(new acceptor_t(11111));
 	}
 
 	int Run()
@@ -38,15 +37,14 @@ private:
 };
 
 
-void t(void *arg)
+void* t(void *arg)
 {
 	while(true)
 	{
-		cout<<"t..."<<endl;
-		ss_container_t *ss = static_cast<ss_container_t*>(arg);
-		ss_container_t::iterator i = ss->begin();
-		for(; i!=ss->end(); ++it)
-			(*i)->PostOutput("hello", 6);
+//		cout<<"t..."<<endl;
+		ss_container::iterator i = ss_container::instance().begin();
+		for(; i!=ss_container::instance().end(); ++i)
+			i->second->PostOutput("hello", 6);
 		
 		sleep(1);
 	}
@@ -55,7 +53,7 @@ void t(void *arg)
 int main( )
 {
 	pthread_t fd;
-	pthread_create(&fd, NULL, t, &sessions);
+	pthread_create(&fd, NULL, t, NULL);
 	Server svr_instance;
 	svr_instance.Run();
 

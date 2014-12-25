@@ -175,9 +175,13 @@ public:
 #endif
 		_handler->OutputHandle();
 		const char *buf = _handler->outbuf();
-		int len = _handler->out_bufsize();
+		size_t len = _handler->out_bufsize();
 		if( len > 0 )
+		{
+			cout<<"write{"<<len<<"):"<<buf<<endl;
 			write(_fd, buf, len);
+			_handler->ClearOutbuf();
+		}
 
 		_preactor->PostRecv(_fd);
 	}

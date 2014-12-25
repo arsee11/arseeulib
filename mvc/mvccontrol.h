@@ -173,8 +173,9 @@ NAMESP_BEGIN
 //@PACK inter pack.
 //@OBJECT model.
 //@LOGIC request method.
-template<class PACK, 
-	class OBJECT
+template<class PACK 
+	//,class OBJECT
+	,class Receiver 
 	,class LOGIC
 >
 class RControl
@@ -182,50 +183,53 @@ class RControl
 
 public:
 	typedef PACK pack_t;
-	typedef pack_t::params_pack_t 	params_pack_t;
-	typedef pack_t::pack_ptr_t  	pack_ptr_t;
-	typedef pack_t::pack_list_t 	pack_list_t;
+	typedef typename pack_t::params_pack_t 	params_pack_t;
+	typedef typename pack_t::pack_ptr_t  	pack_ptr_t;
+	typedef typename pack_t::pack_list_t 	pack_list_t;
 	
-	typedef OBJECT object_t;
+	//typedef OBJECT object_t;
 	typedef LOGIC logic_t;
-	typedef RRequest<object_t, logic_t> request_t;
+	typedef RRequest<logic_t, Receiver> request_t;
 	typedef RResponse<pack_t> response_t;
 	
 	
-	const static std::string rqt_name()const { return logic_t::name(); }
-	const static std::string target()const { return logic_t::target(); }
+	const static std::string rqt_name() { return logic_t::name(); }
+	const static std::string target(){ return logic_t::target(); }
 	
-	RControl(object_t *obj, logic_t *logic)
-		:obj(obj)
-		,_rsp(obj->Name())
+	RControl(/*object_t *obj,i*/const std::string &rsp_name, logic_t *logic)
+		//:_obj(obj)
+		//,,_rsp(object_t::name())
+		:_rsp(rsp_name)
 	{
-		_rqt.AttachSrc(obj);
+		//_rqt.AttachSrc(obj);
 		_rqt.AttachLogic(logic);
 	}
 	
-	RControl()
+	RControl(const std::string &rsp_name, Receiver* rev)
+		:_rsp(rsp_name)
 	{
+		_rqt.AttachReceiver(rev);
 		_rqt.AttachLogic( new logic_t(&_rsp) );
 	}
 	
-	void AttachObj(object_t *obj)
-	{
-		_obj = obj
-		_rsp.SetSrc(_obj);			
-		_rqt.AttachSrc(_obj);
-	}
+	//void AttachObj(object_t *obj)
+	//{
+	//	_obj = obj;
+	//	_rsp.SetSrc(_obj);			
+	//	_rqt.AttachSrc(_obj);
+	//}
 
-	bool Execute(pack_t const& pck)
+	template<class Object>
+	bool Execute(Object *obj, const pack_t& pck)
 	{
 		typename pack_t::params_pack_t prams = std::move(pck.Params());
-		_state = _rqt.Execute( prams );
+		_state = _rqt.Execute(obj, prams );
 				
 		return true;
 	}
 	
-	pack_list_t Reply(const pack_t &src_pck )
+	void Reply(pack_t &src_pck, pack_list_t& pcks  )
 	{
-		pack_list_t pcks;
 		pack_ptr_t pck( _rsp.Reply(src_pck) );
 		if(pck!=nullptr && pck->Status())
 			pcks.push_back(pck);
@@ -247,11 +251,10 @@ public:
 			}
 		}
 				
-		return std::move( pcks );
 	}
 
 private:
-	object_t *_obj = nullptr;
+	//object_t *_obj = nullptr;
 	request_t  _rqt;
 	response_t _rsp;
 	int _state = 0;

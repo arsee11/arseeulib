@@ -19,6 +19,27 @@
 
 NAMESP_BEGIN
 
+JSerializer::stream_t JSerializer::Resolve(const pack_ptr_t &pck)
+{
+	Json::FastWriter wr;
+	Json::Value root;
+	root["source"] = pck->Source();
+	root["target"] = pck->Target();
+	root["action"] = pck->Action();
+	Json::Value param;
+	Json::Value params;
+	for(auto &i : pck->Params())
+	{
+		param["name"]  = i.first;
+		param["value"] = i.second;
+		params.append(param);
+	}
+			
+	root["params"] = params;
+	std::string str = wr.write(root);
+	return std::move(str);		
+}
+
 JSerializer::stream_t JSerializer::Resolve(const pack_t &pck)
 {
 	Json::FastWriter wr;

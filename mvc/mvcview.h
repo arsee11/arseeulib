@@ -16,10 +16,6 @@
 #include "mvcview_abstr.h"
 #endif
 
-#ifndef GLOBALDEF_H
-#include "globaldef.h"
-#endif
-
 #ifndef NAMESPDEF_H
 #include "../namespdef.h"
 #endif
@@ -72,6 +68,7 @@ public:
 	//	_t.Receive( params );
 	//}
 	
+	const std::string name(){ return _t.name(); }
 	void Output() override
 	{
 		_t.Output();
@@ -84,7 +81,6 @@ private:
 };
 
 
-typedef std::string view_t;
 
 NAMESP_END;
 

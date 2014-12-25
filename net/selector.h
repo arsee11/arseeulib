@@ -21,7 +21,7 @@
 using namespace std;
 
 
-void SetNoblocking(fd_t fd)
+inline void SetNoblocking(fd_t fd)
 {
 	int flag = fcntl(fd, F_GETFD, NULL);
 	if( fcntl(fd, F_SETFL, flag|O_NONBLOCK) == -1 )

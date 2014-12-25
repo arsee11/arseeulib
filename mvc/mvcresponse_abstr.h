@@ -3,9 +3,6 @@
 #ifndef MVCRESPONSE_ABSTR_H
 #define MVCRESPONSE_ABSTR_H
 
-#ifndef GLOBALDEF_H
-#include "globaldef.h"
-#endif
 
 #ifndef NAMESPDEF_H
 #include "../namespdef.h"
@@ -26,10 +23,14 @@ public:
 	virtual ~IFilter(){}
 };
 
+
 class IResponse
 {
 public:
-	virtual int Push() = 0;
+	typedef std::string  view_t;
+//	virtual int Push() = 0;
+	virtual void AttachView(const view_t &view)=0;
+	virtual void DetachView(const view_t &view)=0;
 	virtual ~IResponse(){}
 };
 
