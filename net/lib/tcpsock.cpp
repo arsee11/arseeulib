@@ -10,7 +10,7 @@
 //****************************
 
 #ifndef TCPSOCK_H
-#include "tcpsock.h"
+#include "../tcpsock.h"
 #endif
 
 #if defined(__GNUC__)
@@ -75,6 +75,25 @@ TcpSock::lpeer_ptr_t TcpSock::CreateServer(const std::string &ip, unsigned short
 	return nullptr;
 }
 
+int RemotePeer::Read(char *buf, int len, int timeout)
+{
+	if (timeout == -1)
+		return Read(buf, len);
+
+	//ToDo:timeout handle
+	fd_set rfds;
+	FD_ZERO(&rfds);
+	FD_SET(_sock, &rfds);
+
+	timeval tval = { timeout, 0 };
+	int ret = select(_sock + 1, &rfds, NULL, NULL, &tval);
+	if (ret > 0 && FD_ISSET(_sock, &rfds) )
+	{
+		return Read(buf, len);
+	}
+
+	return 0;
+}
 
 int RemotePeer::Read(char *buf, int len)
 {

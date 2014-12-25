@@ -64,7 +64,7 @@ public:
 	RequesterTmp()=default;
 	virtual ~RequesterTmp(){};
 
-	void Action(const std::string& action){ _pack.Action(action); _pack.Reset(); }
+	void Action(const std::string& action){ _pack.Reset(); _pack.Action(action); }
 	void Action(std::string&& action){ Action(action); }
 	void Action(const char* action){ Action(std::string(action)); }
 	
@@ -75,7 +75,8 @@ public:
 	void Param(std::string &&name, const char* value){ Param(name, std::string(value)); }
 	void Param(const char* name, const char* value){ Param(std::string(name), std::string(value)); }
 
-	void Request(std::string &msg, int timeout=-1)throw(rqtexcpt)
+	//@timeout seconds.
+	std::string Request(int timeout = -1)throw(rqtexcpt)
 	{
 		if(_sender == nullptr)
 			throw rqtexcpt("not open!");
@@ -87,7 +88,11 @@ public:
 		_sender->Write(buf, len);
 		//ToDo:do until a whole pack or timeout
 		char rbuf[1024]={0};
-		_sender->Read(rbuf, 1024, timeout);
+		int r = _sender->Read(rbuf, 1024, timeout);
+		if (r>0)
+			return std::move(string(rbuf + pack_t::HeadField + pack_t::LenField));
+
+		return "not recv";
 	}
 
 	void Close(){ if(_sender!=nullptr) _sender->Close(); }

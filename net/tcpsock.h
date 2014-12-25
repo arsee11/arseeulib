@@ -45,15 +45,7 @@ public:
 		Close();
 	}
 	
-	int Read(char *buf, int len, int timeout)
-	{
-		if(timeout == -1)
-			return Read(buf, len);
-
-		//ToDo:timeout handle
-		return -1;
-	}
-	
+	int Read(char *buf, int len, int timeout);
 	int Read(char *buf, int len);
 	int Write(const char *buf, int len);
 

@@ -49,7 +49,7 @@ public:
 	typedef Serializer serial_t;
 
 
-	static const short HeadFiled=4;
+	static const short HeadField=4;
 	static const short LenField = 4;
 
 		
@@ -370,7 +370,7 @@ inline const char* Head0xff(const char *stream, size_t len, size_t *head_len)
 	*head_len = 4;
 	if( len > 4 )
 	{
-		for(size_t i=0; i<=len-4; ++i)
+		for(size_t i=0; i<=len-4; ++i) 
 		{
 			long tmp = *(long*)(stream+i);
 			if(tmp == head)

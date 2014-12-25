@@ -18,10 +18,10 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\tcpsock.cpp">
+    <ClCompile Include="tcpsock.cpp">
       <Filter>Resource Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\udpsock.cpp">
+    <ClCompile Include="udpsock.cpp">
       <Filter>Resource Files</Filter>
     </ClCompile>
   </ItemGroup>
