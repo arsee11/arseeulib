@@ -108,6 +108,8 @@ private:
 	//source_t *_src;
 	Receiver* _receiver = nullptr; 
 };
+
+
 template<class SOURCE>
 class MultiRequest
 {

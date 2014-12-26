@@ -64,19 +64,53 @@ public:
 	RequesterTmp()=default;
 	virtual ~RequesterTmp(){};
 
-	void Action(const std::string& action){ _pack.Reset(); _pack.Action(action); }
-	void Action(std::string&& action){ Action(action); }
-	void Action(const char* action){ Action(std::string(action)); }
+	void source(const std::string& val){ _source = val; }
+	void source(std::string&& val){ source(val); }
+	void source(const char* val){ source(std::string(val)); }
+
+	void action(const std::string& val){ _action = val; }
+	void action(std::string&& val){ action(val); }
+	void action(const char* val){ action(std::string(val)); }
 	
-	void Param(const std::string &name, const std::string& value){ _pack.Param(name, value); }
-	void Param(std::string &&name, const std::string& value){ Param(name, value); }
-	void Param(const char* name, const std::string& value){ Param(std::string(name), value); }
-	void Param(std::string &&name, std::string&& value){ Param(name, value); }
-	void Param(std::string &&name, const char* value){ Param(name, std::string(value)); }
-	void Param(const char* name, const char* value){ Param(std::string(name), std::string(value)); }
+	void param(const std::string &name, const std::string& value){ _pack.param(name, value); }
+	void param(std::string &&name, const std::string& value){ param(name, value); }
+	void param(const char* name, const std::string& value){ param(std::string(name), value); }
+	void param(std::string &&name, std::string&& value){ param(name, value); }
+	void param(const std::string &name, std::string&& value){ param(name, value); }
+	void param(const char* name, std::string&& value){ param(string(name), value); }
+	void param(std::string &&name, const char* value){ param(name, std::string(value)); }
+	void param(const std::string &name, const char* value){ param(name, std::string(value)); }
+	void param(const char* name, const char* value){ param(std::string(name), std::string(value)); }
 
 	//@timeout seconds.
 	std::string Request(int timeout = -1)throw(rqtexcpt)
+	{
+		char rbuf[1024]={0};
+		int r = Request(rbuf, 1024, timeout);
+		if (r>0)
+			return std::move(string(rbuf + pack_t::HeadField + pack_t::LenField));
+			
+		return "not recv";
+	}
+	
+	template<class Response>
+	void Request(Response &rsp, int timeout=-1)
+	{
+		char rbuf[1024]={0};
+		int r = Request(rbuf, 1024, timeout);
+		if (r>0)
+			rsp.Parse(rbuf, r);
+		//else
+			//rsp.Status(false);
+	}
+
+	void Close(){ if(_sender!=nullptr) _sender->Close(); }
+	//ToDo:Id handle
+	void GenerateId(){ _id = "0"; }
+
+private:
+	//@timeout seconds.
+	int Request(char *rbuf, int rlen, int timeout = -1)throw(rqtexcpt)
 	{
 		if(_sender == nullptr)
 			throw rqtexcpt("not open!");
@@ -84,24 +118,18 @@ public:
 		GenerateId();
 		typename pack_t::serial_t ss;
 		size_t len=0;
+		_pack.action(_action);
+		_pack.source(_source);
 		const char* buf = ss(_pack, &len);
 		_sender->Write(buf, len);
 		//ToDo:do until a whole pack or timeout
-		char rbuf[1024]={0};
-		int r = _sender->Read(rbuf, 1024, timeout);
-		if (r>0)
-			return std::move(string(rbuf + pack_t::HeadField + pack_t::LenField));
-
-		return "not recv";
+		return _sender->Read(rbuf, rlen, timeout);
 	}
-
-	void Close(){ if(_sender!=nullptr) _sender->Close(); }
-	//ToDo:Id handle
-	void GenerateId(){ _id = "0"; }
-
+	
 protected:
 	pack_t _pack;
 	std::string _action;
+	std::string _source;
 	std::string _id;
 	Sender _sender=nullptr;
 };

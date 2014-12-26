@@ -20,65 +20,41 @@
 #include "../namespdef.h"
 #endif
 
+#ifndef INVOKED_H
+#include "invoked.h"
+#endif
+
 #include <string>
 #include <utility>
 
 NAMESP_BEGIN
 
-template<class T>
-class View:
-	public IView
-{
-public:
-	typedef View<T> my_t;
-	
-public:
-	View()
-	{
-		_t = std::move<T>( T() );
-	}
-	
-	template<class... Us>
-	View(Us*... us)
-	{
-		_t =  T(us...);
-	}
-	
-	template<class... Us>
-	View(Us&... us)
-	{
-		_t = T(us...);
-	}
-
-	template<class... Us>
-	View(Us&&... us)
-	{
-		_t = T(us...);
-	}
-	
-	template<class... Us>
-	bool Receive(Us&... params)
-	{
-		return _t.Receive( params... );
-	}
-	
-	//template<class... Us>
-	//void Receive(Us&&... params)
-	//{
-	//	_t.Receive( params );
-	//}
-	
-	const std::string name(){ return _t.name(); }
-	void Output() override
-	{
-		_t.Output();
-	}
-	
-	T& ref(){ return (_t); }
-	
-private:
-	T _t;
-};
+template<int n, class Derived, class... Ts>
+using MVCView = Invoked<n, Derived, Ts...>;
+//{
+//public:
+//	typedef View<param_count> my_t;
+//	
+//public:
+//	template<class... Us>
+//	bool Execute(Us&&... params)
+//	{
+//		return _t.Receive( params... );
+//	}
+//	
+//	template<class... Us>
+//	bool Execute(Us&... params)
+//	{
+//		return _t.Receive( params... );
+//	}
+//	
+//	const std::string name(){ return _t.name(); }
+//		
+//	T& ref(){ return (_t); }
+//	
+//private:
+//	T _t;
+//};
 
 
 
