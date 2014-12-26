@@ -231,21 +231,21 @@ public:
 	void Reply(pack_t &src_pck, pack_list_t& pcks  )
 	{
 		pack_ptr_t pck( _rsp.Reply(src_pck) );
-		if(pck!=nullptr && pck->Status())
+		if(pck!=nullptr && pck->status())
 			pcks.push_back(pck);
 		else
 		{
 			if(_state == 0)
 			{
 				pcks.push_back( pack_ptr_t(
-					new pack_t(src_pck.Target(), src_pck.Source(), "response", "Resqust OK")
+					new pack_t(src_pck.target(), src_pck.source(), "response", "Resqust OK")
 					)
 				);
 			}
 			else
 			{
 				pcks.push_back(pack_ptr_t(
-					new pack_t(src_pck.Target(), src_pck.Source(), "response", "Resqust Failed")
+					new pack_t(src_pck.target(), src_pck.source(), "response", "Resqust Failed")
 					)
 				);
 			}

@@ -99,6 +99,20 @@ private:
 	std::map<key_t, session_ptr_t> _sessions;
 };
 
+struct Buf
+{
+	Buf(const char* buf, size_t len);
+	Buf(const char* buf, size_t len);
+	Buf(const char* buf);
+	
+	~Buf(){ delete[] buf; }
+	
+	char *buf=nullptr;
+	size_t size=0;
+};
+
+typedef std::shared_ptr<buf> buf_t;
+
 template<size_t insize, class Preactor>
 class Session
 {
@@ -157,7 +171,7 @@ public:
 
 	int PostOutput(const char* buf, size_t size)
 	{
-		_outbuf = buf;
+		_outbuf = const_cast<const char*>(buf);
 		_outbuf_size = size;
 		_preactor->PostSend(_fd); 
 	}
@@ -178,7 +192,7 @@ protected:
 	unsigned short _remote_port = -1;
 	fd_t _fd;
 	char _inbuf[insize] = {0};
-	const char *_outbuf = nullptr;
+	char *_outbuf = nullptr;
 	size_t _outbuf_size = 0;
 	Preactor *_preactor = nullptr;
 };

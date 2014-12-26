@@ -41,7 +41,7 @@ public:
 	{
 		typedef Pack pack_t;
 		//std::cout << pck.Action() << std::endl;
-		if ( pck.Action() == control_t::rqt_name() )
+		if ( pck.action() == control_t::rqt_name() )
 		{
 			//std::string tname = pck.Target();
 			std::string tname = control_t::target();

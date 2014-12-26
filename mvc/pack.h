@@ -134,28 +134,30 @@ public:
 	{
 	}
 
-	bool Status()const{ return _status; }
-	void Status(bool val){ _status = val; }
+	bool status()const{ return _status; }
+	void status(bool val){ _status = val; }
 
-	stream_t Action()const{ return std::move(_action); }
-	void Action(const stream_t &val ){ _action=val; }
-	void Action(stream_t &&val ){ _action=val; }
+	stream_t action()const{ return std::move(_action); }
+	void action(const stream_t &val ){ _action=val; }
+	void action(stream_t &&val ){ _action=val; }
 	
-	stream_t Target()const{ return std::move(_target); }
-	void Target(stream_t &&val ){ _target=val; }
+	stream_t target()const{ return std::move(_target); }
+	void target(stream_t &&val ){ _target=val; }
 
-	stream_t Source()const{ return std::move(_source); }
-	void Source(stream_t &&val ){ _source=val; }
+	stream_t source()const{ return std::move(_source); }
+	void source(const stream_t &val ){ _source=val; }
+	void source(stream_t &&val ){ source(val); }
 
-	params_pack_t Params()const{return std::move(_params);} 
-	void Param(stream_t &&name, stream_t &&val){ _params[name] = val; }
-	void Param(const stream_t &name, const stream_t &val){ _params[name] = val; }
-	void Param(stream_t &&name, const stream_t &val){ _params[name] = val; }
-	void Param(const stream_t &name, stream_t &&val){ _params[name] = val; }
-	void Param(const char *name, stream_t &&val){ _params[name] = val; }
+	params_pack_t params()const{return std::move(_params);} 
+	void param(stream_t &&name, stream_t &&val){ _params[name] = val; }
+	void param(const stream_t &name, const stream_t &val){ _params[name] = val; }
+	void param(stream_t &&name, const stream_t &val){ _params[name] = val; }
+	void param(const stream_t &name, stream_t &&val){ _params[name] = val; }
+	void param(const char *name, stream_t &&val){ _params[name] = val; }
 
 	void Reset()
 	{
+		_status = false;
 		_action="";
 		_target="";
 		_source="";
@@ -198,6 +200,7 @@ public:
 	//@return >0 successed, otherwise failed.
 	int operator()(pack_t &pck, const char* stream, size_t len)
 	{
+		pck.Reset();
 		const char *pstream = nullptr;	
 		if( ( pstream = Judge(stream, len) ) != nullptr )
 		{
@@ -312,18 +315,20 @@ public:
 public:
 	virtual ~SerializerAbstr()
 	{
-		if(_buf != nullptr )
-			delete[] _buf;
-		if(_head != nullptr)
-			delete _head;
+		//if(_buf != nullptr )
+		//	delete[] _buf;
+		//if(_head != nullptr)
+		//	delete _head;
 	}
 	
+	//@return new memory must delete it after use
 	const char* operator()(const pack_t &pck, size_t *len)
 	{
 		stream_t str = Resolve(pck);
 		return Build(str, len);
 	}
 
+	//@return new memory must delete it after use
 	const char* operator()(const pack_ptr_t &pck, size_t *len)
 	{
 		stream_t str = Resolve(pck);
