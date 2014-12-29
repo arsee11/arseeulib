@@ -96,7 +96,7 @@ inline bool SockInit()
 inline bool SockUninit()
 {
 #if defined(_MSC_VER)
-	return WSACleanup();
+	return WSACleanup()==0;
 #else
 	return true;
 #endif
