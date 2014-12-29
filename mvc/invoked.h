@@ -48,8 +48,6 @@ public:
 	enum{ P1, PC };	
 	
 	typedef typename ArgAt<0, Ts...>::result 	p1_t;
-		
-	static const std::string _p1;
 };
 
 //the want 2 params one.
@@ -64,9 +62,6 @@ public:
 	
 	typedef typename ArgAt<0, Ts...>::result 	p1_t;
 	typedef typename ArgAt<1, Ts...>::result 	p2_t;
-
-	static const std::string _p1;
-	static const std::string _p2;
 };
 
 //the want 3 params one.
@@ -83,9 +78,6 @@ public:
 	typedef typename ArgAt<1, Ts...>::result 	p2_t;
 	typedef typename ArgAt<2, Ts...>::result 	p3_t;
 	
-	static const std::string _p1;
-	static const std::string _p2;
-	static const std::string _p3;	
 };
 
 

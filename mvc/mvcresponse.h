@@ -141,6 +141,7 @@ public:
 	}
 	
 	void ReplyAdd(std::string pname, std::string pvalue){ _params[pname] = pvalue; }
+	void ReplyAdd(std::string pname, unsigned short pvalue){ _params[pname] = StringBuilder(pvalue); }
 	
 	template<class T>	
 	int PushAdd(const std::string& key, const T& value)
@@ -178,7 +179,7 @@ public:
 	pack_t *Reply(const pack_t &src_pck)
 	{
 		if(_params.size() > 0)
-			return new pack_t(_src, src_pck.Source(), "response", _params);
+			return new pack_t(_src, src_pck.source(), "response", _params);
 			
 		return nullptr;
 	}

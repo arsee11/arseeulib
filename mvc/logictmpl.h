@@ -27,6 +27,7 @@ class BaseLogicTmpl:
 	public Invoked<n, Derived, Ts...> 
 {
 protected:
+	typedef BaseLogicTmpl<n, Derived, Response, Ts...> base_t;
 	Response *_rsp;
 
 public:

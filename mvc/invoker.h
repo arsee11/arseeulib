@@ -51,7 +51,7 @@ struct Invoker<1>
 	{
 		typedef ParamPlace< typename T::p1_t,0> 	_1pp;	
 			
-		_1pp::name = T::_p1;
+		_1pp::name = T::p1();
 			
 		ParamTransfor<param_pack_t, _1pp> pt = {pp};
 		//template specify Get<0> is a template.
@@ -65,7 +65,7 @@ struct Invoker<1>
 	{
 		typedef ParamPlace< typename T::p1_t,0> 	_1pp;	
 			
-		_1pp::name = T::_p1;
+		_1pp::name = T::p1();
 			
 		ParamTransfor<param_pack_t, _1pp> pt = {pp};
 		//template specify Get<0> is a template.
@@ -85,8 +85,8 @@ struct Invoker<2>
 		typedef ParamPlace< typename T::p1_t,0> 	_1pp;	
 		typedef ParamPlace< typename T::p2_t,1> 	_2pp;	
 				
-		_1pp::name = T::_p1;
-		_2pp::name = T::_p2;
+		_1pp::name = T::p1();
+		_2pp::name = T::p2();
 		//cout << T::_p1 << " " << T::_p2 << endl;
 		//cout << _1pp::name << " " << _2pp::name << endl;
 		ParamTransfor<param_pack_t, _1pp, _2pp> pt = {pp};
@@ -110,9 +110,9 @@ struct Invoker<3>
 		typedef ParamPlace< typename T::p2_t, 1> 	_2pp;
 		typedef ParamPlace< typename T::p3_t, 2> 	_3pp;
 		
-		_1pp::name = T::_p1;
-		_2pp::name = T::_p2;
-		_3pp::name = T::_p3;
+		_1pp::name = T::p1();
+		_2pp::name = T::p2();
+		_3pp::name = T::p3();
 		
 		ParamTransfor<param_pack_t, _1pp, _2pp, _3pp> pt = {pp};
 		return t->Execute(rev, src

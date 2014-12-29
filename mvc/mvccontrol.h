@@ -222,7 +222,7 @@ public:
 	template<class Object>
 	bool Execute(Object *obj, const pack_t& pck)
 	{
-		typename pack_t::params_pack_t prams = std::move(pck.Params());
+		typename pack_t::params_pack_t prams = std::move(pck.params());
 		_state = _rqt.Execute(obj, prams );
 				
 		return true;

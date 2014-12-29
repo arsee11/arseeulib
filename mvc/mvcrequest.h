@@ -15,8 +15,8 @@
 #include "../namespdef.h"
 #endif
 
-#ifndef PARAMS_DISPATCH_H
-#include "params_dispatch.h"
+#ifndef INVOKER_H
+#include "invoker.h"
 #endif
 
 NAMESP_BEGIN

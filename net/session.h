@@ -102,7 +102,6 @@ private:
 struct Buf
 {
 	Buf(const char* buf, size_t len);
-	Buf(const char* buf, size_t len);
 	Buf(const char* buf);
 	
 	~Buf(){ delete[] buf; }
@@ -111,7 +110,7 @@ struct Buf
 	size_t size=0;
 };
 
-typedef std::shared_ptr<buf> buf_t;
+typedef std::shared_ptr<Buf> buf_t;
 
 template<size_t insize, class Preactor>
 class Session
@@ -171,7 +170,7 @@ public:
 
 	int PostOutput(const char* buf, size_t size)
 	{
-		_outbuf = const_cast<const char*>(buf);
+		_outbuf = const_cast<char*>(buf);
 		_outbuf_size = size;
 		_preactor->PostSend(_fd); 
 	}
