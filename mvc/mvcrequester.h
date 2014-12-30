@@ -29,6 +29,8 @@
 #include "../net/tcpsock.h"
 #endif
 
+#include <thread>
+
 NAMESP_BEGIN
 
 class rqtexcpt:public std::exception
@@ -53,16 +55,16 @@ private:
 };
 
 
-//@Sender must smart pointer
-template<class Sender, class Pack>
+//@Sockptr must be a smart pointer
+template<class Sockptr, class Pack>
 class RequesterTmp
 {
 	typedef Pack pack_t;
 
 public:
-	void sender(const Sender &s)const{ _sender = s; }
+	void sender(const Sockptr &s)const{ _sock = s; }
 	RequesterTmp()=default;
-	virtual ~RequesterTmp(){};
+	virtual ~RequesterTmp(){ _listen_status = false; _listener_thread.join(); };
 
 	void source(const std::string& val){ _source = val; }
 	void source(std::string&& val){ source(val); }
@@ -104,7 +106,49 @@ public:
 			//rsp.Status(false);
 	}
 
-	void Close(){ if(_sender!=nullptr) _sender->Close(); }
+	template<class View>
+	void AddListener(View &v)
+	{
+	}
+
+	template<class View>
+	void Listen(View *v)
+	{
+		auto fuc = [this, v](){		
+			pack_t::unserial_t us(1024);
+			while (_listen_status)
+			{
+				for (int i = 0; i<3; i++)
+				{
+					char rbuf[1024] = { 0 };
+					size_t len =  _sock->Read(rbuf, 1024, 2);
+					if (len > 0)
+					{
+						size_t pcklen = 0;
+						pack_t pck;
+						us(pck, rbuf, len);
+						if (pck.status())
+						{
+							if (v->name() == pck.target())
+								Invoker<View::PC>::Invoke(pck.params(), v);
+
+							break;
+						}
+					}
+					//else
+					//{
+					//	_listen_status = false;
+					//	break;
+					//}
+				}
+
+			}
+		};
+
+		_listener_thread = std::thread(fuc);
+	}
+
+	void Close(){ if(_sock!=nullptr) _sock->Close(); }
 	//ToDo:Id handle
 	void GenerateId(){ _id = "0"; }
 
@@ -112,7 +156,7 @@ private:
 	//@timeout seconds.
 	int Request(char *rbuf, int rlen, int timeout = -1)throw(rqtexcpt)
 	{
-		if(_sender == nullptr)
+		if(_sock == nullptr)
 			throw rqtexcpt("not open!");
 
 		GenerateId();
@@ -121,9 +165,9 @@ private:
 		_pack.action(_action);
 		_pack.source(_source);
 		const char* buf = ss(_pack, &len);
-		_sender->Write(buf, len);
+		_sock->Write(buf, len);
 		//ToDo:do until a whole pack or timeout
-		return _sender->Read(rbuf, rlen, timeout);
+		return _sock->Read(rbuf, rlen, timeout);
 	}
 	
 protected:
@@ -131,7 +175,9 @@ protected:
 	std::string _action;
 	std::string _source;
 	std::string _id;
-	Sender _sender=nullptr;
+	Sockptr _sock = nullptr;
+	std::thread _listener_thread;
+	bool _listen_status = true;
 };
 
 
@@ -147,7 +193,7 @@ public:
 
 	void Open(const char* rip, unsigned short rport)throw(sockexcpt)
 	{
-		base_t::_sender = TcpSock::CreateClient(std::string(rip), rport);
+		base_t::_sock = TcpSock::CreateClient(std::string(rip), rport);
 	}
 };
 
