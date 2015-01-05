@@ -64,7 +64,7 @@ class RequesterTmp
 public:
 	void sender(const Sockptr &s)const{ _sock = s; }
 	RequesterTmp()=default;
-	virtual ~RequesterTmp(){ _listen_status = false; _listener_thread.join(); };
+	virtual ~RequesterTmp(){ _listen_status = false; if(_listener_thread.joinable()) _listener_thread.join(); };
 
 	void source(const std::string& val){ _source = val; }
 	void source(std::string&& val){ source(val); }
@@ -121,7 +121,7 @@ public:
 				for (int i = 0; i<3; i++)
 				{
 					char rbuf[1024] = { 0 };
-					size_t len =  _sock->Read(rbuf, 1024, 2);
+					int len =  _sock->Read(rbuf, 1024, 2);
 					if (len > 0)
 					{
 						size_t pcklen = 0;
@@ -166,8 +166,10 @@ private:
 		_pack.source(_source);
 		const char* buf = ss(_pack, &len);
 		_sock->Write(buf, len);
+		_pack.Reset();
 		//ToDo:do until a whole pack or timeout
-		return _sock->Read(rbuf, rlen, timeout);
+		//return _sock->Read(rbuf, rlen, timeout);
+		return 1;
 	}
 	
 protected:
