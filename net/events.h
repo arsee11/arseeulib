@@ -178,8 +178,8 @@ public:
 		size_t len = _handler->out_bufsize();
 		if( len > 0 )
 		{
-			cout<<"write{"<<len<<"):"<<buf<<endl;
-			write(_fd, buf, len);
+			cout<<_fd<<":write{"<<len<<"):"<<buf+8<<endl;
+			int r = write(_fd, buf, len);
 			_handler->ClearOutbuf();
 		}
 

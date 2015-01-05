@@ -42,7 +42,8 @@ class SessionContainer
 {
 public:
 	//typedef std::shared_ptr<SessionT> session_ptr_t; 
-	typedef SessionT* session_ptr_t; 
+	typedef SessionT session_t; 
+	typedef session_t* session_ptr_t; 
 	typedef Key key_t;
 	typedef typename std::map<key_t, session_ptr_t>::iterator iterator;
 
@@ -112,11 +113,12 @@ struct Buf
 
 typedef std::shared_ptr<Buf> buf_t;
 
-template<size_t insize, class Preactor>
+template<size_t insize, class Preactor, class Derived>
 class Session
 {
 public:
-	typedef SessionContainer<Session<insize, Preactor> > ss_container_t;
+	//typedef SessionContainer<Session<insize, Preactor> > ss_container_t;
+	typedef SessionContainer<Derived> ss_container_t;
 
 public:
 	Session(fd_t fd, std::string remoteip, unsigned short remote_port)
@@ -124,7 +126,7 @@ public:
 		,_remote_port(remote_port)
 		,_fd(fd)
 	{
-		ss_container_t::instance().put(this);
+	//	ss_container_t::instance().put(this);
 	}
 
 	Session()=delete;
@@ -139,7 +141,7 @@ public:
 #ifdef DEBUG
 		cout<<"~Session"<<endl;
 #endif
-		ss_container_t::instance().pop(this);
+//		ss_container_t::instance().pop(this);
 	}
 
 	virtual void InputHandle(size_t len)

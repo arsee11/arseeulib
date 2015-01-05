@@ -115,6 +115,7 @@ struct Invoker<3>
 		_3pp::name = T::p3();
 		
 		ParamTransfor<param_pack_t, _1pp, _2pp, _3pp> pt = {pp};
+		cout<<typeid(pt.template Get<0>()).name()<< pt.template Get<0>()<<typeid(pt.template Get<1>()).name()<< pt.template Get<1>()<<typeid(pt.template Get<2>()).name()<< pt.template Get<2>()<<endl; 
 		return t->Execute(rev, src
 			, pt.template Get<0>()
 			, pt.template Get<1>()

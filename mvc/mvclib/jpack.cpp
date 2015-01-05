@@ -54,8 +54,7 @@ JSerializer::stream_t JSerializer::Resolve(const pack_ptr_t &pck)
 	}
 			
 	root["params"] = params;
-	std::string str = wr.write(root);
-	return std::move(str);		
+	return std::move(wr.write(root));
 }
 
 JSerializer::stream_t JSerializer::Resolve(const pack_t &pck)
@@ -75,8 +74,7 @@ JSerializer::stream_t JSerializer::Resolve(const pack_t &pck)
 	}
 			
 	root["params"] = params;
-	std::string str = wr.write(root);
-	return std::move(str);		
+	return std::move(wr.write(root));
 }
 
 size_t JSerializer::Header()

@@ -144,16 +144,16 @@ public:
 	void ReplyAdd(std::string pname, unsigned short pvalue){ _params[pname] = StringBuilder(pvalue); }
 	
 	template<class T>	
-	int PushAdd(const std::string& key, const T& value)
+	int PushAdd(const string& target, const std::string& key, const T& value)
 	{
 		string strval =StringBuilder(value);
 		params_pack_t params;
 		params[key] = strval;
-		for(auto i:_views)
+		//for(auto i:_views)
 		{			
 			_pcks.push_back( 
-				pack_ptr_t( new pack_t(i
-					,_src
+				pack_ptr_t( new pack_t("push"
+					,target
 					,"push"
 					,params
 				) )
@@ -165,11 +165,9 @@ public:
 	int Push(Sender& ss)
 	{
 		typename pack_t::serial_t serial;
-		for(auto &i : _pcks)
+		for(auto i : _pcks)
 		{
-			size_t outbuf_size=0;
-			const char * outbuf = serial(i, &outbuf_size);
-			ss(outbuf, outbuf_size);
+			ss(i);
 		}
 		
 		return 0;
@@ -189,6 +187,7 @@ protected:
 	params_pack_t _params;
 	pack_list_t _pcks;
 	std::string _src;
+	std::string _target;
 };
 
 

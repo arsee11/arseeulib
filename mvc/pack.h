@@ -27,7 +27,8 @@
 #include <map>
 #include <vector>
 #include <memory>
-
+#include <iostream>
+using namespace std;
 NAMESP_BEGIN
 
 ///////////////////////////////////////////////////////////////////////////
@@ -187,12 +188,14 @@ public:
 	UnSerializerAbstr(size_t buf_len)
 		:_buf_len(buf_len)
 	{
+		cout<<"UnSerializerAbstr()"<<endl;
 		_buf = new char[3*_buf_len];
 		memset(_buf, 0, 3*_buf_len);
 	}
 
 	~UnSerializerAbstr()
 	{
+		cout<<"~UnSerializerAbstr()"<<endl;
 		delete[] _buf;
 		_buf = nullptr;
 	}
@@ -343,11 +346,12 @@ protected:
 	const char* Build(stream_t &str, size_t* len)
 	{
 		_hlen = Header();
-		_buf = new char[_hlen+pack_t::LenField+str.size()];
+		long plen = str.size()+1;//add \0
+		_buf = new char[_hlen+pack_t::LenField+plen];
 		memcpy(_buf, _head, _hlen);
-		long plen = str.size();
 		memcpy(_buf+_hlen, &plen, pack_t::LenField); 
-		memcpy(_buf+_hlen+pack_t::LenField, str.c_str(), str.size());
+		//memcpy(_buf+_hlen+pack_t::LenField, str.c_str(), plen);
+		strcpy(_buf+_hlen+pack_t::LenField, str.c_str());
 		*len = _hlen+pack_t::LenField+plen;
 		return _buf;
 	}
