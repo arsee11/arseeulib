@@ -9,8 +9,12 @@
 //record 
 //****************************
 
-#ifndef RESPONSETO_H
-#define RESPONSETO_H
+#ifndef MVCLRESPONSE_H
+#define MVCLRESPONSE_H
+
+#ifndef MVCRESPONSE_H
+#include "mvcresponse.h"
+#endif
 
 #ifndef NAMESPDEF_H
 #include "../namespdef.h"
@@ -27,14 +31,13 @@
 NAMESP_BEGIN
 
 template<class View, class Pack>
-class Responseto
+class LResponse
+	:public Response<View, Pack>
 {
-	typedef View view_t;
-	typedef Pack pack_t;
-	
 public:
-	Responseto(view_t *view)
-		:_view(view)
+	LResponse(view_t *view)
+		:Response("local")
+		,_view(view)
 	{
 	}
 	
@@ -45,8 +48,8 @@ public:
 			return _pck.status();
 		
 		return false;
-	}
-	
+	} 
+  	
 	virtual void Update()
 	{
 		if(_view != nullptr)
@@ -63,4 +66,4 @@ protected:
 
 NAMESP_END
 
-#endif/*RESPONSETO_H*/
+#endif/*MVCLRESPONSE_H*/

@@ -105,6 +105,17 @@ int UdpPeer::Read(byte_t *buf, int len, AddrPair &addr)
 	return rlen;
 }
 
+int UdpPeer::Read(byte_t *buf, int len)
+{
+	sockaddr_in inaddr;
+	socklen_t addrlen = sizeof(inaddr);
+	memset(&inaddr, 0, sizeof(inaddr));
+	int rlen=-1;
+	rlen=recvfrom(_sock, buf, len, 0, (sockaddr *)&inaddr, &addrlen);
+		
+	return rlen;
+}
+
 int UdpPeer::Write(const byte_t *buf, int len, const AddrPair &addr)
 {
 	sockaddr_in saddr;

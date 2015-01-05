@@ -146,7 +146,8 @@ public:
 	static rpeer_ptr_t CreateClient(unsigned short lport, std::string &&rip, unsigned short rport) throw(sockexcpt);
 	static rpeer_ptr_t CreateClient(std::string &&rip, unsigned short rport) throw(sockexcpt);
 	static rpeer_ptr_t CreateClient(const std::string &rip, unsigned short rport) throw(sockexcpt);		
-	static lpeer_ptr_t CreateServer(const std::string &ip, unsigned short port) throw(sockexcpt);	
+	static lpeer_ptr_t CreateServer(const std::string &ip, unsigned short port) throw(sockexcpt);
+	static lpeer_ptr_t CreateServer(unsigned short port) throw(sockexcpt);		
 };
 
 NAMESP_END

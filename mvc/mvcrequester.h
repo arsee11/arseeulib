@@ -99,6 +99,7 @@ public:
 	void Request(Response &rsp, int timeout=-1)
 	{
 		char rbuf[1024]={0};
+		//ToDo:do until a whole pack or timeout
 		int r = Request(rbuf, 1024, timeout);
 		if (r>0)
 			rsp.Parse(rbuf, r);
@@ -109,43 +110,6 @@ public:
 	template<class View>
 	void AddListener(View &v)
 	{
-	}
-
-	template<class View>
-	void Listen(View *v)
-	{
-		auto fuc = [this, v](){		
-			pack_t::unserial_t us(1024);
-			while (_listen_status)
-			{
-				for (int i = 0; i<3; i++)
-				{
-					char rbuf[1024] = { 0 };
-					int len =  _sock->Read(rbuf, 1024, 2);
-					if (len > 0)
-					{
-						size_t pcklen = 0;
-						pack_t pck;
-						us(pck, rbuf, len);
-						if (pck.status())
-						{
-							if (v->name() == pck.target())
-								Invoker<View::PC>::Invoke(pck.params(), v);
-
-							break;
-						}
-					}
-					//else
-					//{
-					//	_listen_status = false;
-					//	break;
-					//}
-				}
-
-			}
-		};
-
-		_listener_thread = std::thread(fuc);
 	}
 
 	void Close(){ if(_sock!=nullptr) _sock->Close(); }
@@ -164,12 +128,12 @@ private:
 		size_t len=0;
 		_pack.action(_action);
 		_pack.source(_source);
+		_pack.param("rqt_id", _id);
 		const char* buf = ss(_pack, &len);
 		_sock->Write(buf, len);
 		_pack.Reset();
-		//ToDo:do until a whole pack or timeout
-		//return _sock->Read(rbuf, rlen, timeout);
-		return 1;
+		
+		return _sock->Read(rbuf, rlen, timeout);
 	}
 	
 protected:

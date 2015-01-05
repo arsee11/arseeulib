@@ -169,12 +169,18 @@ private:
 	template<int N>
 	struct GetObjT
 	{
+		//template<class Invoker, class... Args>
+		//auto operator()(std::string &name, Invoker &func, Args&... args)
+		//->decltype(std::get<N>( my_t::Instance()._objs ))
+		//{
+		//	if ( std::get<N>( my_t::Instance()._objs )->Name() == name )
+		//		return std::get<N>(my_t::Instance()._objs);			
+		//}
+		
 		template<class Invoker, class... Args>
 		void operator()(std::string &name, Invoker &func, Args&... args)
 		{
-			//if ( std::get<N>( my_t::Instance()._objs )->Name() == name )
-			//	acc.AttachSrc( std::get<N>(my_t::Instance()._objs) );
-				
+			
 			if ( ArgAt<N, OBJS...>::result::name() == name )
 				func.Execute(std::get<N>( my_t::Instance()._objs ), args...);
 		}

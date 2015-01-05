@@ -34,7 +34,8 @@ struct Invoker<0>
 {
 	//@T: The Invoked obj.
 	template<class Receiver, class SRC, class T>
-	static int Invoke(Receiver *rev, SRC *src, T &t)
+	static auto Invoke(Receiver *rev, SRC *src, T &t)
+	->decltype(t->Execute(rev, src))
 	{
 		return t->Execute(rev, src);
 	}	
@@ -47,7 +48,8 @@ struct Invoker<1>
 	//@PARAM_PACK:params value pack,
 	//@T		 :The Invoked obj.
 	template<class Receiver, class SRC, class PARAM_PACK, class T>
-	static int Invoke(Receiver* rev, SRC *src, const PARAM_PACK &pp, T *t)
+	static auto Invoke(Receiver* rev, SRC *src, const PARAM_PACK &pp, T *t)
+	->decltype(t->Execute(rev, src, pt.template Get<0>() ))
 	{
 		typedef ParamPlace< typename T::p1_t,0> 	_1pp;	
 			
@@ -80,7 +82,8 @@ struct Invoker<2>
 	//@PARAM_PACK:params value pack,
 	//@T		 :The Invoked obj.
 	template<class Receiver, class SRC, class PARAM_PACK, class T>
-	static int Invoke(Receiver* rev, SRC *src, const PARAM_PACK &pp, T *t)
+	static auto Invoke(Receiver* rev, SRC *src, const PARAM_PACK &pp, T *t)
+	->decltype( t->Execute(rev, src,pt.template Get<0>(),pt.template Get<1>()) )
 	{
 		typedef ParamPlace< typename T::p1_t,0> 	_1pp;	
 		typedef ParamPlace< typename T::p2_t,1> 	_2pp;	
@@ -104,7 +107,9 @@ struct Invoker<3>
 	//@PARAM_PACK:params value pack,
 	//@T		 :The Invoked obj.
 	template<class Receiver, class SRC, class PARAM_PACK, class T>
-	static int Invoke(Receiver* rev, SRC *src, const PARAM_PACK &pp, T *t)
+	static auto Invoke(Receiver* rev, SRC *src, const PARAM_PACK &pp, T *t)
+	->decltype( t->Execute(rev, src, pt.template Get<0>(), pt.template Get<1>()
+			,pt.template Get<2>()) )
 	{
 		typedef ParamPlace< typename T::p1_t, 0> 	_1pp;
 		typedef ParamPlace< typename T::p2_t, 1> 	_2pp;
@@ -115,7 +120,7 @@ struct Invoker<3>
 		_3pp::name = T::p3();
 		
 		ParamTransfor<param_pack_t, _1pp, _2pp, _3pp> pt = {pp};
-		cout<<typeid(pt.template Get<0>()).name()<< pt.template Get<0>()<<typeid(pt.template Get<1>()).name()<< pt.template Get<1>()<<typeid(pt.template Get<2>()).name()<< pt.template Get<2>()<<endl; 
+		//cout<<typeid(pt.template Get<0>()).name()<< pt.template Get<0>()<<typeid(pt.template Get<1>()).name()<< pt.template Get<1>()<<typeid(pt.template Get<2>()).name()<< pt.template Get<2>()<<endl; 
 		return t->Execute(rev, src
 			, pt.template Get<0>()
 			, pt.template Get<1>()

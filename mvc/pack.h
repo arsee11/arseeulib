@@ -28,11 +28,12 @@
 #include <vector>
 #include <memory>
 #include <iostream>
+
 using namespace std;
+
 NAMESP_BEGIN
 
 ///////////////////////////////////////////////////////////////////////////
-
 template<
 	class Serializer,
 	class UnSerializer
@@ -49,15 +50,15 @@ public:
 	typedef UnSerializer unserial_t;
 	typedef Serializer serial_t;
 
-
 	static const short HeadField=4;
-	static const short LenField = 4;
-
-		
+	static const short LenField = 4;		
 	
 public:
 	Pack(){}
-	Pack(const stream_t &src, const stream_t &trgt, const stream_t &act, const stream_t &param)
+	
+	Pack(const stream_t &src, const stream_t &trgt
+		, const stream_t &act, const stream_t &param
+	)
 		:_source(src)
 		,_target(trgt)
 		,_action(act)
@@ -66,7 +67,9 @@ public:
 		_params["msg"] = param;
 	}
 	
-	Pack(const stream_t &src, const stream_t &trgt, const stream_t &act, const params_pack_t &params)
+	Pack(const stream_t &src, const stream_t &trgt
+		, const stream_t &act, const params_pack_t &params
+	)
 		:_source(src)
 		,_target(trgt)
 		,_action(act)
@@ -75,14 +78,18 @@ public:
 	{
 	}
 
-	Pack(const stream_t &src, stream_t &&trgt, stream_t &&act, const params_pack_t &params)
+	Pack(const stream_t &src, stream_t &&trgt, stream_t &&act
+		, const params_pack_t &params
+	)
 		:Pack(src, trgt, act, params)
 	{
 	}
 	
 	
 	
-	Pack(stream_t &&src, stream_t &&trgt, stream_t &&act, params_pack_t &&params)
+	Pack(stream_t &&src, stream_t &&trgt, stream_t &&act
+		, params_pack_t &&params
+	)
 		:Pack(src, trgt, act, params)
 	{
 	}
@@ -351,7 +358,11 @@ protected:
 		memcpy(_buf, _head, _hlen);
 		memcpy(_buf+_hlen, &plen, pack_t::LenField); 
 		//memcpy(_buf+_hlen+pack_t::LenField, str.c_str(), plen);
-		strcpy(_buf+_hlen+pack_t::LenField, str.c_str());
+#if defined(_MSC_VER)
+		strcpy_s(_buf+_hlen+pack_t::LenField, plen, str.c_str());
+#else
+		strncpy(_buf+_hlen+pack_t::LenField, str.c_str(), plen);
+#endif
 		*len = _hlen+pack_t::LenField+plen;
 		return _buf;
 	}

@@ -31,10 +31,7 @@ class Dispatcher
 {
 public:
 	typedef CONTROL control_t;
-	//typedef typename control_t::source_t trans_t;
-	//typedef typename control_t::chn_t chn_t;
-	//typedef typename chn_t::pack_t pack_t;
-
+	
 public:
 	template<class Receiver, class OBJECTS_COLLECTION, class Pack>
 	static void Execute(Receiver& rev, OBJECTS_COLLECTION &objs, Pack &pck, typename Pack::pack_list_t &replies)
@@ -43,11 +40,10 @@ public:
 		//std::cout << pck.Action() << std::endl;
 		if ( pck.action() == control_t::rqt_name() )
 		{
-			//std::string tname = pck.Target();
 			std::string tname = control_t::target();
-			control_t ctrl(tname, &rev);
+			control_t ctrl(pck.source(), &rev);
 			objs.GetObj(tname, ctrl, pck);
-			ctrl.Reply(pck, replies );
+			ctrl.Reply(replies);
 		}
 	}
 };

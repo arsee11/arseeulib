@@ -21,91 +21,28 @@
 
 NAMESP_BEGIN
 
-//ToDo::限制只能从new 创建
-template<class OBJ>
-class LogicT
-{
-public:
-	typedef OBJ obj_t;
-	
-	virtual int Execute(obj_t *obj) = 0;
-
-	virtual ~LogicT(){ /*cout << "~LogicT()" << endl;*/ }
-};
-
-template<class SOURCE, class LOGIC>
-class Request
-{
-private:
-	typedef SOURCE source_t;
-	typedef LOGIC logic_t;
-	typedef std::unique_ptr<logic_t > logic_ptr_t;
-
-public:
-
-	void AttachSrc(source_t *src)
-	{
-		_src = src;
-	}
-
-	void AttachLogic(logic_t *logic)
-	{
-		_logic = logic_ptr_t(logic);
-	}
-	
-	template<class... Ts>
-	int Execute(Ts... ts)
-	{
-		return _logic->Execute(_src, ts...);
-	}
-
-	template<class... Ts>
-	int Execute(Ts*... ts)
-	{
-		return _logic->Execute(_src, ts...);
-	}
-	
-	//bool Serialize();
-	//bool UnSerialize();
-	
-private:
-	logic_ptr_t _logic;
-	source_t *_src;
-	
-};
-
-template<class LOGIC, class Receiver>
+template<class LOGIC, class Receiver, class Response>
 class RRequest
 {
 private:
-	//typedef SOURCE source_t;
 	typedef LOGIC logic_t;
 	typedef std::unique_ptr<logic_t > logic_ptr_t;
 
 public:
-
-//	void AttachSrc(source_t *src)
-//	{
-//		_src = src;
-//	}
-
 	void AttachReceiver(Receiver* rev){ _receiver = rev; }
 	void AttachLogic(logic_t *logic)
 	{
 		_logic = logic_ptr_t(logic);
 	}
 
-
-	template<class OBJECT, class PARAMS_PACK>
-	int Execute(OBJECT* obj, PARAMS_PACK &params)
+	template<class OBJECT, class Argumet>
+	int Execute(OBJECT* obj, Argumet &arg)
 	{
-		return Invoker<logic_t::PC>::Invoke(_receiver, obj, params, _logic.get()); 
-		//return _logic->Execute(_src, params);
+		return Invoker<logic_t::PC>::Invoke(_receiver, obj, arg, _logic.get()); 
 	}
 
 private:
 	logic_ptr_t _logic;
-	//source_t *_src;
 	Receiver* _receiver = nullptr; 
 };
 

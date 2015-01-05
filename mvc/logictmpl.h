@@ -7,6 +7,10 @@
 //modify: 2014-12-19
 //record 
 //****************************
+//****************************
+//modify: 2015-01-05
+//update 
+//****************************
 
 #ifndef LOGIC_TMPL_H
 #define LOGIC_TMPL_H
@@ -22,21 +26,21 @@
 NAMESP_BEGIN
 
 //BaseLogicTmpl
-template<int n, class Derived, class Response, class... Ts>
+template<int n, class Derived, class Response, class PushResponse, class... Ts>
 class BaseLogicTmpl:
 	public Invoked<n, Derived, Ts...> 
 {
 protected:
-	typedef BaseLogicTmpl<n, Derived, Response, Ts...> base_t;
-	Response *_rsp;
-
-public:
-	BaseLogicTmpl(Response *rsp)
-		:_rsp(rsp)
-	{}
+	typedef BaseLogicTmpl<n, Derived, Response, PushResponse, Ts...> base_t;
+	typedef Response response_t;
+	typedef PushResponse pusher_t;
 	
-	BaseLogicTmpl()=delete;	
+public:
+	BaseLogicTmpl()==default;
 };
+
+template<int n, class Derived, class... Ts>
+using BaseLogicJpack = BaseLogicTmpl<n, Derived, RResponse<Jpack>, PushResponse<Japck>, Ts...>;
 
 NAMESP_END
 

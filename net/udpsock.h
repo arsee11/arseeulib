@@ -62,6 +62,7 @@ private:
 	
 public:
 	int Read(byte_t *buf, int len, AddrPair &addr);
+	int Read(byte_t *buf, int len);
 	int Write(const byte_t *buf, int len, const AddrPair &addr);
 		
 	SOCKET sock(){ return _sock; }
