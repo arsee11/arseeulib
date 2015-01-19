@@ -83,18 +83,29 @@ public:
 		_rqt.AttachLogic(logic);
 	}
 	
+	RControl(view_t&& view, logic_t* logic)
+		:RControl(view, logic)
+	{}
+	
 	RControl(view_t& view, Receiver* rev)
 		:_view(view)
 	{
 		_rqt.AttachReceiver(rev);
 		_rqt.AttachLogic( new logic_t() );
 	}
+
+	RControl(view_t&& view, Receiver* rev)
+		:RControl(view, rev)
+	{}
 	
 	template<class Object>
 	bool Execute(Object *obj, const pack_t& pck)
 	{
 		typename pack_t::params_pack_t prams = std::move(pck.params());
 		_rsp = unique_ptr<response_t>( _rqt.Execute(obj, prams ) );
+		if(_rsp == nullptr)
+			throw exception();
+
 		_rsp->view(_view);
 		
 		return true;
@@ -102,7 +113,7 @@ public:
 	
 	void Reply(pack_list_t& pcks)
 	{
-		pack_ptr_t pck( _rsp.Reply() );
+		pack_ptr_t pck( _rsp->Reply() );
 		if(pck!=nullptr && pck->status())
 			pcks.push_back(pck);
 	}

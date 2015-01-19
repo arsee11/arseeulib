@@ -16,8 +16,6 @@
 #include<algorithm>
 #include <memory>
 
-#include "mvcresponse_abstr.h"
-
 #ifndef UTILITY_H
 #include "utility.h"
 #endif
@@ -38,18 +36,15 @@ NAMESP_BEGIN
 
 
 //@SOURCE the data object 
-template<class SOURCE, class RspImpl>
+template<class SOURCE>
 class Object//:
 	//public IObject
 {
 	typedef SOURCE source_t;
-public:
-	typedef typename RspImpl::view_t view_t;
 	
 public:
 	Object()
 		:_src()
-		,_rsp("")
 	{
 	}
 	
@@ -95,21 +90,6 @@ public:
 	
 	const std::string Name(){ return std::move( _src.Name() ); }
 	
-	int Attach( const view_t &view)
-	{
-		_rsp.AttachView(view);
-	}
-	
-	void Attach( const view_t &&view)
-	{
-		Attach(view);
-	}
-	
-	void Detach( const view_t &view)
-	{
-		_rsp.DetachView(view);
-	}
-	
 	source_t& ref(){ return _src; }
 
 	const source_t& ref()const { return _src; }
@@ -119,7 +99,6 @@ public:
 private:
 	source_t _src;	
 	//std::unique_ptr<IResponse>  _rsp = nullptr; 
-	RspImpl _rsp;
 };
 
 

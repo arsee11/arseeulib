@@ -13,6 +13,9 @@ NAMESP_BEGIN
 template<class View, class Pack>
 class Response
 {
+protected:
+	typedef Response<View, Pack> base_t;
+
 public:
 	typedef View view_t;
 	typedef Pack pack_t;

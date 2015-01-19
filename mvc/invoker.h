@@ -49,7 +49,7 @@ struct Invoker<1>
 	//@T		 :The Invoked obj.
 	template<class Receiver, class SRC, class PARAM_PACK, class T>
 	static auto Invoke(Receiver* rev, SRC *src, const PARAM_PACK &pp, T *t)
-	->decltype(t->Execute(rev, src, pt.template Get<0>() ))
+	->decltype(t->Execute(rev, src, typename T::p1_t() ))
 	{
 		typedef ParamPlace< typename T::p1_t,0> 	_1pp;	
 			
@@ -83,7 +83,7 @@ struct Invoker<2>
 	//@T		 :The Invoked obj.
 	template<class Receiver, class SRC, class PARAM_PACK, class T>
 	static auto Invoke(Receiver* rev, SRC *src, const PARAM_PACK &pp, T *t)
-	->decltype( t->Execute(rev, src,pt.template Get<0>(),pt.template Get<1>()) )
+	->decltype( t->Execute(rev, src, typename T::p1_t(), typename T::p2_t()) )
 	{
 		typedef ParamPlace< typename T::p1_t,0> 	_1pp;	
 		typedef ParamPlace< typename T::p2_t,1> 	_2pp;	
@@ -108,8 +108,7 @@ struct Invoker<3>
 	//@T		 :The Invoked obj.
 	template<class Receiver, class SRC, class PARAM_PACK, class T>
 	static auto Invoke(Receiver* rev, SRC *src, const PARAM_PACK &pp, T *t)
-	->decltype( t->Execute(rev, src, pt.template Get<0>(), pt.template Get<1>()
-			,pt.template Get<2>()) )
+	->decltype( t->Execute(rev, src, typename T::p1_t(), typename T::p2_t(), typename T::p3_t()) )
 	{
 		typedef ParamPlace< typename T::p1_t, 0> 	_1pp;
 		typedef ParamPlace< typename T::p2_t, 1> 	_2pp;

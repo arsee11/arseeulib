@@ -46,14 +46,18 @@ template<class Pack>
 class RResponse
 	:public Response<std::string, Pack>
 {
+	typedef Response<std::string, Pack> base_t;
+
 public:
+	typedef typename base_t::view_t view_t;
+	typedef Pack pack_t;
 	typedef typename pack_t::params_pack_t 	params_pack_t;
 	typedef typename pack_t::pack_ptr_t  	pack_ptr_t;
 	typedef typename pack_t::pack_list_t 	pack_list_t;
 	
 public:
 	RResponse(const std::string &name, view_t &view)
-		:Response(name)
+		:base_t(name)
 		,_view(view)
 	{
 	}
@@ -63,7 +67,7 @@ public:
 	{}
 	
 	RResponse(const std::string &name)
-		:_name(name)
+		:base_t(name)
 	{}
 	
 	RResponse(std::string &&name)
@@ -75,13 +79,13 @@ public:
 	template<class T>
 	void ParamAdd(std::string &&key, const T& value)
 	{ 
-		_params[pname] = StringBuilder(pvalue); 
+		_params[key] = StringBuilder(value); 
 	}
 	
 	pack_t* Reply()
 	{
 		if(_params.size() > 0)
-			return new pack_t(_name, _view, "response", _params);
+			return new pack_t(base_t::_name, _view, "response", _params);
 			
 		return nullptr;
 	}
@@ -102,34 +106,42 @@ template<class Pack>
 class PushResponse
 	:public Response<std::string, Pack>
 {
+	typedef Response<std::string, Pack> base_t;
+
 public:
+	typedef typename base_t::view_t view_t;
+	typedef Pack pack_t;
 	typedef typename pack_t::params_pack_t 	params_pack_t;
 	typedef typename pack_t::pack_ptr_t  	pack_ptr_t;
 	typedef typename pack_t::pack_list_t 	pack_list_t;
 	
 public:
-	RResponse(const std::string &name, const view_t &view)
-		:Response(name)
+	PushResponse(const std::string &name, const view_t &view)
+		:base_t(name)
 		,_view(view)
 	{
 	}
 	
-	RResponse(std::string &&name, view_t &&view)
-		:RResponse(name,view)
+	PushResponse(std::string &&name, view_t &&view)
+		:PushResponse(name,view)
 	{}
 	
 	template<class T>
 	void ParamAdd(std::string &&key, const T& value)
 	{ 
-		_params[pname] = StringBuilder(pvalue); 
+		_params[key] = StringBuilder(value); 
 	}
 	
 		
 	template<class Sender>	
 	void Push(Sender& ss)
 	{
-		pack_t pck(_name, _view, "push", _params)
-		ss(pck);
+		pack_t pck(base_t::_name, _view, "push", _params);
+		typename pack_t::serial_t s;
+		size_t len=0;
+		const char *buf = s(pck, &len);
+		ss(buf, len);
+		delete[] buf;
 	}
 	
 				

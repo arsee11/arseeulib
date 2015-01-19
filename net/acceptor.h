@@ -17,6 +17,10 @@
 #include "fddef.h"
 #endif
 
+#ifndef ADDR_H
+#include "addr.h"
+#endif
+
 
 
 //session 生命周期谁管理？
@@ -56,7 +60,12 @@ public:
 
 		addr.sin_port = htons(_port);
 		_fd = socket(AF_INET, SOCK_STREAM, 0);
-		bind(_fd, (sockaddr*)&addr, sizeof(addr));
+		if(_fd == -1 )
+			throw sockexcpt("socket");
+
+		if( bind(_fd, (sockaddr*)&addr, sizeof(addr)) == -1)
+			throw sockexcpt("bind");
+
 		listen(_fd, 5);
 	}
 

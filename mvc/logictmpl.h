@@ -23,6 +23,14 @@
 #include "invoked.h"
 #endif
 
+#ifndef MVC_RRESPONSE_H
+#include "mvcrresponse.h"
+#endif
+
+#ifndef JPACK_H
+#include "jpack.h"
+#endif
+
 NAMESP_BEGIN
 
 //BaseLogicTmpl
@@ -30,17 +38,19 @@ template<int n, class Derived, class Response, class PushResponse, class... Ts>
 class BaseLogicTmpl:
 	public Invoked<n, Derived, Ts...> 
 {
+public:
+	typedef Response response_t;
+
 protected:
 	typedef BaseLogicTmpl<n, Derived, Response, PushResponse, Ts...> base_t;
-	typedef Response response_t;
 	typedef PushResponse pusher_t;
 	
 public:
-	BaseLogicTmpl()==default;
+	BaseLogicTmpl()=default;
 };
 
 template<int n, class Derived, class... Ts>
-using BaseLogicJpack = BaseLogicTmpl<n, Derived, RResponse<Jpack>, PushResponse<Japck>, Ts...>;
+using BaseLogicJpack = BaseLogicTmpl<n, Derived, RResponse<Jpack>, PushResponse<Jpack>, Ts...>;
 
 NAMESP_END
 

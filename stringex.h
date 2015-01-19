@@ -8,6 +8,8 @@
 #endif
 
 #include <sstream>
+#include <string>
+#include <utility>
 
 using namespace std;
 
@@ -34,6 +36,10 @@ inline string StringBuilder(const string &val)
 	return val;
 }
 
+inline string StringBuilder(const char* val)
+{
+	return std::move(string(val));
+}
 
 template<class T>
 inline T string2t(string &value)

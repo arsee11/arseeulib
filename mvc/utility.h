@@ -122,6 +122,31 @@ struct Iteration<1, FUNCTION >
 		FUNCTION<0>()(Params...);
 	}
 };
+
+
+//template<int N, template<int>class FUNCTION>
+//struct Iteration
+//{
+//	template<class... PARAMS>
+//	static auto Handle( PARAMS&... Params)->decltype(FUNCTION<N-1>()(Params...))
+//	{
+//		if(N>1)
+//			auto result = FUNCTION<N-1>()(Params...);
+//					
+//		Iteration<N-1, FUNCTION>::Handle(Params...);
+//	}	
+//};
+//
+//
+//template< template<int>class FUNCTION >
+//struct Iteration<1, FUNCTION >
+//{
+//	template< class... PARAMS>
+//	static auto Handle(PARAMS&... Params)
+//	{
+//		FUNCTION<0>()(Params...);
+//	}
+//};
 //Iteration End
 ///////////////////////////////////////////////
 
