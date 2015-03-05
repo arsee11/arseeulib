@@ -50,7 +50,7 @@ public:
 		return false;
 	} 
   	
-	virtual void Update()
+	void Update() override
 	{
 		if(_view != nullptr)
 		{

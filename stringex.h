@@ -8,13 +8,10 @@
 #endif
 
 #include <sstream>
-<<<<<<< HEAD
 #include <string>
 #include <utility>
-=======
-#inlcude <string>
-#inlcude <locale.h>
->>>>>>> 8a9dcb2985007ee5826e5936f2a0fdc28cf56be9
+#include <locale.h>
+
 
 using namespace std;
 
@@ -47,7 +44,7 @@ inline string StringBuilder(const char* val)
 }
 
 template<class T>
-inline T string2t(string &value)
+inline T str2t(const string &value)
 {	
 	T out;
 	stringstream ss;
@@ -56,8 +53,20 @@ inline T string2t(string &value)
 	return  out;
 }
 
+template<class T>
+string t2str(T value)
+{
+	stringstream ss;
+	ss.clear();
+	ss << value;
+	string str;
+	ss >> str;
+	return str;
+}
+
+
 //string转wstring
-std::wstring str2wstr(const std::string &str)
+inline std::wstring str2wstr(const std::string &str)
 {
 	if(str.empty())
 		return L"";
@@ -72,7 +81,7 @@ std::wstring str2wstr(const std::string &str)
 }
 
 // wstring转string
-std::string wstr2str(const std::wstring &str)
+inline std::string wstr2str(const std::wstring &str)
 {
 	if( str.empty() )
 		return "";

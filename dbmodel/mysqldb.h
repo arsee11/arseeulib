@@ -75,6 +75,7 @@ struct MysqlRow
 
 
 ////////////////////////////////////////////////////////////////////////////////////
+//a result table
 struct MysqlRes
 {
 	typedef MysqlRow db_row_t;
@@ -119,7 +120,8 @@ struct MysqlRes
 		return res_raw->row_count;
 	}
 
-	db_row_t NextRow()
+	/// next row
+	db_row_t next()
 	{	
 		if(res_raw == NULL)
 			return db_row_t(NULL);
@@ -127,9 +129,9 @@ struct MysqlRes
 		return db_row_t( mysql_fetch_row(res_raw) ); 
 	}
 	
-	db_row_t Begin( ){ return NextRow(); }
+	db_row_t begin( ){ return next(); }
 
-	db_row_t End( )	{ return db_row_t(NULL) ; }
+	db_row_t end( )	{ return db_row_t(NULL) ; }
 
 	void Release()
 	{

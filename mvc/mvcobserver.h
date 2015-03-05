@@ -71,14 +71,10 @@ public:
 					int len =  _rev->Read(rbuf, 1024);
 					if (len > 0)
 					{
-						size_t pcklen = 0;
-						pack_t pck;
-						us(pck, rbuf, len);
-						if (pck.status())
+						LResponse<View, Pack>* rsp = new LResponse<View, Pack>(v);
+						if( rsp->Parse(rbuf, len) )
 						{
-							if (v->name() == pck.target())
-								Invoker<View::PC>::Invoke(pck.params(), v);
-
+							ResponsePool<View, Pack>::instance().add(pck.request_id(), 
 							break;
 						}
 					}

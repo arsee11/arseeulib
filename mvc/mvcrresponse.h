@@ -30,12 +30,11 @@
 
 #include <string>
 #include <memory>
+#include <list>
 
 #ifndef MVC_VIEW_H
 #include "mvcview.h"
 #endif
-
-#include <list>
 
 NAMESP_BEGIN
 
