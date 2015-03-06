@@ -12,11 +12,13 @@ Amodel;
 
 int main()
 {
-	Amodel a(int_attr_t(1), str_attr_t("empty"), double_attr_t(1.1));
+	Amodel a(int_attr_t("a", 1), str_attr_t("b", "empty"), double_attr_t("c", 1.1));
 
 	cout << "a=" << a.get_attr<0>() << endl;
 	cout << "b=" << a.get_attr<1>() << endl;
 
+	a.set_attr("a", 1111);
+	cout << "a=" << a.get_attr<0>() << endl;
 	//if (a.get_attr("c")->isnull_)
 	//	cout << "c=null" << endl;
 	//else

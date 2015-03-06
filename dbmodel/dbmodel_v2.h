@@ -31,7 +31,8 @@
 using namespace std;
 
 NAMESP_BEGIN
-struct Attribute{
+struct Attribute
+{
 	Attribute(bool accept_null)
 	:accept_null_(accept_null)
 	{
@@ -52,12 +53,14 @@ struct Attribute{
 };
 
 template<class Value>
-struct AttributeG : public Attribute{
+struct AttributeG : public Attribute
+{
 	typedef Value value_type;
 
-	AttributeG(Value val, bool accept_null = false)
+	AttributeG(const string& name, Value val, bool accept_null = false)
 		:Attribute(accept_null)
 		, value_(val)
+		, name_(name)
 	{
 	}
 
@@ -79,19 +82,21 @@ struct AttributeG : public Attribute{
 	void str(const string& str){ value_ = str2t<Value>(str); }
 
 	Value value_;
+	string name_;
 };
 
 template<class Value, bool accept_null>
 struct AttributeT;
 
 template<class Value>
-struct AttributeT<Value, false> : public AttributeG<Value>{
-	AttributeT(Value val)
-	:AttributeG<Value>(val, false)
+struct AttributeT<Value, false> : public AttributeG<Value>
+{
+	AttributeT(const string& name, Value val)
+	:AttributeG<Value>(name, val, false)
 	{}
 
 	AttributeT()
-		:AttributeG<Value>(Value(), false)
+		:AttributeG<Value>("", Value(), false)
 	{}
 
 	static shared_ptr<Attribute> New(Value val)
@@ -107,9 +112,10 @@ struct AttributeT<Value, false> : public AttributeG<Value>{
 };
 
 template<class Value>
-struct AttributeT<Value, true> : public AttributeG<Value>{
-	AttributeT()
-	:AttributeG<Value>(true)
+struct AttributeT<Value, true> : public AttributeG<Value>
+{
+	AttributeT(const string& name)
+	:AttributeG<Value>(name,true)
 	{}
 
 	static shared_ptr<Attribute> New()
@@ -125,17 +131,17 @@ struct AttributeT<Value, true> : public AttributeG<Value>{
 };
 
 
-typedef AttributeT<int, false> int_attr_t;
-typedef AttributeT<size_t, false> uint_attr_t;
-typedef AttributeT<float, false> float_attr_t;
-typedef AttributeT<double, false> double_attr_t;
-typedef AttributeT<string, false> str_attr_t;
+typedef AttributeT<int, false>		int_attr_t;
+typedef AttributeT<size_t, false>	uint_attr_t;
+typedef AttributeT<float, false>	float_attr_t;
+typedef AttributeT<double, false>	double_attr_t;
+typedef AttributeT<string, false>	str_attr_t;
 
-typedef AttributeT<int, true > int_null_attr_t;
-typedef AttributeT<size_t, true > uint_null_attr_t;
-typedef AttributeT<float, true > float_null_attr_t;
-typedef AttributeT<double, true > double_null_attr_t;
-typedef AttributeT<string, true > str_null_attr_t;
+typedef AttributeT<int, true >		int_null_attr_t;
+typedef AttributeT<size_t, true >	uint_null_attr_t;
+typedef AttributeT<float, true >	float_null_attr_t;
+typedef AttributeT<double, true >	double_null_attr_t;
+typedef AttributeT<string, true >	str_null_attr_t;
 
 
 ////////////////////////////////////////////////////////////////
@@ -143,11 +149,12 @@ typedef AttributeT<string, true > str_null_attr_t;
 template<class... Attributes>
 class DbModel
 {
+	typedef DbModel<Attributes...> outer_t;
+
 public:
 	typedef vector< shared_ptr<DbModel> > objlist_t;
 	typedef tuple<Attributes...> attr_map_t;
 	//typedef attr_map_t::iterator attr_iterator;
-	
 	
 			
 public:
@@ -173,13 +180,11 @@ public:
 	void set_attr(const string& key, const char* val){ set_attr(key, string(val)); }
 	
 	template<class Value>
-	void set_attr(const string& key, Value val)
+	void set_attr(string&& key, Value val)
 	{
 		size_t idx=-1;
-		Iteration<AttrCount, AttrAt>::Handle(key, &idx);
-		if( idx > -1 )
-			set_attr<idx>(val);
-		else
+		Iteration<AttrCount, AttrAt>::Handle(*this, key, idx);
+		if( idx == -1 )
 			throw exception(string("attribute["+key+"] not found").c_str());
 	}
 	
@@ -220,10 +225,13 @@ protected:
 	template<int N>
 	struct AttrAt
 	{
-		void operator()(std::string &name, size_t* idx)
-		{			
-			if ( ArgAt<N, Attributes...>::result::name() == name )
+		void operator()(outer_t& outer, std::string &name, size_t& idx)
+		{	
+			auto& attr = get<N>(outer._attrs);
+			if (attr.name_ == name)
+			{
 				idx = N;
+			}
 		}
 	};	
 	
