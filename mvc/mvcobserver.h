@@ -74,7 +74,7 @@ public:
 						LResponse<View, Pack>* rsp = new LResponse<View, Pack>(v);
 						if( rsp->Parse(rbuf, len) )
 						{
-							ResponsePool<View, Pack>::instance().add(pck.request_id(), 
+							rsp->Updeate(); 
 							break;
 						}
 					}
