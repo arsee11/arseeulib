@@ -30,6 +30,8 @@
 
 NAMESP_BEGIN
 
+//////////////////////////////////////////////
+//client response 
 template<class View, class Pack>
 class LResponse
 	:public Response<View, Pack>
