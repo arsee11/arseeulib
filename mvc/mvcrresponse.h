@@ -12,10 +12,6 @@
 #ifndef MVC_RRESPONSE_H
 #define MVC_RRESPONSE_H
 
-#ifndef MVCRESPONSE_H
-#include "mvcresponse.h"
-#endif
-
 #ifndef UTILITY_H
 #include "utility.h"
 #endif
@@ -43,10 +39,7 @@ NAMESP_BEGIN
 //Remote Response
 template<class Pack>
 class RResponse
-	:public Response<std::string, Pack>
-{
-	typedef Response<std::string, Pack> base_t;
-
+{	
 public:
 	typedef typename base_t::view_t view_t;
 	typedef Pack pack_t;
