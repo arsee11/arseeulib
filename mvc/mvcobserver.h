@@ -83,11 +83,14 @@ public:
 					if (len > 0)
 					{
 						cout << "rbuf:" << rbuf + pack_t::HeadField + pack_t::LenField << endl;
-						Pack pck;
-						if( LResponse<Pack>::Parse(rbuf, len, pck) )
+						Pack::pack_list_t pcks;
+						if( LResponse<Pack>::Parse(rbuf, len, pcks) )
 						{
-							if (_rsps.find(pck.target()) != _rsps.end())
-								_rsps[pck.target()]->Update(pck);
+							for (auto& i : pcks)
+							{
+								if (_rsps.find(i->target()) != _rsps.end())
+									_rsps[i->target()]->Update( *(i.get()) );
+							}
 
 							break;
 						}

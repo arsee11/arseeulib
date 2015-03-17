@@ -35,19 +35,21 @@ public:
 	virtual void Update(const Pack& pck) = 0;
 
 	//Pase the msg buf to Pack
-	static bool Parse(const char* buf, size_t len, Pack& pck)
+	static bool Parse(const char* buf, size_t len, typename Pack::pack_list_t& pcks)
 	{
+		Pack* pck = new Pack;
 		typename Pack::unserial_t us(1024);
-		if (us(pck, buf, len) > 0)
-			return pck.status();
+		if (us(*pck, buf, len) > 0)
+		{
+			if (pck->status())
+				pcks.push_back(typename Pack::pack_ptr_t(pck));
+		}
 		
-		return false;
-
 		//these for test
 		//pck = Pack("tester", "msgview", "response");
 		//pck.param("msg", "hello, it just a test!");
 		//pck.param("from", "007");
-		return true;
+		return pcks.size() > 0;
 			
 	}
 	
