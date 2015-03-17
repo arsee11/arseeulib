@@ -123,11 +123,12 @@ public:
 	}
 	
 		
-	template<class Sender>	
-	void Push(Sender& ss)
+	template<class Session>	
+	void Push(const std::string& ip, const int port)
 	{
-		pack_t pck(_name, _view, "push", _params);
-		ss(pack);
+		typename Session::session_ptr_t ss =Session::instance().get(ip, port);
+		typename pack_t::pack_ptr_t  pck(new pack_t(_name, _view, "push", _params) );
+		ss->PostOutput(pck);
 	}
 	
 				
