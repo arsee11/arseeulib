@@ -195,14 +195,14 @@ public:
 	UnSerializerAbstr(size_t buf_len)
 		:_buf_len(buf_len)
 	{
-		cout<<"UnSerializerAbstr()"<<endl;
+		//cout<<"UnSerializerAbstr()"<<endl;
 		_buf = new char[3*_buf_len];
 		memset(_buf, 0, 3*_buf_len);
 	}
 
 	~UnSerializerAbstr()
 	{
-		cout<<"~UnSerializerAbstr()"<<endl;
+		//cout<<"~UnSerializerAbstr()"<<endl;
 		delete[] _buf;
 		_buf = nullptr;
 	}

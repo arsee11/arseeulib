@@ -62,7 +62,9 @@ class RequesterTmp
 	typedef Pack pack_t;
 
 public:
-	void sender(const Sockptr &s)const{ _sock = s; }
+	void sender(const Sockptr &s){ _sock = s; }
+	Sockptr sender()const{ return _sock ; }
+
 	RequesterTmp()=default;
 	virtual ~RequesterTmp(){ _listen_status = false; if(_listener_thread.joinable()) _listener_thread.join(); };
 
@@ -85,14 +87,14 @@ public:
 	void param(const char* name, const char* value){ param(std::string(name), std::string(value)); }
 
 	//@timeout seconds.
-	std::string Request(int timeout = -1)throw(rqtexcpt)
+	std::string Request()throw(rqtexcpt)
 	{
 		char rbuf[1024]={0};
-		int r = Request(rbuf, 1024, timeout);
+		int r = RequestNoWait(rbuf, 1024);
 		if (r>0)
 			return std::move(string(rbuf + pack_t::HeadField + pack_t::LenField));
 			
-		return "not recv";
+		throw rqtexcpt("request failed!");
 	}
 	
 	template<class Response>
@@ -135,6 +137,22 @@ private:
 		
 		return _sock->Read(rbuf, rlen, timeout);
 	}
+
+	int RequestNoWait(char *rbuf, int rlen)throw(rqtexcpt)
+	{
+		if (_sock == nullptr)
+			throw rqtexcpt("not open!");
+
+		GenerateId();
+		typename pack_t::serial_t ss;
+		size_t len = 0;
+		_pack.action(_action);
+		_pack.source(_source);
+		_pack.param("rqt_id", _id);
+		const char* buf = ss(_pack, &len);
+		_sock->Write(buf, len);
+		_pack.Reset();	
+	}
 	
 protected:
 	pack_t _pack;
@@ -160,6 +178,11 @@ public:
 	void Open(const char* rip, unsigned short rport)throw(sockexcpt)
 	{
 		base_t::_sock = TcpSock::CreateClient(std::string(rip), rport);
+	}
+
+	void Open(const string& rip, unsigned short rport)throw(sockexcpt)
+	{
+		return Open(rip.c_str(), rport);
 	}
 };
 

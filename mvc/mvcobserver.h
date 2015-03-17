@@ -33,6 +33,10 @@
 #include "../net/tcpsock.h"
 #endif
 
+#ifndef MVCLRESPONSE_H
+#include "mvclresponse.h"
+#endif
+
 #include <thread>
 
 NAMESP_BEGIN
@@ -42,6 +46,8 @@ template<class Receiver, class Pack>
 class ObserverTmp
 {
 	typedef Pack pack_t;
+	typedef LResponse<Pack> response_t;
+	typedef std::shared_ptr< LResponse<Pack> > rsp_ptr_t;
 
 public:
 	ObserverTmp()=default;
@@ -53,28 +59,36 @@ public:
 			_listener_thread.join(); 
 	}		
 
-	template<class View>
-	void AddListener(View &v)
+	void Register(response_t* rsp)
 	{
+		_rsps[rsp->name()] = rsp_ptr_t(rsp);
 	}
 
-	template<class View>
-	void Listen(View *v)
+	void UnRegister(response_t* rsp)
 	{
-		auto fuc = [this, v](){		
+		_rsps.erase( rsp->name() );
+	}
+
+	void Listen()
+	{
+		auto fuc = [this](){		
 			pack_t::unserial_t us(1024);
 			while (_listen_status)
 			{
+				//error for 3 times
 				for (int i = 0; i<3; i++)
 				{
 					char rbuf[1024] = { 0 };
 					int len =  _rev->Read(rbuf, 1024);
 					if (len > 0)
 					{
-						LResponse<View, Pack>* rsp = new LResponse<View, Pack>(v);
-						if( rsp->Parse(rbuf, len) )
+						cout << "rbuf:" << rbuf + pack_t::HeadField + pack_t::LenField << endl;
+						Pack pck;
+						if( LResponse<Pack>::Parse(rbuf, len, pck) )
 						{
-							rsp->Updeate(); 
+							if (_rsps.find(pck.target()) != _rsps.end())
+								_rsps[pck.target()]->Update(pck);
+
 							break;
 						}
 					}
@@ -103,6 +117,7 @@ protected:
 	Receiver _rev = nullptr;
 	std::thread _listener_thread;
 	bool _listen_status = true;
+	std::map<std::string, rsp_ptr_t > _rsps;
 };
 
 
@@ -130,9 +145,9 @@ typedef UdpObserver<Jpack> JUdpObserver;
 ////////////////////////////////////////////////////////////////////////////////
 template<class Pack>
 class TcpObserver:
-	public ObserverTmp<TcpSock::lpeer_ptr_t, Pack>
+	public ObserverTmp<TcpSock::rpeer_ptr_t, Pack>
 {
-	typedef ObserverTmp<TcpSock::lpeer_ptr_t, Pack> base_t;
+	typedef ObserverTmp<TcpSock::rpeer_ptr_t, Pack> base_t;
 	
 public:
 	TcpObserver()=default;
@@ -142,9 +157,14 @@ public:
 		base_t::_rev = TcpSock::CreateServer(lport);
 	}
 	
-	template<class View>
-	void Listen(View *v)
-	{	
+	void Open(TcpSock::rpeer_ptr_t& conn)throw(sockexcpt)
+	{
+		base_t::_rev = conn;
+	}
+
+	void Open(TcpSock::rpeer_ptr_t&& conn)throw(sockexcpt)
+	{
+		base_t::_rev = conn;
 	}
 };
 

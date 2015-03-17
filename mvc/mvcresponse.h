@@ -10,51 +10,22 @@
 
 NAMESP_BEGIN
 
-template<class View, class Pack>
-class Response
-{
-protected:
-	typedef Response<View, Pack> base_t;
-
-public:
-	typedef View view_t;
-	typedef Pack pack_t;
-
-public:
-	std::string name(){ return _name; }
-	
-	virtual ~Response(){}
-	
-	Response(const std::string &name)
-		:_name(name)
-	{
-	}
-	
-	Response(std::string &&name)
-		:Response(name)
-	{}
-	
-	virtual void Update()=0;
-	
-protected:
-	std::string _name;
-	size_t _rqt_id=-1; //request id
-};
-
-template<class View, class Pack>
-class ResponsePool
+///////////////////////////////////////////////////////////
+//LResponsePool 
+//for client use
+class LResponsePool
 {
 public:
-	static ResponsePool<View, Pack>& instance()
+	static LResponsePool& instance()
 	{
-		static ResponsePool<View, Pack> _myself;
+		static LResponsePool _myself;
 		return _myself;
 	}
 	
-	typedef std::shared_ptr<Response<View, Pack> > rsp_ptr_t;
+	typedef std::shared_ptr<Response > rsp_ptr_t;
 	
 	//@rsp must be created from heap. 
-	void add(const std::string& request_id, Response<View, Pack>* rsp)
+	void add(const std::string& request_id, Response>* rsp)
 	{
 		_rsps[request_id] = rsp_ptr_t(rsp);
 	}
@@ -70,10 +41,10 @@ public:
 	}
 		
 private:
-	ResponsePool(){};
-	~ResponsePool(){};
-	ResponsePool(const ResponsePool<View, Pack>&);
-	ResponsePool<View, Pack>& operator=(const ResponsePool<View, Pack>&);
+	LResponsePool(){};
+	~LResponsePool(){};
+	LResponsePool(const LResponsePool&);
+	LResponsePool& operator=(const LResponsePool&);
 	
 	rsp_ptr_t& operator[](const string& request_id){ return _rsps[request_id];}
 	rsp_ptr_t& operator[](const string& request_id)const { return _rsps[request_id];}
