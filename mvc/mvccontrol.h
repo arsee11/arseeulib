@@ -26,7 +26,7 @@
 #endif
 
 #ifndef MVC_RESPONSE_H
-#include "mvcresponse.h"
+#include "mvcrresponse.h"
 #endif
 
 #ifndef MVC_REQUEST_H
