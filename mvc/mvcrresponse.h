@@ -41,7 +41,7 @@ template<class Pack>
 class RResponse
 {	
 public:
-	typedef std::string veiw_t;
+	typedef std::string view_t;
 	typedef Pack pack_t;
 	typedef typename pack_t::params_pack_t 	params_pack_t;
 	typedef typename pack_t::pack_ptr_t  	pack_ptr_t;
@@ -99,7 +99,7 @@ template<class Pack>
 class PushResponse
 {
 public:
-	typedef std::string veiw_t;
+	typedef std::string view_t;
 	typedef Pack pack_t;
 	typedef typename pack_t::params_pack_t 	params_pack_t;
 	typedef typename pack_t::pack_ptr_t  	pack_ptr_t;
