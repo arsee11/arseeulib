@@ -127,11 +127,7 @@ public:
 	void Push(Sender& ss)
 	{
 		pack_t pck(_name, _view, "push", _params);
-		typename pack_t::serial_t s;
-		size_t len=0;
-		const char *buf = s(pck, &len);
-		ss(buf, len);
-		delete[] buf;
+		ss(pack);
 	}
 	
 				
