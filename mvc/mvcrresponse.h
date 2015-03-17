@@ -41,7 +41,7 @@ template<class Pack>
 class RResponse
 {	
 public:
-	typedef typename _name::view_t view_t;
+	typedef std::string veiw_t;
 	typedef Pack pack_t;
 	typedef typename pack_t::params_pack_t 	params_pack_t;
 	typedef typename pack_t::pack_ptr_t  	pack_ptr_t;
@@ -77,7 +77,7 @@ public:
 	pack_t* Reply()
 	{
 		if(_params.size() > 0)
-			return new pack_t(_name::_name, _view, "response", _params);
+			return new pack_t(_name, _view, "response", _params);
 			
 		return nullptr;
 	}
@@ -99,13 +99,14 @@ template<class Pack>
 class PushResponse
 {
 public:
+	typedef std::string veiw_t;
 	typedef Pack pack_t;
 	typedef typename pack_t::params_pack_t 	params_pack_t;
 	typedef typename pack_t::pack_ptr_t  	pack_ptr_t;
 	typedef typename pack_t::pack_list_t 	pack_list_t;
 	
 public:
-	PushResponse(const std::string &name, const view_t &view)
+	PushResponse(const std::string &name, view_t& view)
 		:_name(name)
 		,_view(view)
 	{
@@ -125,7 +126,7 @@ public:
 	template<class Sender>	
 	void Push(Sender& ss)
 	{
-		pack_t pck(_name::_name, _view, "push", _params);
+		pack_t pck(_name, _view, "push", _params);
 		typename pack_t::serial_t s;
 		size_t len=0;
 		const char *buf = s(pck, &len);
