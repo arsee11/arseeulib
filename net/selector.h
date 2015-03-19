@@ -3,7 +3,7 @@
 #ifndef SELECTOR_H	
 #define SELECTOR_H	
 
-#include <hash_map>
+#include <map>
 #include <memory>
 #include <sys/epoll.h>
 #include <fcntl.h>
@@ -34,7 +34,7 @@ inline void SetNoblocking(fd_t fd)
 	if( fcntl(fd, F_SETFL, flag|O_NONBLOCK) == -1 )
 	{
 		perror("fcntl");
-		throw exception();
+		throw std::exception();
 	}
 }
 

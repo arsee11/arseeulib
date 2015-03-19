@@ -15,10 +15,6 @@ NAMESP_BEGIN
 namespace net
 {
 
-NAMESP_BEGIN
-namespace net
-{
-
 typedef int fd_t;
 
 enum EvtType{

@@ -6,7 +6,7 @@
 #define FD_H
 
 #include <utility>
-#include <ext/hash_map>
+#include <map>
 #include <list>
 #include <string>
 #include <exception>
@@ -100,7 +100,7 @@ public:
 	}
 
 private:
-	__gnu_cxx::hash_map<int, evt_ptr_t> _evts;
+	std::map<int, evt_ptr_t> _evts;
 
 	evt_ptr_t _evt_state = nullptr;
 
@@ -117,7 +117,7 @@ class FdHolder
 public:
 	typedef std::shared_ptr<Fd> fd_ptr_t;
 	typedef std::list<fd_ptr_t> fd_list_t;
-	typedef __gnu_cxx::hash_map<fd_t, fd_ptr_t> fd_container_t;
+	typedef std::map<fd_t, fd_ptr_t> fd_container_t;
 
 	typedef Manager<false> normal_manager_t ;
 	typedef Manager<true,false,false,false> accept_manager_t ;

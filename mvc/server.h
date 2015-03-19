@@ -30,7 +30,9 @@
 
 #include <exception>
 
+#ifndef UDPSOCK_H
 #include "../net/udpsock.h"
+#endif
 
 NAMESP_BEGIN
 
@@ -49,7 +51,7 @@ public:
 
 	bool Run()throw(std::exception)
 	{
-		AddrPair addr;
+		net::AddrPair addr;
 		pack_t pck;
 		_chn.Read(pck);
 
@@ -79,7 +81,7 @@ public:
 	//typedef typename chn_t::pack_t pack_t;
 
 public:
-	PreactorServer(size_t max_session, SockConfig &conf)
+	PreactorServer(size_t max_session, net::SockConfig &conf)
 		:_preactor(max_session)
 	{
 		_preactor.RegistryAcceptor(new Acceptor(conf.lip.c_str(), conf.lport));

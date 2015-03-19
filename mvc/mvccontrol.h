@@ -104,7 +104,7 @@ public:
 		typename pack_t::params_pack_t prams = std::move(pck.params());
 		_rsp = unique_ptr<response_t>( _rqt.Execute(obj, prams ) );
 		if(_rsp == nullptr)
-			throw exception();
+			throw std::exception();
 
 		_rsp->view(_view);
 		
