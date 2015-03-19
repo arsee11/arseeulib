@@ -18,8 +18,15 @@
 #include "fddef.h"
 #endif
 
+#ifndef NAMESPDEF_H
+#include "../namespdef.h"
+#endif
+
 using namespace std;
 
+NAMESP_BEGIN
+namespace net
+{
 
 inline void SetNoblocking(fd_t fd)
 {
@@ -186,5 +193,8 @@ public:
 private:
 	int _accptfd = -1;
 };
+
+}//net
+NAMESP_END
 
 #endif /*SELECTOR_H*/	

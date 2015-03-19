@@ -9,7 +9,15 @@
 #include <list>
 #include <iostream>
 
+#ifndef NAMESPDEF_H
+#include "../namespdef.h"
+#endif
+
 using namespace std;
+
+NAMESP_BEGIN
+namespace net
+{
 
 template<class SELECTOR
 >
@@ -63,5 +71,8 @@ private:
 	selector_t _selector;
 
 };
+
+}//net
+NAMESP_END
 
 #endif /*REACTOR_H*/

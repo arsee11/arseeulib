@@ -33,6 +33,8 @@
 
 
 NAMESP_BEGIN
+namespace net
+{
 
 #if defined(__GNUC__)
 typedef int SOCKET;
@@ -102,6 +104,7 @@ inline bool SockUninit()
 #endif
 }
 	
+}//net
 NAMESP_END
 
 #endif/*ADDR_H*/

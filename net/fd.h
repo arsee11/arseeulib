@@ -1,4 +1,6 @@
 //fd.h
+//copyright	:Copyright (c) 2014 arsee.
+//license	:GNU GPL V2.
 
 #ifndef FD_H
 #define FD_H
@@ -16,6 +18,14 @@
 #ifndef FD_DEF_H 
 #include "fddef.h"
 #endif
+
+#ifndef NAMESPDEF_H
+#include "../namespdef.h"
+#endif
+
+NAMESP_BEGIN
+namespace net
+{
 
 class FdExp:
 	public std::exception
@@ -205,5 +215,8 @@ public:
 		fdh._fd_cont[fd] = pfd; 
 	}
 };
+
+}//net
+NAMESP_END
 
 #endif /*FD_H*/

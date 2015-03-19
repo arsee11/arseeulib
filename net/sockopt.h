@@ -9,6 +9,8 @@
 //log	: record 
 //****************************
 
+namespace net
+{
 ////////////////////////////////
 //Socket Option operations.
 //@Sock the socket class.
@@ -21,3 +23,4 @@ struct SockOpt
 
 	SOCKET _sock;
 };
+}//

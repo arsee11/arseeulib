@@ -23,7 +23,8 @@
 #include <memory>
 
 NAMESP_BEGIN
-
+namespace net
+{
 class RemotePeer
 {
 	typedef RemotePeer my_t;
@@ -150,6 +151,7 @@ public:
 	static lpeer_ptr_t CreateServer(unsigned short port) throw(sockexcpt);		
 };
 
+}//net
 NAMESP_END
 
 #endif /*TCPSOCK_H*/

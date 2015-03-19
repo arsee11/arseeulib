@@ -1,4 +1,6 @@
 //events.h
+//copyright	:Copyright (c) 2014 arsee.
+//license	:GNU GPL V2.
 
 #ifndef EVENTS_H
 #define EVENTS_H
@@ -13,6 +15,13 @@
 #include "fddef.h"
 #endif
 
+#ifndef NAMESPDEF_H
+#include "../namespdef.h"
+#endif
+
+NAMESP_BEGIN
+namespace net
+{
 
 //////////////////////////////////////////////////////////////////////////
 class Event
@@ -228,5 +237,7 @@ private:
 	Preactor *_preactor;
 };
 
+}//net
+NAMESP_END
 
 #endif /*EVENTS_H*/
