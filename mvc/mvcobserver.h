@@ -25,11 +25,11 @@
 #include "jpack.h"
 #endif
 
-#ifndef TCP_SOCK_H 
+#ifndef UDPSOCK_H 
 #include "../net/udpsock.h"
 #endif
 
-#ifndef TCP_SOCK_H 
+#ifndef TCPSOCK_H 
 #include "../net/tcpsock.h"
 #endif
 

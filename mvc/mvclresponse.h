@@ -44,6 +44,12 @@ public:
 			if (pck->status())
 				pcks.push_back(typename Pack::pack_ptr_t(pck));
 		}
+
+		while (us(*pck, nullptr, 0) > 0)
+		{
+			if (pck->status())
+				pcks.push_back(typename Pack::pack_ptr_t(pck));
+		}
 		
 		//these for test
 		//pck = Pack("tester", "msgview", "response");
