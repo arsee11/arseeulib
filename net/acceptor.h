@@ -1,4 +1,6 @@
 //acceptor.h
+//copyright	:Copyright (c) 2014 arsee.
+//license	:GNU GPL V2.
 
 #ifndef ACCEPTOR_H
 #define ACCEPTOR_H
@@ -21,7 +23,14 @@
 #include "addr.h"
 #endif
 
+#ifndef NAMESPDEF_H
+#include "../namespdef.h"
+#endif
 
+
+NAMESP_BEGIN
+namespace net
+{
 
 //session 生命周期谁管理？
 template<class SESSION>
@@ -90,5 +99,8 @@ private:
 	std::string _ip;
 	unsigned short _port = -1;
 };
+
+}//net
+NAMESP_END
 
 #endif /*ACCEPTOR_H*/

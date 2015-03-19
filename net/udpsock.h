@@ -24,6 +24,8 @@
 
 NAMESP_BEGIN
 
+namespace net
+{
 class UdpPeer
 {
 	typedef UdpPeer my_t;
@@ -92,7 +94,7 @@ public:
 	static UdpPeer* Create() throw(sockexcpt);	
 };
 
-
+}//net
 NAMESP_END
 
 #endif /*UDPSOCK_H*/

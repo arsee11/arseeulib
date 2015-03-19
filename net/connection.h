@@ -1,7 +1,17 @@
 //connection.h
+//copyright	:Copyright (c) 2014 arsee.
+//license	:GNU GPL V2.
 
 #ifndef CONNECTION_H
 #define CONNECTION_H
+
+#ifndef NAMESPDEF_H
+#include "../namespdef.h"
+#endif
+
+NAMESP_BEGIN
+namespace net
+{
 
 class Conntection
 {
@@ -58,5 +68,9 @@ public:
 	override int write()throw(sockexp);	
 
 };
+
+}//net
+NAMESP_END
+
 #endif /*CONNECTION_H*/
 
