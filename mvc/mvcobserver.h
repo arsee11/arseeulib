@@ -127,18 +127,18 @@ protected:
 ////////////////////////////////////////////////////////////////////////////////
 template<class Pack>
 class UdpObserver:
-	public ObserverTmp<UdpPeer*, Pack>
+	public ObserverTmp<net::UdpPeer*, Pack>
 {
-	typedef ObserverTmp<UdpPeer*, Pack> base_t;
+	typedef ObserverTmp<net::UdpPeer*, Pack> base_t;
 	
 public:
 	UdpObserver() = default;
 	~UdpObserver(){ Close(); if (_rev != nullptr) delete _rev; }
 	
 
-	void Open(unsigned short lport)throw(sockexcpt)
+	void Open(unsigned short lport)throw(net::sockexcpt)
 	{
-		base_t::_rev = UdpSock::Create(lport);
+		base_t::_rev = net::UdpSock::Create(lport);
 	}
 };
 
@@ -148,24 +148,24 @@ typedef UdpObserver<Jpack> JUdpObserver;
 ////////////////////////////////////////////////////////////////////////////////
 template<class Pack>
 class TcpObserver:
-	public ObserverTmp<TcpSock::rpeer_ptr_t, Pack>
+	public ObserverTmp<net::TcpSock::rpeer_ptr_t, Pack>
 {
-	typedef ObserverTmp<TcpSock::rpeer_ptr_t, Pack> base_t;
+	typedef ObserverTmp<net::TcpSock::rpeer_ptr_t, Pack> base_t;
 	
 public:
 	TcpObserver()=default;
 
-	void Open(unsigned short lport)throw(sockexcpt)
+	void Open(unsigned short lport)throw(net::sockexcpt)
 	{
-		base_t::_rev = TcpSock::CreateServer(lport);
+		base_t::_rev = net::TcpSock::CreateServer(lport);
 	}
 	
-	void Open(TcpSock::rpeer_ptr_t& conn)throw(sockexcpt)
+	void Open(net::TcpSock::rpeer_ptr_t& conn)throw(net::sockexcpt)
 	{
 		base_t::_rev = conn;
 	}
 
-	void Open(TcpSock::rpeer_ptr_t&& conn)throw(sockexcpt)
+	void Open(net::TcpSock::rpeer_ptr_t&& conn)throw(net::sockexcpt)
 	{
 		base_t::_rev = conn;
 	}

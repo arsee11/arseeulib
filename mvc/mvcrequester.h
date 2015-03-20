@@ -168,19 +168,19 @@ protected:
 ////////////////////////////////////////////////////////////////////////////////
 template<class Pack>
 class TcpRequester:
-	public RequesterTmp<TcpSock::rpeer_ptr_t, Pack>
+	public RequesterTmp<net::TcpSock::rpeer_ptr_t, Pack>
 {
-	typedef RequesterTmp<TcpSock::rpeer_ptr_t, Pack> base_t;
+	typedef RequesterTmp<net::TcpSock::rpeer_ptr_t, Pack> base_t;
 public:
 	TcpRequester()=default;
 	~TcpRequester(){ base_t::Close(); }
 
-	void Open(const char* rip, unsigned short rport)throw(sockexcpt)
+	void Open(const char* rip, unsigned short rport)throw(net::sockexcpt)
 	{
-		base_t::_sock = TcpSock::CreateClient(std::string(rip), rport);
+		base_t::_sock = net::TcpSock::CreateClient(std::string(rip), rport);
 	}
 
-	void Open(const string& rip, unsigned short rport)throw(sockexcpt)
+	void Open(const string& rip, unsigned short rport)throw(net::sockexcpt)
 	{
 		return Open(rip.c_str(), rport);
 	}

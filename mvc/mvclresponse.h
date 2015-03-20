@@ -37,18 +37,21 @@ public:
 	//Pase the msg buf to Pack
 	static bool Parse(const char* buf, size_t len, typename Pack::pack_list_t& pcks)
 	{
-		Pack* pck = new Pack;
+		typename Pack::pack_ptr_t pck = typename Pack::pack_ptr_t( new Pack );
 		typename Pack::unserial_t us(1024);
 		if (us(*pck, buf, len) > 0)
 		{
 			if (pck->status())
-				pcks.push_back(typename Pack::pack_ptr_t(pck));
+				pcks.push_back(pck);
 		}
 
+		pck = typename Pack::pack_ptr_t(new Pack);
 		while (us(*pck, nullptr, 0) > 0)
 		{
 			if (pck->status())
-				pcks.push_back(typename Pack::pack_ptr_t(pck));
+				pcks.push_back(pck);
+
+			pck = typename Pack::pack_ptr_t(new Pack);
 		}
 		
 		//these for test
