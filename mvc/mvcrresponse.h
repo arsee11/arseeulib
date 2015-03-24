@@ -66,18 +66,26 @@ public:
 		:RResponse(name)
 	{}
 	
-	void view(const view_t &view){ _view = view; }
+	void view	(const view_t&		val){ _view   = val; }
+	void action	(const std::string& val){ _action = val; }
 		
 	template<class T>
 	void ParamAdd(std::string &&key, const T& value)
 	{ 
 		_params[key] = StringBuilder(value); 
 	}
-	
+
+
+	template<class T>
+	void ParamAdd(const char* key, const T value)
+	{
+		_params[std::string(key)] = StringBuilder(value);
+	}
+
 	pack_t* Reply()
 	{
 		if(_params.size() > 0)
-			return new pack_t(_name, _view, "response", _params);
+			return new pack_t(_name, _view, _action, _params);
 			
 		return nullptr;
 	}
@@ -86,6 +94,7 @@ protected:
 	view_t _view;
 	params_pack_t _params;
 	std::string _name;
+	std::string _action;
 	//pack_list_t _pcks;
 	//std::string _src;
 	//std::string _target;
@@ -111,7 +120,23 @@ public:
 		,_view(view)
 	{
 	}
+
+	PushResponse(view_t& view)
+		:_name("pusher")
+		, _view(view)
+	{
+	}
+
+	PushResponse(const char* view)
+		:PushResponse(view_t(view))
+	{
+	}
 	
+	PushResponse(const char* name, view_t& view)
+		:PushResponse(std::string(name), view)
+	{
+	}
+
 	PushResponse(std::string &&name, view_t &&view)
 		:PushResponse(name,view)
 	{}

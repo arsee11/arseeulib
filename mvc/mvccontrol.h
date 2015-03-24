@@ -107,6 +107,7 @@ public:
 			throw std::exception();
 
 		_rsp->view(_view);
+		_rsp->action( pck.action() );
 		
 		return true;
 	}

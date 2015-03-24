@@ -88,7 +88,7 @@ public:
 		return 0;
 	}
 	
-	const std::string Name(){ return std::move( _src.Name() ); }
+	//const std::string Name(){ return std::move( _src.Name() ); }
 	
 	source_t& ref(){ return _src; }
 
@@ -125,9 +125,17 @@ public:
 	}
 	
 	template<class Invoker, class... Args >
-	static void GetObj(std::string &name, Invoker &func, Args&... args)
+	void GetObj(std::string &name, Invoker &func, Args&... args)
 	{
 		Iteration<Count, GetObjT>::Handle(name, func, args...);
+	}
+	
+	template<class Obj>
+	Obj* GetObj()
+	{
+		ObjHolder<Obj> h;
+		Iteration<Count, GetObjT>::Handle(const_cast<std::string&>(Obj::name()), h);
+		return h.r;
 	}
 	
 private:
@@ -145,6 +153,15 @@ private:
 	
 	typedef typename Trait<OBJS...>::value collection_t;
 	
+	template<class ReturnObj>
+	struct ObjHolder
+	{
+		ReturnObj* r;
+		
+		template<class FromObj>
+		void Execute(FromObj* f){ r = (ReturnObj*)f; }
+	};
+
 	template<int N>
 	struct GetObjT
 	{
@@ -163,6 +180,7 @@ private:
 			if ( ArgAt<N, OBJS...>::result::name() == name )
 				func.Execute(std::get<N>( my_t::Instance()._objs ), args...);
 		}
+				
 	};	
 	
 

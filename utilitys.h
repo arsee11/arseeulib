@@ -5,10 +5,13 @@
 #include <sstream>
 
 
-namespace arsee
-{
+#ifndef NAMESPDEF_H
+#include "namespdef.h"
+#endif
 
 using namespace std;
+
+NAMESP_BEGIN
 
 template<class T>
 T::value_type sum(T &array)
@@ -73,6 +76,6 @@ bool issame(ITERATOR &start, ITERATOR &end )
 
 }
 
-}/*namespace*/
+NAMESP_END/*namespace*/
 
 #endif /*UTILITY_H*/

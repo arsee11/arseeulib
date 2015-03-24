@@ -28,6 +28,22 @@
 #include <string>
 #endif
 
+#define INVOKED_BEGIN(n) \
+	template<class Derived, class... Ts>\
+	class Invoked<n, Derived, Ts...> \
+	{\
+	protected:\
+		typedef Invoked<n, Derived, Ts...> base_t;\
+	public:
+
+#define INVOKED_PARAM(i) \
+		static const int P##i = i;\
+		typedef typename ArgAt<i, Ts...>::result 	p##i##_t;
+
+	
+#define INVOKED_END \
+	};
+
 NAMESP_BEGIN
 
 //@N      : number of the params it want to accept,
@@ -79,6 +95,17 @@ public:
 	typedef typename ArgAt<2, Ts...>::result 	p3_t;
 	
 };
+
+
+	
+
+//the want 4 params one.
+INVOKED_BEGIN(4)
+	INVOKED_PARAM(0)
+	INVOKED_PARAM(1)
+	INVOKED_PARAM(2)
+	INVOKED_PARAM(3)	
+INVOKED_END
 
 
 
