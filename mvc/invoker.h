@@ -167,6 +167,60 @@ struct Invoker<3>
 	}
 };
 
+//the 4 params one.
+template<>
+struct Invoker<4>
+{
+	//@PARAM_PACK:params value pack,
+	//@T		 :The Invoked obj.
+	template<class Receiver, class SRC, class PARAM_PACK, class T>
+	static auto Invoke(Receiver* rev, SRC *src, const PARAM_PACK &pp, T *t)
+	->decltype( t->Execute(rev, src, typename T::p1_t(), typename T::p2_t(), typename T::p3_t()) )
+	{
+		typedef ParamPlace< typename T::p1_t, 0> 	_1pp;
+		typedef ParamPlace< typename T::p2_t, 1> 	_2pp;
+		typedef ParamPlace< typename T::p3_t, 2> 	_3pp;
+		typedef ParamPlace< typename T::p3_t, 3> 	_4pp;
+		
+		_1pp::name = T::p1();
+		_2pp::name = T::p2();
+		_3pp::name = T::p3();
+		_4pp::name = T::p4();
+		
+		ParamTransfor<param_pack_t, _1pp, _2pp, _3pp, _4pp> pt = {pp};
+		return t->Execute(rev, src
+			, pt.template Get<0>()
+			, pt.template Get<1>()
+			, pt.template Get<2>()
+			, pt.template Get<3>() 
+		);
+	}	
+
+	// @PARAM_PACK:params value pack,
+	//@T		 :The Invoked obj.
+	template<class PARAM_PACK, class T>
+	static int Invoke(const PARAM_PACK &pp, T *t)
+	{
+		typedef ParamPlace< typename T::p1_t, 0> 	_1pp;
+		typedef ParamPlace< typename T::p2_t, 1> 	_2pp;
+		typedef ParamPlace< typename T::p3_t, 2> 	_3pp;
+		typedef ParamPlace< typename T::p3_t, 3> 	_4pp;
+		
+		_1pp::name = T::p1();
+		_2pp::name = T::p2();
+		_3pp::name = T::p3();
+		_4pp::name = T::p4();
+		
+		ParamTransfor<param_pack_t, _1pp, _2pp, _3pp, _4pp> pt = {pp};
+		//template specify Get<0> is a template.
+		return t->Execute(pt.template Get<0>()
+			, pt.template Get<1>()
+			, pt.template Get<2>()
+			, pt.template Get<3>()
+			);
+	}
+};
+
 
 NAMESP_END
 
