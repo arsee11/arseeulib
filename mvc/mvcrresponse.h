@@ -126,6 +126,11 @@ public:
 		, _view(view)
 	{
 	}
+	
+	PushResponse(view_t&& view)
+		:PushResponse(view)
+	{
+	}
 
 	PushResponse(const char* view)
 		:PushResponse(view_t(view))

@@ -134,7 +134,8 @@ public:
 	Obj* GetObj()
 	{
 		ObjHolder<Obj> h;
-		Iteration<Count, GetObjT>::Handle(const_cast<std::string&>(Obj::name()), h);
+		const std::string& name = Obj::name();
+		Iteration<Count, GetObjT>::Handle(const_cast<std::string&>(name), h);
 		return h.r;
 	}
 	
