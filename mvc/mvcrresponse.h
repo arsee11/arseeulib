@@ -121,7 +121,7 @@ public:
 	{
 	}
 
-	PushResponse(view_t& view)
+	PushResponse(const view_t& view)
 		:_name("pusher")
 		, _view(view)
 	{
