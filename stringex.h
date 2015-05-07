@@ -95,6 +95,29 @@ inline std::string wstr2str(const std::wstring &str)
     return str1;
 }
 
+void str_trim(string& str, char totrim)
+{
+	size_t i = 0;
+
+	//前面的
+	for( ; i<str.size(); i++)
+	{
+		if( str[i] != totrim )
+			break;
+	}
+
+	str.erase(0, i);
+
+	//后面的
+	for(i=str.size()-1; i>=0&&str.size()>0; i--)
+	{
+		if( str[i] != totrim )
+			break;
+	}
+
+	str.erase(i+1);
+}
+
 NAMESP_END
 
 #endif /*STRINGEX_H*/
