@@ -151,6 +151,7 @@ private:
 		_pack.param("rqt_id", _id);
 		const char* buf = ss(_pack, &len);
 		_sock->Write(buf, len);
+		cout << buf + 8 << endl;
 		_pack.Reset();	
 	}
 	
