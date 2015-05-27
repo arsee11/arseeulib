@@ -5,7 +5,7 @@ xmlns="http://www.w3school.com.cn"
 elementFormDefault="qualified">
 
 <xs:element name="pack">
-	<xs:element name="head" type="xs:string"/>
+	<xs:element name="head" type="xs:string">
 		<xs:complexType>
 		<xs:element name="type" type="xs:string" >
 			<xs:simpleType>
