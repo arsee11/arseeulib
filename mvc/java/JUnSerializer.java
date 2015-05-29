@@ -1,11 +1,11 @@
 //JUnSerializer.java
 
-package arsee.mvc.java;
+package mylib.mvc.java;
 
 import org.json.*;
 import java.util.*;
 
-public class JUnSerializer:extends Pack.UnSerializer{
+public class JUnSerializer extends Pack.UnSerializer{
 	@override
 	public Pack parseBody(byte[] buf, int offset, int len){
 			StringBuffer sb = new StringBuffer(buf, offset, len);
