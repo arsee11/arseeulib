@@ -51,7 +51,7 @@ public:
 	typedef Serializer serial_t;
 
 	static const short HeadField=4;
-	static const short LenField = 4;		
+	static const short LenField = 4;	//payload len	
 	
 public:
 	Pack(){}
