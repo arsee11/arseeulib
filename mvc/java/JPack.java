@@ -8,6 +8,7 @@ import java.util.*;
 
 public class JPack extends Pack{
 	
+	public JPack(){ super(); }
 	public JPack( String src, String trgt, String act ){
 		super(src, trgt, act);
 	}
@@ -39,9 +40,9 @@ public class JPack extends Pack{
 					Iterator j = i.entrySet().iterator();
 					if( j.hasNext() ){
 						if( count == 0)
-							strbuf.append("[");
+							strbuf.append("param:[");
 						else
-							strbuf.append(",[");
+							strbuf.append(",param:[");
 							
 						Map.Entry e = (Map.Entry)j.next();
 						strbuf.append("{\"name\":" ).append("\"").append(e.getKey()  ).append("\",");
@@ -66,37 +67,38 @@ public class JPack extends Pack{
 		}
 	}
 
-	class JUnSerializer extends Pack.UnSerializer{
+	class JUnSerializer extends UnSerializer{
 		@Override
 		public boolean parseBody(byte[] buf, int offset, int len){
-				StringBuffer sb = new StringBuffer(buf, offset, len);
-				try{
-					JSONObject jb = new JSONObject(sb.toString());
-					Pack pck = new Pack(
-						jb.getString("source"),
-						jb.getString("target"),
-						jb.getString("action")
-					);
-							
-					JSONArray ja = jb.getJSONArray("params");
-					Pack.ParamTable pt = new Pack.ParamTable();
-					for(int i=0; i<ja.getLength(); i++){
-						JSONArray ja2 = ja.getJSONObject(i).getJSONArray();
-						HashMap<String, Object> p = new HashMap<String, Object>();
-						for(int j=0; j<ja2.getLength(); j++){
-							JSONObject param = ja2.getJSONObject(j);
-							p.put(param.getString("name"), param.getString("value"));					
-						}
+			String str = new String(buf, offset, len);
+			Pack pck = new JPack(); 
+			try{
+				JSONObject jb = new JSONObject(str.toString());
+				pck = new JPack(
+					jb.getString("source"),
+					jb.getString("target"),
+					jb.getString("action")
+				);
 						
-						pt.add(p);
+				JSONArray ja = jb.getJSONArray("params");
+				Pack.ParamTable pt = new Pack.ParamTable();
+				for(int i=0; i<ja.length(); i++){
+					JSONArray ja2 = ja.getJSONObject(i).getJSONArray("param");
+					HashMap<String, Object> p = new HashMap<String, Object>();
+					for(int j=0; j<ja2.length(); j++){
+						JSONObject param = ja2.getJSONObject(j);
+						p.put(param.getString("name"), param.getString("value"));					
 					}
-				}catch(JSONException e){
-					pck.setStatus(false);
-					return false;
+					
+					pt.add(p);
 				}
-				
-				pck.setStatus(true);
-				return true;
+			}catch(JSONException e){
+				pck.setStatus(false);
+				return false;
+			}
+			
+			pck.setStatus(true);
+			return true;
 		}
 	}
 	
