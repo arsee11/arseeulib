@@ -28,13 +28,16 @@ class MVCRactor{
 	void start(){
 		Thread t = new Thread( new Runable(){
 			
-			@override
-			public void run(){			
+			@Override
+			public void run(){
+				final int MAX = 1024;
 				while( !stop ){
-					byte[] buf = new byte[1024];
+					byte[] buf = new byte[MAX];
 					int len = 0;
-					sock.read(buf, len);
-					JPack pck(buf);
+					Reader r = new InputStreamReader( sock.getInputStream() );
+					len = r.read(buf, 0, MAX);
+					Pack pck = new JPack();
+					pck.getUnserializer().solve(buf);
 					if( pck.getStatus() )
 					{
 						View v = views.find(pck->getTarget());
