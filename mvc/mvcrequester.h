@@ -76,16 +76,18 @@ public:
 	void action(std::string&& val){ action(val); }
 	void action(const char* val){ action(std::string(val)); }
 	
-	void param(const std::string &name, const std::string& value){ _pack.param(name, value); }
-	void param(std::string &&name, const std::string& value){ param(name, value); }
-	void param(const char* name, const std::string& value){ param(std::string(name), value); }
-	void param(std::string &&name, std::string&& value){ param(name, value); }
-	void param(const std::string &name, std::string&& value){ param(name, value); }
-	void param(const char* name, std::string&& value){ param(string(name), value); }
-	void param(std::string &&name, const char* value){ param(name, std::string(value)); }
-	void param(const std::string &name, const char* value){ param(name, std::string(value)); }
-	void param(const char* name, const char* value){ param(std::string(name), std::string(value)); }
-
+	void add_param(const std::string &name, const std::string& value){ _pack.param(name, value); }
+	void add_param(std::string &&name, const std::string& value){ param(name, value); }
+	void add_param(const char* name, const std::string& value){ param(std::string(name), value); }
+	void add_param(std::string &&name, std::string&& value){ param(name, value); }
+	void add_param(const std::string &name, std::string&& value){ param(name, value); }
+	void add_param(const char* name, std::string&& value){ param(string(name), value); }
+	void add_param(std::string &&name, const char* value){ param(name, std::string(value)); }
+	void add_param(const std::string &name, const char* value){ param(name, std::string(value)); }
+	void add_param(const char* name, const char* value){ param(std::string(name), std::string(value)); }
+	
+	void append_param(){ param(std::string(name), std::string(value)); }
+	
 	//@timeout seconds.
 	std::string Request()throw(rqtexcpt)
 	{
