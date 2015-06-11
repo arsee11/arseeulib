@@ -45,7 +45,8 @@ public:
 	typedef std::shared_ptr<pack_t> pack_ptr_t;
 	typedef std::vector<pack_ptr_t> pack_list_t;
 	typedef std::string stream_t;
-	typedef std::map<stream_t, stream_t> params_pack_t;
+	typedef std::map<stream_t, stream_t> params_item_t;
+	typedef std::vector<params_item_t> params_pack_t;
 	
 	typedef UnSerializer unserial_t;
 	typedef Serializer serial_t;

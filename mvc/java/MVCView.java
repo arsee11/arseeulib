@@ -1,7 +1,8 @@
 //MVCView.java
 
-package arsee.mvc.java;
+package mylib.mvc.java;
 
-interface View{
+interface MVCView{
 	boolean invoke(Pack pck);
+	String getName();
 }
