@@ -17,8 +17,11 @@ void test_serializ1()
 {
 	cout<<"test_serializ1:"<<endl;
 	Jpack pck("aaa", "bbb","ccc");
-	pck.Param("ddd", "1111");
-	pck.Param("eee", "2222");
+	Jpack::param_item_t param_item;
+	param_item["ddd"] = "1111";
+	param_item["eee"] = "eee";
+	Jpack::params_pack_t pparam;
+	pparam.push_back(param_item);
 	
 	Jpack::serial_t s;
 	size_t len;
@@ -32,8 +35,11 @@ void test_serializ2()
 {
 	cout<<"test_serializ2:"<<endl;
 	Jpack pck("", "bbb","ccc");
-	pck.Param("ddd", "1111");
-	pck.Param("eee", "2222");
+	Jpack::param_item_t param_item;
+	param_item["ddd"] = "1111";
+	param_item["eee"] = "eee";
+	Jpack::params_pack_t pparam;
+	pparam.push_back(param_item);
 	
 	Jpack::serial_t s;
 	size_t len;
@@ -47,8 +53,11 @@ void test_unserializ()
 {
 	cout<<"test_unserializ:"<<endl;
 	Jpack pck("aaa", "bbb","ccc");
-	pck.Param("ddd", "1111");
-	pck.Param("eee", "2222");
+	Jpack::param_item_t param_item;
+	param_item["ddd"] = "1111";
+	param_item["eee"] = "eee";
+	Jpack::params_pack_t pparam;
+	pparam.push_back(param_item);
 	
 	Jpack::serial_t s;
 	size_t len;
@@ -62,7 +71,8 @@ void test_unserializ()
 	cout<<"source:"<<npack.Source()<<endl;
 	cout<<"target:"<<npack.Target()<<endl;
 	for(auto &i:npack.Params())
-		cout<<i.first<<"="<<i.second<<endl;
+		for(auto &j:i)
+		 cout<<j.first<<"="<<j.second<<endl;
 	
 }
 

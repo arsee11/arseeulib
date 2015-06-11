@@ -24,25 +24,6 @@ T::value_type sum(T &array)
 	return sum;
 }
 
-template<class T>
-T string2t(string &value, T &out)
-{	
-	strstream ss;
-	ss<<value;
-	ss>>out;
-	return  out;
-}
-
-template<class T>
-string t2string(T value)
-{	
-	strstream ss;
-	ss<<value;
-	string str;
-	ss>>str;
-	return str;
-}
-
 template<class ITERATOR, class COMPARE>
 bool issame(ITERATOR start, ITERATOR end, COMPARE &cmp  )
 {

@@ -16,6 +16,9 @@
 #include "../jpack.h"
 #endif
 
+#ifndef STRINGEX_H
+#include "stringex.h"
+#endif
 
 NAMESP_BEGIN
 
@@ -46,11 +49,19 @@ JSerializer::stream_t JSerializer::Resolve(const pack_ptr_t &pck)
 	root["action"] = pck->action();
 	Json::Value param;
 	Json::Value params;
+	int k=0;
 	for(auto &i : pck->params())
 	{
-		param["name"]  = i.first;
-		param["value"] = i.second;
-		params.append(param);
+		Json::Value param_item;
+		for(auto &j : i)
+		{
+			Json::Value param;
+			param["name"]  = j.first;
+			param["value"] = j.second;
+			param_item.append(param);
+		}
+		params["param"+t2str(k)] = param_item;
+		++k;
 	}
 			
 	root["params"] = params;
@@ -66,13 +77,21 @@ JSerializer::stream_t JSerializer::Resolve(const pack_t &pck)
 	root["action"] = pck.action();
 	Json::Value param;
 	Json::Value params;
-	for(auto &i : pck.params())
+	int k = 0;
+	for (auto &i : pck.params())
 	{
-		param["name"]  = i.first;
-		param["value"] = i.second;
-		params.append(param);
+		Json::Value param_item;
+		for (auto &j : i)
+		{
+			Json::Value param;
+			param["name"] = j.first;
+			param["value"] = j.second;
+			param_item.append(param);
+		}
+		params["param" + t2str(k)] = param_item;
+		++k;
 	}
-			
+
 	root["params"] = params;
 	return std::move(wr.write(root));
 }
@@ -94,11 +113,18 @@ int JUnSerializer::Parse(pack_t &pck, stream_t &stream)
 		pck.source( root["source"].asString()	);
 		pck.action( root["action"].asString()	);
 		pck.target(  root["target"].asString()	);
-		Json::Value params = root["params"];
+		Json::Value& params = root["params"];
+		pack_t::params_pack_t pparam;
 		for(int i=0; i<params.size(); i++)
 		{
-			Json::Value param = params[i];
-			pck.param( param["name"].asString(), param["value"].asString());
+			Json::Value& param_item = params["param"+t2str(i)];
+			pack_t::param_item_t ppitem;
+			for(int j=0; j< param_item.size(); j++)
+			{
+				Json::Value& param = param_item[i];				
+				ppitem[param["name"].asString()] = param["value"].asString();
+			}
+			pparam.push_back(ppitem);
 		}
 
 		pck.status(true);

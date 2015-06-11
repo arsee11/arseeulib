@@ -74,7 +74,12 @@ inline std::wstring str2wstr(const std::string &str)
     unsigned len = str.size() * 2;
     setlocale(LC_CTYPE, "");     //必须调用此函数
     wchar_t *p = new wchar_t[len];
-    mbstowcs(p,str.c_str(),len);
+#if defined(__GNUC__)
+	mbstowcs(p,str.c_str(),len);
+#else
+	size_t  converted = 0;
+	mbstowcs_s(&converted, p, len, str.c_str(), _TRUNCATE);
+#endif
     std::wstring str1(p);
     delete[] p;
     return str1;
@@ -89,7 +94,12 @@ inline std::string wstr2str(const std::wstring &str)
     unsigned len = str.size() * 4;
     setlocale(LC_CTYPE, "");
     char *p = new char[len];
+#if defined(__GNUC__)
     wcstombs(p,str.c_str(),len);
+#else
+	size_t  converted = 0;
+	wcstombs_s(&converted, p, len, str.c_str(), len+1);
+#endif
     std::string str1(p);
     delete[] p;
     return str1;

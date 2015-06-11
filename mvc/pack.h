@@ -45,8 +45,8 @@ public:
 	typedef std::shared_ptr<pack_t> pack_ptr_t;
 	typedef std::vector<pack_ptr_t> pack_list_t;
 	typedef std::string stream_t;
-	typedef std::map<stream_t, stream_t> params_item_t;
-	typedef std::vector<params_item_t> params_pack_t;
+	typedef std::map<stream_t, stream_t> param_item_t;
+	typedef std::vector<param_item_t> params_pack_t;
 	
 	typedef UnSerializer unserial_t;
 	typedef Serializer serial_t;
@@ -157,12 +157,18 @@ public:
 	void source(const stream_t &val ){ _source=val; }
 	void source(stream_t &&val ){ source(val); }
 
+	params_pack_t params(params_pack_t& val){_params = std::move(val);} 
 	params_pack_t params()const{return std::move(_params);} 
-	void param(stream_t &&name, stream_t &&val){ _params[name] = val; }
-	void param(const stream_t &name, const stream_t &val){ _params[name] = val; }
-	void param(stream_t &&name, const stream_t &val){ _params[name] = val; }
-	void param(const stream_t &name, stream_t &&val){ _params[name] = val; }
-	void param(const char *name, stream_t &&val){ _params[name] = val; }
+	stream_t get_param(size_t i, stream_t &&name)		const{ return get_param(i, name); }
+	stream_t get_param(size_t i, const char *name )		const{ return get_param(i, stream_t(name)); }
+	stream_t get_param(size_t i, const stream_t &name)	const
+	{ 
+		if(_params.size()>=i)
+			return _params[i][name]; 
+			
+		return stream_t();
+	}
+	
 
 	void Reset()
 	{
