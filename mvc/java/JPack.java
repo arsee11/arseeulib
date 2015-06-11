@@ -31,7 +31,7 @@ public class JPack extends Pack{
 			
 			if( getParamTable().size() > 0 )
 			{
-				strbuf.append("\"params\":[");
+				strbuf.append("\"params\":[{");
 				int count=0;
 				for(HashMap<String, Object> i:getParamTable()){
 					if( i.size() == 0 )
@@ -40,9 +40,9 @@ public class JPack extends Pack{
 					Iterator j = i.entrySet().iterator();
 					if( j.hasNext() ){
 						if( count == 0)
-							strbuf.append("param:[");
+							strbuf.append("\"param"+count+"\":[");
 						else
-							strbuf.append(",param:[");
+							strbuf.append(",\"param"+count+"\":[");
 							
 						Map.Entry e = (Map.Entry)j.next();
 						strbuf.append("{\"name\":" ).append("\"").append(e.getKey()  ).append("\",");
@@ -59,7 +59,7 @@ public class JPack extends Pack{
 				}
 			}
 				
-			strbuf.append("]");
+			strbuf.append("}]");
 			strbuf.append("}");		
 	
 			System.out.println(strbuf.toString());
@@ -71,19 +71,19 @@ public class JPack extends Pack{
 		@Override
 		public boolean parseBody(byte[] buf, int offset, int len){
 			String str = new String(buf, offset, len);
+			System.out.println(buf[9]);
+			System.out.println(str);
 			Pack pck = new JPack(); 
 			try{
-				JSONObject jb = new JSONObject(str.toString());
-				pck = new JPack(
-					jb.getString("source"),
-					jb.getString("target"),
-					jb.getString("action")
-				);
+				JSONObject jb = new JSONObject(str);
+				src = jb.getString("source");
+				trgt = jb.getString("target");
+				act = jb.getString("action");
 						
 				JSONArray ja = jb.getJSONArray("params");
 				Pack.ParamTable pt = new Pack.ParamTable();
 				for(int i=0; i<ja.length(); i++){
-					JSONArray ja2 = ja.getJSONObject(i).getJSONArray("param");
+					JSONArray ja2 = ja.getJSONObject(i).getJSONArray("param"+i);
 					HashMap<String, Object> p = new HashMap<String, Object>();
 					for(int j=0; j<ja2.length(); j++){
 						JSONObject param = ja2.getJSONObject(j);
@@ -92,12 +92,15 @@ public class JPack extends Pack{
 					
 					pt.add(p);
 				}
+				paramTable = pt;
 			}catch(JSONException e){
-				pck.setStatus(false);
+				setStatus(false);
+				System.out.println(e.toString());
+
 				return false;
 			}
 			
-			pck.setStatus(true);
+			setStatus(true);
 			return true;
 		}
 	}

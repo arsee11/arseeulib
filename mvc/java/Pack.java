@@ -18,22 +18,6 @@ public abstract class Pack{
 		}
 	}
 	
-	public static int bytes2Int(byte[] bytes, int offset){
-		int value = 0;
-		value = value + bytes[offset+0]&&0xFF);	
-		value = value + ((int)bytes[offset+1]&0xFF)<<8;	
-		value = value + ((int)bytes[offset+2]&0xFF)<<16;	
-		value = value + ((int)bytes[offset+3]&0xFF)<<24;
-		
-		return value;
-	}
-
-	public static void int2Bytes(int nvalue, byte[] bytes, int offset){
-		bytes[offset+0] = (byte)( nvalue     &0xFF); 	   	 //1st byte;
-		bytes[offset+1] = (byte)((nvalue>>8 )&0xFF); //2nd byte;
-		bytes[offset+2] = (byte)((nvalue>>16)&0xFF); //3nd byte;
-		bytes[offset+3] = (byte)((nvalue>>24)&0xFF); //4nd byte;
-	}
 
 	public abstract class Serializer{
 		public byte[] solve(){
@@ -42,11 +26,12 @@ public abstract class Pack{
 			int len = str.length();
 			byte[] buf = new byte[8+len];
 			System.arraycopy(HEAD, 0, buf, 0, 4);
-			buf[4] = (byte)(len&0xFF); 	   	 //1st byte;
-			buf[5] = (byte)((len>>8 )&0xFF); //2nd byte;
-			buf[6] = (byte)((len>>16)&0xFF); //3nd byte;
-			buf[7] = (byte)((len>>24)&0xFF); //4nd byte;
-			
+			try{
+				Util.int2Bytes(len, buf, 4);	
+			}catch(Exception e){
+				return null;
+			}
+
 			System.arraycopy(str.getBytes(), 0, buf, 8, len);
 			return buf;
 		}
@@ -59,16 +44,21 @@ public abstract class Pack{
 			if( buf.length < 8 )
 				throw new Exception("buf to small");
 
-			if( bytes2Int(buf, 0) != bytes2Int(HEAD, 0) )
-				throw new Exception("head failed");
+			int payloadLen=0; 
+			try{
+				if( Util.bytes2Int(buf, 0) != Util.bytes2Int(HEAD, 0) )
+					throw new Exception("head failed");
 
-			int payloadLen = bytes2Int(buf, 4);
-			if( buf.length-8 < payloadLen )
-			{
-				setStatus(false);
-				return;
+				payloadLen = Util.bytes2Int(buf, 4);
+				System.out.println("payloadLen:"+payloadLen);
+				if( buf.length-8 < payloadLen )
+				{
+					setStatus(false);
+					return;
+				}
+			}catch(Exception e){
+				throw e;
 			}
-
 
 			if( !parseBody(buf, 8, payloadLen) )
 				throw new Exception("payload invalid");
@@ -97,9 +87,9 @@ public abstract class Pack{
 	public abstract Serializer getSerializer();
 	public abstract UnSerializer getUnSerializer();
 	
-	String src;
-	String trgt;
-	String act;
-	boolean status;
-	ParamTable paramTable =  new ParamTable();
+	protected String src;
+	protected String trgt;
+	protected String act;
+	protected boolean status;
+	protected ParamTable paramTable =  new ParamTable();
 }

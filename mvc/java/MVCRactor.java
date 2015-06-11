@@ -1,12 +1,12 @@
-//MVCRactor.java
+//MVCReactor.java
 
 package arsee.mvc.java;
 
 import java.net.*;
 
-class MVCRactor{
+class MVCReactor{
 	
-	MVCRactor(Socket sock)
+	MVCReactor(Socket sock)
 	{
 		this.sock = sock;
 	}
@@ -18,14 +18,14 @@ class MVCRactor{
 	public void stop(){ stop = true; thread.join(); }
 	
 	public void register(View view){
-		views.put(view->getName(), view):
+		views.put(view.getName(), view):
 	}
 	
 	public void unregister(View view){
-		views.remove(view->getName()):
+		views.remove(view.getName()):
 	}
 	
-	void start(){
+	void start(Socket s){
 		Thread t = new Thread( new Runable(){
 			
 			@override
@@ -33,13 +33,15 @@ class MVCRactor{
 				while( !stop ){
 					byte[] buf = new byte[1024];
 					int len = 0;
-					sock.read(buf, len);
-					JPack pck(buf);
+					Reader r = new InputStreamReader( sock.getInputStream() );
+					len = r.read(buf, len);
+					Pack pck = new JPack();
+					pck.getUnserializer().solve(buf);
 					if( pck.getStatus() )
 					{
-						View v = views.find(pck->getTarget());
+						View v = views.find(pck.getTarget());
 						if( v != null)
-							v.execute(pck);
+							v.invoke(pck);
 					}
 				}
 			}
