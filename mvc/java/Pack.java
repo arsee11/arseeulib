@@ -4,10 +4,11 @@ package mylib.mvc.java;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.lang.Exception;
 
-public class Pack{
+public abstract class Pack{
 
-	static final byte[] HEAD = {(byte)0xFF, (byte)0xFF, (byte)0xFF, (byte)0xFF};
+	public static final byte[] HEAD = {(byte)0xFF, (byte)0xFF, (byte)0xFF, (byte)0xFF};
 	
 	public static class ParamTable extends ArrayList<HashMap<String, Object>>{
 		public void AddColumn(String name, Object value){
@@ -17,6 +18,7 @@ public class Pack{
 		}
 	}
 	
+
 	public abstract class Serializer{
 		public byte[] solve(){
 			StringBuffer strbuf = new StringBuffer();			
@@ -24,11 +26,12 @@ public class Pack{
 			int len = str.length();
 			byte[] buf = new byte[8+len];
 			System.arraycopy(HEAD, 0, buf, 0, 4);
-			buf[4] = (byte)(len&0xFF); 	   	 //1st byte;
-			buf[5] = (byte)((len>>8 )&0xFF); //2nd byte;
-			buf[6] = (byte)((len>>16)&0xFF); //3nd byte;
-			buf[7] = (byte)((len>>24)&0xFF); //4nd byte;
-			
+			try{
+				Util.int2Bytes(len, buf, 4);	
+			}catch(Exception e){
+				return null;
+			}
+
 			System.arraycopy(str.getBytes(), 0, buf, 8, len);
 			return buf;
 		}
@@ -36,6 +39,36 @@ public class Pack{
 		abstract String buildBody();
 	}
 	
+	public abstract class UnSerializer{
+		public void solve(byte[] buf) throws Exception{
+			if( buf.length < 8 )
+				throw new Exception("buf to small");
+
+			int payloadLen=0; 
+			try{
+				if( Util.bytes2Int(buf, 0) != Util.bytes2Int(HEAD, 0) )
+					throw new Exception("head failed");
+
+				payloadLen = Util.bytes2Int(buf, 4);
+				System.out.println("payloadLen:"+payloadLen);
+				if( buf.length-8 < payloadLen )
+				{
+					setStatus(false);
+					return;
+				}
+			}catch(Exception e){
+				throw e;
+			}
+
+			if( !parseBody(buf, 8, payloadLen) )
+				throw new Exception("payload invalid");
+
+		}
+
+		public abstract boolean parseBody(byte[] buf, int offset, int len);
+	}
+
+	public Pack(){ this.status = false; }
 	public Pack( String src, String trgt, String act ){
 		this.src = src;
 		this.trgt = trgt;
@@ -45,13 +78,18 @@ public class Pack{
 	public String getSource(){ return src;  }
 	public String getTarget(){ return trgt; }
 	public String getAction(){ return act;  }
+	public boolean getStatus(){ return status;  }
+	public void setStatus(boolean value ){ status=value;  }
 	
 	public void  setParamTable(ParamTable table){ paramTable = table;  }
 	public Pack.ParamTable getParamTable(){ return paramTable;    }
 
+	public abstract Serializer getSerializer();
+	public abstract UnSerializer getUnSerializer();
 	
-	String src;
-	String trgt;
-	String act;
-	ParamTable paramTable =  new ParamTable();
+	protected String src;
+	protected String trgt;
+	protected String act;
+	protected boolean status;
+	protected ParamTable paramTable =  new ParamTable();
 }
