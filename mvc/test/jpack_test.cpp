@@ -3,7 +3,9 @@
 #include "../jpack.h"
 #include<iostream>
 
-
+#if defined(_MSC_VER)
+#pragma comment(lib, "../../lib/jsonlibd")
+#endif
 
 using namespace arsee;
 using namespace std;
@@ -20,9 +22,7 @@ void test_serializ1()
 	Jpack::param_item_t param_item;
 	param_item["ddd"] = "1111";
 	param_item["eee"] = "eee";
-	Jpack::params_pack_t pparam;
-	pparam.push_back(param_item);
-	
+	pck.append_param(param_item);
 	Jpack::serial_t s;
 	size_t len;
 	const char *buf = s(pck, &len);
@@ -37,9 +37,13 @@ void test_serializ2()
 	Jpack pck("", "bbb","ccc");
 	Jpack::param_item_t param_item;
 	param_item["ddd"] = "1111";
-	param_item["eee"] = "eee";
-	Jpack::params_pack_t pparam;
-	pparam.push_back(param_item);
+	param_item["eee"] = "222";
+	pck.append_param(param_item);
+
+	Jpack::param_item_t param_item2;
+	param_item2["ddd"] = "333";
+	param_item2["eee"] = "444";
+	pck.append_param(param_item2);
 	
 	Jpack::serial_t s;
 	size_t len;
@@ -55,10 +59,14 @@ void test_unserializ()
 	Jpack pck("aaa", "bbb","ccc");
 	Jpack::param_item_t param_item;
 	param_item["ddd"] = "1111";
-	param_item["eee"] = "eee";
-	Jpack::params_pack_t pparam;
-	pparam.push_back(param_item);
+	param_item["eee"] = "222";
+	pck.append_param(param_item);
 	
+	Jpack::param_item_t param_item2;
+	param_item2["ddd"] = "333";
+	param_item2["eee"] = "444";
+	pck.append_param(param_item2);
+
 	Jpack::serial_t s;
 	size_t len;
 	const char *buf = s(pck, &len);
@@ -67,20 +75,23 @@ void test_unserializ()
 	Jpack npack;
 	int r = us(npack, buf, len);
 	cout<<"result("<<r<<"):"<<endl;
-	cout<<"action:"<<npack.Action()<<endl;
-	cout<<"source:"<<npack.Source()<<endl;
-	cout<<"target:"<<npack.Target()<<endl;
-	for(auto &i:npack.Params())
-		for(auto &j:i)
-		 cout<<j.first<<"="<<j.second<<endl;
+	cout<<"action:"<<npack.action()<<endl;
+	cout<<"source:"<<npack.source()<<endl;
+	cout<<"target:"<<npack.target()<<endl;
+	for (auto &i : npack.params())
+	{
+		for (auto &j : i)
+			cout << j.first << "=" << j.second << endl;
+	}
+		 
 	
 }
 
 int main()
 {
-	test_serializ1();
+	//test_serializ1();
 	test_serializ2();
-	test_unserializ();
+	//test_unserializ();
 	return 0;
 }
 

@@ -99,15 +99,18 @@ public:
 	{}
 	
 	template<class Object>
-	bool Execute(Object *obj, const pack_t& pck)
+	bool Execute(Object *obj, const pack_t& pck) throw exception
 	{
-		typename pack_t::params_pack_t prams = std::move(pck.params());
-		_rsp = unique_ptr<response_t>( _rqt.Execute(obj, prams ) );
-		if(_rsp == nullptr)
-			throw std::exception();
+		typename pack_t::params_pack_t &prams = pck.params();
+		for(auto &i:params)
+		{
+			_rsp = unique_ptr<response_t>( _rqt.Execute(obj, i ) );
+			if(_rsp == nullptr)
+				throw std::exception();
 
-		_rsp->view(_view);
-		_rsp->action( pck.action() );
+			_rsp->view(_view);
+			_rsp->action( pck.action() );
+		}
 		
 		return true;
 	}

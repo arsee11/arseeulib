@@ -29,7 +29,7 @@
 
 NAMESP_BEGIN
 
-typedef std::map<std::string, std::string> param_pack_t;
+//typedef std::map<std::string, std::string> param_pack_t;
 
 template<class PARAM_PACK, class...PLACES>
 struct ParamTransfor

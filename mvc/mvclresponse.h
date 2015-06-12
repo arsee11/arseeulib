@@ -96,8 +96,14 @@ public:
 	{
 		if(_view != nullptr)
 		{
-			if( _view->name() == pck.target() )
-				Invoker<View::PC>::Invoke(pck.params(), _view);
+			if (_view->name() == pck.target())
+			{
+				for (auto &i : pck.params())
+				{
+					Invoker<View::PC>::Invoke(i, _view);
+				}
+			}
+				
 		}
 	}
 	

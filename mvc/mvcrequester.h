@@ -76,17 +76,17 @@ public:
 	void action(std::string&& val){ action(val); }
 	void action(const char* val){ action(std::string(val)); }
 	
-	void add_param(const std::string &name, const std::string& value){ _pack.param(name, value); }
-	void add_param(std::string &&name, const std::string& value){ param(name, value); }
-	void add_param(const char* name, const std::string& value){ param(std::string(name), value); }
-	void add_param(std::string &&name, std::string&& value){ param(name, value); }
-	void add_param(const std::string &name, std::string&& value){ param(name, value); }
-	void add_param(const char* name, std::string&& value){ param(string(name), value); }
-	void add_param(std::string &&name, const char* value){ param(name, std::string(value)); }
-	void add_param(const std::string &name, const char* value){ param(name, std::string(value)); }
-	void add_param(const char* name, const char* value){ param(std::string(name), std::string(value)); }
+	void add_param(const std::string &name, const std::string& value){ _pack_item[name]=value; }
+	void add_param(std::string &&name, const std::string& value){ add_param(name, value); }
+	void add_param(const char* name, const std::string& value){ add_param(std::string(name), value); }
+	void add_param(std::string &&name, std::string&& value){ add_param(name, value); }
+	void add_param(const std::string &name, std::string&& value){ add_param(name, value); }
+	void add_param(const char* name, std::string&& value){ add_param(string(name), value); }
+	void add_param(std::string &&name, const char* value){ add_param(name, std::string(value)); }
+	void add_param(const std::string &name, const char* value){ add_param(name, std::string(value)); }
+	void add_param(const char* name, const char* value){ add_param(std::string(name), std::string(value)); }
 	
-	void append_param(){ param(std::string(name), std::string(value)); }
+	void append_param(){ _pack.append_param(_pack_item); _pack_item.clear(); }
 	
 	//@timeout seconds.
 	std::string Request()throw(rqtexcpt)
@@ -150,7 +150,9 @@ private:
 		size_t len = 0;
 		_pack.action(_action);
 		_pack.source(_source);
-		_pack.param("rqt_id", _id);
+		typename pack_t::param_item_t pitem;
+		pitem["rqt_id"] = _id;
+		_pack.append_param(pitem);
 		const char* buf = ss(_pack, &len);
 		_sock->Write(buf, len);
 		cout << buf + 8 << endl;
@@ -159,6 +161,7 @@ private:
 	
 protected:
 	pack_t _pack;
+	typename pack_t::param_item_t _pack_item;
 	std::string _action;
 	std::string _source;
 	std::string _id;

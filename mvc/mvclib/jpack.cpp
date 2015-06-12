@@ -10,14 +10,14 @@
 //****************************
 
 #include <utility>
-#include <json/json.h>
+#include "../json/json.h"
 
 #ifndef JPACK_H
 #include "../jpack.h"
 #endif
 
 #ifndef STRINGEX_H
-#include "stringex.h"
+#include "../../stringex.h"
 #endif
 
 NAMESP_BEGIN
@@ -114,17 +114,16 @@ int JUnSerializer::Parse(pack_t &pck, stream_t &stream)
 		pck.action( root["action"].asString()	);
 		pck.target(  root["target"].asString()	);
 		Json::Value& params = root["params"];
-		pack_t::params_pack_t pparam;
 		for(int i=0; i<params.size(); i++)
 		{
 			Json::Value& param_item = params["param"+t2str(i)];
 			pack_t::param_item_t ppitem;
 			for(int j=0; j< param_item.size(); j++)
 			{
-				Json::Value& param = param_item[i];				
+				Json::Value& param = param_item[j];				
 				ppitem[param["name"].asString()] = param["value"].asString();
 			}
-			pparam.push_back(ppitem);
+			pck.append_param(ppitem);
 		}
 
 		pck.status(true);

@@ -157,8 +157,8 @@ public:
 	void source(const stream_t &val ){ _source=val; }
 	void source(stream_t &&val ){ source(val); }
 
-	params_pack_t params(params_pack_t& val){_params = std::move(val);} 
-	params_pack_t params()const{return std::move(_params);} 
+	void append_param(param_item_t& val){ _params.push_back(val); }
+	const params_pack_t& params()const{return _params;} 
 	stream_t get_param(size_t i, stream_t &&name)		const{ return get_param(i, name); }
 	stream_t get_param(size_t i, const char *name )		const{ return get_param(i, stream_t(name)); }
 	stream_t get_param(size_t i, const stream_t &name)	const

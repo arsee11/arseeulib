@@ -46,6 +46,7 @@ template<>
 struct Invoker<1>
 {
 	//@PARAM_PACK:params value pack,
+	//            [{name:value},{name:value}].
 	//@T		 :The Invoked obj.
 	template<class Receiver, class SRC, class PARAM_PACK, class T>
 	static auto Invoke(Receiver* rev, SRC *src, const PARAM_PACK &pp, T *t)
@@ -53,14 +54,14 @@ struct Invoker<1>
 	{
 		typedef ParamPlace< typename T::p1_t,0> 	_1pp;	
 			
-		_1pp::name = T::p1();
-			
-		ParamTransfor<param_pack_t, _1pp> pt = {pp};
+		_1pp::name = T::p1();	
+		ParamTransfor<PARAM_PACK, _1pp> pt = { pp };
 		//template specify Get<0> is a template.
 		return t->Execute(rev, src, pt.template Get<0>() );
 	}	
 	
-	//@PARAM_PACK:params value pack,
+	//@PARAM_PACK:params value pack
+	//            [{name:value},{name:value}].
 	//@T		 :The Invoked obj.
 	template<class PARAM_PACK, class T>
 	static int Invoke(const PARAM_PACK &pp, T *t)
@@ -69,7 +70,7 @@ struct Invoker<1>
 			
 		_1pp::name = T::p1();
 			
-		ParamTransfor<param_pack_t, _1pp> pt = {pp};
+		ParamTransfor<PARAM_PACK, _1pp> pt = { pp };
 		//template specify Get<0> is a template.
 		return t->Execute(pt.template Get<0>() );
 	}	
@@ -92,7 +93,7 @@ struct Invoker<2>
 		_2pp::name = T::p2();
 		//cout << T::_p1 << " " << T::_p2 << endl;
 		//cout << _1pp::name << " " << _2pp::name << endl;
-		ParamTransfor<param_pack_t, _1pp, _2pp> pt = {pp};
+		ParamTransfor<PARAM_PACK, _1pp, _2pp> pt = { pp };
 		return t->Execute(rev, src
 			,pt.template Get<0>()
 			,pt.template Get<1>()
@@ -110,7 +111,7 @@ struct Invoker<2>
 		_1pp::name = T::p1();
 		_2pp::name = T::p2();
 
-		ParamTransfor<param_pack_t, _1pp, _2pp> pt = { pp };
+		ParamTransfor<PARAM_PACK, _1pp, _2pp> pt = { pp };
 		//template specify Get<0> is a template.
 		return t->Execute(pt.template Get<0>()
 			,pt.template Get<1>()
@@ -136,7 +137,7 @@ struct Invoker<3>
 		_2pp::name = T::p2();
 		_3pp::name = T::p3();
 		
-		ParamTransfor<param_pack_t, _1pp, _2pp, _3pp> pt = {pp};
+		ParamTransfor<PARAM_PACK, _1pp, _2pp, _3pp> pt = { pp };
 		//cout<<typeid(pt.template Get<0>()).name()<< pt.template Get<0>()<<typeid(pt.template Get<1>()).name()<< pt.template Get<1>()<<typeid(pt.template Get<2>()).name()<< pt.template Get<2>()<<endl; 
 		return t->Execute(rev, src
 			, pt.template Get<0>()
@@ -158,7 +159,7 @@ struct Invoker<3>
 		_2pp::name = T::p2();
 		_3pp::name = T::p3();
 
-		ParamTransfor<param_pack_t, _1pp, _2pp, _3pp> pt = { pp };
+		ParamTransfor<PARAM_PACK, _1pp, _2pp, _3pp> pt = { pp };
 		//template specify Get<0> is a template.
 		return t->Execute(pt.template Get<0>()
 			, pt.template Get<1>()
@@ -187,7 +188,7 @@ struct Invoker<4>
 		_3pp::name = T::p3();
 		_4pp::name = T::p4();
 		
-		ParamTransfor<param_pack_t, _1pp, _2pp, _3pp, _4pp> pt = {pp};
+		ParamTransfor<PARAM_PACK, _1pp, _2pp, _3pp, _4pp> pt = { pp };
 		return t->Execute(rev, src
 			, pt.template Get<0>()
 			, pt.template Get<1>()
