@@ -70,28 +70,42 @@ public:
 	void action	(const std::string& val){ _action = val; }
 		
 	template<class T>
-	void ParamAdd(std::string &&key, const T& value)
+	void add_param(std::string &&key, const T& value)
 	{ 
-		_params[key] = StringBuilder(value); 
+		_pack_item[key] = StringBuilder(value); 
 	}
 
 
 	template<class T>
-	void ParamAdd(const char* key, const T value)
+	void add_param(const char* key, const T value)
 	{
-		_params[std::string(key)] = StringBuilder(value);
+		_pack_item[key] = StringBuilder(value); 
+	}
+	
+	void append_param()
+	{
+		_params.push_back(_pack_item);
+		_pack_item.clear();
 	}
 
 	pack_t* Reply()
 	{
 		if(_params.size() > 0)
-			return new pack_t(_name, _view, _action, _params);
+		{
+			pack_t pck=new pack_t(_name, _view, _action);
+			for(auto &i:_params)
+				pck->append_param(i);
+			
+			_params.clear();
+			return pck;
+		}
 			
 		return nullptr;
 	}
 				
 protected:
 	view_t _view;
+	typename pack_t::param_item_t _pack_item;
 	params_pack_t _params;
 	std::string _name;
 	std::string _action;
@@ -147,23 +161,40 @@ public:
 	{}
 	
 	template<class T>
-	void ParamAdd(std::string &&key, const T& value)
+	void add_param(std::string &&key, const T& value)
 	{ 
-		_params[key] = StringBuilder(value); 
+		_pack_item[key] = StringBuilder(value); 
+	}
+
+
+	template<class T>
+	void add_param(const char* key, const T value)
+	{
+		_pack_item[key] = StringBuilder(value); 
 	}
 	
+	void append_param()
+	{
+		_params.push_back(_pack_item);
+		_pack_item.clear();
+	}
 		
 	template<class Session>	
 	void Push(const std::string& ip, const int port)
 	{
 		typename Session::session_ptr_t ss =Session::instance().get(ip, port);
-		typename pack_t::pack_ptr_t  pck(new pack_t(_name, _view, "push", _params) );
+		typename pack_t::pack_ptr_t  pck(new pack_t(_name, _view, "push") );
+		for(auto &i:_params)
+				pck->append_param(i);
+		
+		_params.clear();
 		ss->PostOutput(pck);
 	}
 	
 				
 protected:
 	view_t _view;
+	typename pack_t::param_item_t _pack_item;;
 	params_pack_t _params;
 	std::string _name;
 	//pack_list_t _pcks;
