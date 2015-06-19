@@ -27,7 +27,7 @@ void test_serializ1()
 	size_t len;
 	const char *buf = s(pck, &len);
 	cout<<"result("<<len<<"):";
-	cout<<"head:"<<*(long*)buf<<"len:"<<*(long*)(buf+sizeof(long))<<"payload:"<<buf+2*sizeof(long)<<endl;
+	cout<<"head:"<<*(int*)buf<<"len:"<<*(long*)(buf+sizeof(long))<<"payload:"<<buf+2*sizeof(long)<<endl;
 }
 
 //no source
@@ -49,7 +49,7 @@ void test_serializ2()
 	size_t len;
 	const char *buf = s(pck, &len);
 	cout<<"result("<<len<<"):";
-	cout<<"head:"<<*(long*)buf<<"len:"<<*(long*)(buf+sizeof(long))<<"payload:"<<buf+2*sizeof(long)<<endl;
+	cout<<"head:"<<*(int*)buf<<"len:"<<*(int*)(buf+sizeof(int))<<"payload:"<<buf+2*sizeof(int)<<endl;
 }
 
 //unserial

@@ -10,11 +10,13 @@ class MsgView implements MVCView{
 	public String getName(){ return "msgview";}
 	
 	@Override
-	public void invoke(Pack pck){
-		for(int i=0; i<pck.getParamsCount(); i++)
+	public boolean invoke(Pack pck){
+		for(int i=0; i<pck.getParamTable().size(); i++)
 		{
-			Sytem.out.println("From:"+pck.getParam(i, "from"));
-			Sytem.out.println("Msg :"+pck.getParam(i, "msg"));
+			System.out.println("From:"+pck.getParam(i, "from"));
+			System.out.println("Msg :"+pck.getParam(i, "msg"));
 		}
+
+		return true;
 	}
 }

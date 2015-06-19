@@ -69,6 +69,7 @@ public:
 	typedef typename pack_t::pack_list_t 	pack_list_t;
 	
 	typedef LOGIC logic_t;
+	typedef typename logic_t::obj_t obj_t;
 	typedef RRequest<logic_t, Receiver> request_t;
 	typedef RResponse<pack_t> response_t;
 	typedef typename response_t::view_t view_t;
@@ -98,10 +99,10 @@ public:
 		:RControl(view, rev)
 	{}
 	
-	template<class Object>
-	bool Execute(Object *obj, const pack_t& pck) throw exception
+	
+	bool Execute(obj_t* obj, const pack_t& pck) throw(std::exception)
 	{
-		typename pack_t::params_pack_t &prams = pck.params();
+		const typename pack_t::params_pack_t &params = pck.params();
 		for(auto &i:params)
 		{
 			_rsp = unique_ptr<response_t>( _rqt.Execute(obj, i ) );

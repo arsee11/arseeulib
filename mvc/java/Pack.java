@@ -39,7 +39,7 @@ public abstract class Pack{
 		abstract String buildBody();
 	}
 	
-	public abstract class UnSerializer{
+	public abstract class Unserializer{
 		public void solve(byte[] buf) throws Exception{
 			if( buf.length < 8 )
 				throw new Exception("buf to small");
@@ -74,6 +74,10 @@ public abstract class Pack{
 		this.trgt = trgt;
 		this.act = act;
 	}
+
+	public void setSource(String value){ src = value; }
+	public void setTarget(String value){ trgt= value; }
+	public void setAction(String value){ act = value; }
 	
 	public String getSource(){ return src;  }
 	public String getTarget(){ return trgt; }
@@ -81,7 +85,7 @@ public abstract class Pack{
 	public Object getParam(int i, String name)
 	{
 		if( paramTable.size() > i )
-			return paramTable[i].get(name);
+			return paramTable.get(i).get(name);
 			
 		return new String();
 	}
@@ -93,7 +97,7 @@ public abstract class Pack{
 	public Pack.ParamTable getParamTable(){ return paramTable;    }
 
 	public abstract Serializer getSerializer();
-	public abstract UnSerializer getUnSerializer();
+	public abstract Unserializer getUnserializer();
 	
 	protected String src;
 	protected String trgt;

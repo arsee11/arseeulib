@@ -31,7 +31,8 @@ class Dispatcher
 {
 public:
 	typedef CONTROL control_t;
-	
+	typedef typename control_t::obj_t obj_t;
+
 public:
 	template<class Receiver, class OBJECTS_COLLECTION, class Pack>
 	static void Execute(Receiver& rev, OBJECTS_COLLECTION &objs, Pack &pck, typename Pack::pack_list_t &replies)
@@ -42,7 +43,8 @@ public:
 		{
 			std::string tname = control_t::target();
 			control_t ctrl(pck.source(), &rev);
-			objs.GetObj(tname, ctrl, pck);
+			obj_t* obj = objs.template GetObj<obj_t>();
+			ctrl.Execute(obj, pck);
 			ctrl.Reply(replies);
 		}
 	}

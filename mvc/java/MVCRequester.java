@@ -3,45 +3,52 @@
 package mylib.mvc.java;
 
 import java.net.*;
+import java.util.*;
+import java.io.*;
 
 public class MVCRequester{
 	public MVCRequester(Socket s, Pack pck){
 		this.sock = s;
-		this pack = pck;
+		this.pack = pck;
 	}
 	
 	public MVCRequester(Pack pck){
-		this pack = pck;
+		this.pack = pck;
 	}
 	
-	void setSource(String value){
-		pack.setSource(vlaue);
+	public void setSource(String value){
+		pack.setSource(value);
 	}
 	
-	void setTarget(String value){
-		pack.setTarget(vlaue);
+	public void setTarget(String value){
+		pack.setTarget(value);
 	}
 	
-    void setAction(String value){
-		pack.setAction(vlaue);
+    	public void setAction(String value){
+		pack.setAction(value);
 	}
 	
-    void addParam (String name, Object value){
+    	public void addParam (String name, Object value){
 		params.put(name, value);
 	}
 	
-    void appnedParam(){
+    	public void appnedParam(){
 		packTable.add(params);
 		params.clear();
 	}
 	
-    void post(s){
-		byte[] buf = pack.getSerializer().solve();
-		Writer w = new OutputStreamWriter( s.getOutputStream() );
-		w.flush();
+    	public void post(Socket s){
+		try{
+			byte[] buf = pack.getSerializer().solve();
+			OutputStream w = s.getOutputStream();
+			w.write(buf);
+			w.flush();
+		}catch(IOException e){
+			e.printStackTrace();
+		}
 	}
 	
-	void post(){
+	public void post(){
 		post(sock);
 	}
 	

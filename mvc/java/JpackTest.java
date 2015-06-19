@@ -15,7 +15,7 @@ class JpackTest{
 		try{
 			Util.int2Bytes(str.length(), buf, 4);
 			System.arraycopy(str.getBytes(), 0, buf, 8, str.length());
-			pck.getUnSerializer().solve(buf);
+			pck.getUnserializer().solve(buf);
 		}catch(Exception e){
 			System.out.println(e.toString());
 		}

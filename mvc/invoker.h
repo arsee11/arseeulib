@@ -212,7 +212,7 @@ struct Invoker<4>
 		_3pp::name = T::p3();
 		_4pp::name = T::p4();
 		
-		ParamTransfor<param_pack_t, _1pp, _2pp, _3pp, _4pp> pt = {pp};
+		ParamTransfor<PARAM_PACK, _1pp, _2pp, _3pp, _4pp> pt = {pp};
 		//template specify Get<0> is a template.
 		return t->Execute(pt.template Get<0>()
 			, pt.template Get<1>()

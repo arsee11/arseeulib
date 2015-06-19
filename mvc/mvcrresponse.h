@@ -92,7 +92,7 @@ public:
 	{
 		if(_params.size() > 0)
 		{
-			pack_t pck=new pack_t(_name, _view, _action);
+			pack_t* pck=new pack_t(_name, _view, _action);
 			for(auto &i:_params)
 				pck->append_param(i);
 			
@@ -188,7 +188,8 @@ public:
 				pck->append_param(i);
 		
 		_params.clear();
-		ss->PostOutput(pck);
+		if(ss!=nullptr)
+			ss->PostOutput(pck);
 	}
 	
 				

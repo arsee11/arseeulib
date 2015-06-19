@@ -2,18 +2,20 @@
 
 import java.net.*;
 import java.io.*;
-import mylib.mvc.java.*;
+import mylib.mvc.java.MVCReactor;
+import mylib.mvc.java.MVCRequester;
+import mylib.mvc.java.JPack;
 
 class Client{
-	final int REMOTE_PORT = 11111;
-	final String REMOTE_IP = "152.29.178.221";
+	final static int REMOTE_PORT = 11111;
+	final static String REMOTE_IP = "152.29.178.221";
 	
 	public static void main(String[] args){
 		try{
 			Socket s = new Socket(REMOTE_IP, REMOTE_PORT);
 			MVCReactor reactor = new MVCReactor();
 			reactor.register(new MsgView());
-			reactor.start(s);
+			reactor.listen(s);
 			
 			BufferedReader stdin = new BufferedReader( new InputStreamReader(System.in) );
 			System.out.print("From:");
@@ -33,7 +35,7 @@ class Client{
 			rqt.post(s);
 			
 		}catch(IOException e){
-			e.printTrace();
+			e.printStackTrace();
 		}
 	}
 }

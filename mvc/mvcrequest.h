@@ -36,7 +36,7 @@ public:
 	}
 
 	template<class OBJECT, class Argumet>
-	auto Execute(OBJECT* obj, Argumet &arg)
+	auto Execute(OBJECT* obj, const Argumet &arg)
 	->decltype(Invoker<logic_t::PC>::Invoke((Receiver*)nullptr, obj, arg, (logic_t*)nullptr)) 
 	{
 		return Invoker<logic_t::PC>::Invoke(_receiver, obj, arg, _logic.get()); 

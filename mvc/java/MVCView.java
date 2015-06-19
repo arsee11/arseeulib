@@ -2,7 +2,7 @@
 
 package mylib.mvc.java;
 
-interface MVCView{
+public interface MVCView{
 	boolean invoke(Pack pck);
 	String getName();
 }

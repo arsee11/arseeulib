@@ -17,7 +17,7 @@ public class JPack extends Pack{
 	public Serializer getSerializer(){ return new JSerializer(); }
 	
 	@Override
-	public UnSerializer getUnSerializer(){ return new JUnSerializer(); }
+	public Unserializer getUnserializer(){ return new JUnserializer(); }
 	
 	class JSerializer extends Serializer{
 	
@@ -67,7 +67,7 @@ public class JPack extends Pack{
 		}
 	}
 
-	class JUnSerializer extends UnSerializer{
+	class JUnserializer extends Unserializer{
 		@Override
 		public boolean parseBody(byte[] buf, int offset, int len){
 			String str = new String(buf, offset, len);

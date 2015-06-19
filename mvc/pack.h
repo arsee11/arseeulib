@@ -57,16 +57,6 @@ public:
 public:
 	Pack(){}
 	
-	Pack(const stream_t &src, const stream_t &trgt
-		, const stream_t &act, const stream_t &param
-	)
-		:_source(src)
-		,_target(trgt)
-		,_action(act)
-		,_status(true)
-	{
-		_params["msg"] = param;
-	}
 	
 	Pack(const stream_t &src, const stream_t &trgt
 		, const stream_t &act, const params_pack_t &params
@@ -159,9 +149,9 @@ public:
 
 	void append_param(param_item_t& val){ _params.push_back(val); }
 	const params_pack_t& params()const{return _params;} 
-	stream_t get_param(size_t i, stream_t &&name)		const{ return get_param(i, name); }
-	stream_t get_param(size_t i, const char *name )		const{ return get_param(i, stream_t(name)); }
-	stream_t get_param(size_t i, const stream_t &name)	const
+	//stream_t get_param(size_t i, stream_t &&name)		{ return get_param(i, name); }
+	//stream_t get_param(size_t i, const char *name )	{ return get_param(i, stream_t(name)); }
+	stream_t get_param(size_t i, const stream_t &name)	
 	{ 
 		if(_params.size()>=i)
 			return _params[i][name]; 

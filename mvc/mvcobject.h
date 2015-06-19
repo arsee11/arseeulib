@@ -160,7 +160,7 @@ private:
 		ReturnObj* r;
 		
 		template<class FromObj>
-		void Execute(FromObj* f){ r = (ReturnObj*)f; }
+		void Execute(FromObj* f){ r = (ReturnObj*)(f); }
 	};
 
 	template<int N>
