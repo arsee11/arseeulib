@@ -8,7 +8,8 @@ import mylib.mvc.java.JPack;
 
 class Client{
 	final static int REMOTE_PORT = 11111;
-	final static String REMOTE_IP = "152.29.178.221";
+	//final static String REMOTE_IP = "152.29.178.221";
+	final static String REMOTE_IP = "192.168.10.100";
 	
 	public static void main(String[] args){
 		try{
@@ -29,8 +30,8 @@ class Client{
 			rqt.setTarget("msg");
 			rqt.setAction("trans_msg");
 			rqt.addParam("from", from);
-			rqt.addParam("to", from);
-			rqt.addParam("msg", from);
+			rqt.addParam("to", to);
+			rqt.addParam("msg", msg);
 			rqt.appnedParam();
 			rqt.post(s);
 			

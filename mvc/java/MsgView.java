@@ -7,10 +7,11 @@ import mylib.mvc.java.JPack;
 class MsgView implements MVCView{
 	
 	@Override
-	public String getName(){ return "msgview";}
+	public String getName(){ return "msg";}
 	
 	@Override
 	public boolean invoke(Pack pck){
+		System.out.println("You got a message:");
 		for(int i=0; i<pck.getParamTable().size(); i++)
 		{
 			System.out.println("From:"+pck.getParam(i, "from"));

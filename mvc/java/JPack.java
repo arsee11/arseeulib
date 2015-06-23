@@ -27,11 +27,11 @@ public class JPack extends Pack{
 			strbuf.append("{");
 			strbuf.append("\"action\":").append("\"").append(getAction()).append("\",");
 			strbuf.append("\"source\":").append("\"").append(getSource()).append("\",");
-			strbuf.append("\"target\":").append("\"").append(getTarget()).append("\",");
+			strbuf.append("\"target\":").append("\"").append(getTarget()).append("\"");
 			
 			if( getParamTable().size() > 0 )
 			{
-				strbuf.append("\"params\":[{");
+				strbuf.append(",\"params\":[{");
 				int count=0;
 				for(HashMap<String, Object> i:getParamTable()){
 					if( i.size() == 0 )
@@ -57,12 +57,11 @@ public class JPack extends Pack{
 					count++;
 					strbuf.append("]");
 				}
+				strbuf.append("}]");
 			}
 				
-			strbuf.append("}]");
 			strbuf.append("}");		
-	
-			System.out.println(strbuf.toString());
+			
 			return strbuf.toString();
 		}
 	}
@@ -71,8 +70,6 @@ public class JPack extends Pack{
 		@Override
 		public boolean parseBody(byte[] buf, int offset, int len){
 			String str = new String(buf, offset, len);
-			System.out.println(buf[9]);
-			System.out.println(str);
 			Pack pck = new JPack(); 
 			try{
 				JSONObject jb = new JSONObject(str);

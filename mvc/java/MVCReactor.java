@@ -10,9 +10,27 @@ import java.io.*;
 
 public class MVCReactor{
 	
+	public class ErrorHandler{
+		void Handle(String errorString, Exception e){
+			if( errorString != null)
+			{
+				System.out.println(errorString);
+				if( errorString == "Connect Lost!")
+				{
+					stop = true;
+				}				
+			}
+			
+			if( e != null )
+				e.printStackTrace();
+		}
+	}
+	
 	final int MAX_BUF_LEN=1024;
 
 	public MVCReactor(){}
+
+	public MVCReactor(ErrorHandler eh){ this.errorHandler = eh;}
 
 	public MVCReactor(Socket sock)
 	{
@@ -41,32 +59,45 @@ public class MVCReactor{
 		views.remove(view.getName());
 	}
 	
+		
 	void start(Socket s){
+		System.out.println("start...");
 		Thread t = new Thread( new Runnable(){
 			
 			@Override
 			public void run(){			
-				try{
-					while( !stop ){
+				while( !stop ){
+					try{
+						System.out.println("run..");
 						byte[] buf = new byte[MAX_BUF_LEN];
 						int len = 0;
-						InputStream r =  sock.getInputStream();
+						InputStream r =  s.getInputStream();
 						len = r.read(buf,0, MAX_BUF_LEN);
-						Pack pck = new JPack();
-						pck.getUnserializer().solve(buf);
-						if( pck.getStatus() )
+						System.out.println("len:"+len);
+						if( len <= 0 )
+							errorHandler.Handle("Connect Lost!", null);
+						else
 						{
-							MVCView v = views.get(pck.getTarget());
-							if( v != null)
-								v.invoke(pck);
+							System.out.println("recv("+len+"):"+new String(buf, 8, len-8));
+							Pack pck = new JPack();
+							pck.getUnserializer().solve(buf);
+							if( pck.getStatus() )
+							{
+								MVCView v = views.get(pck.getTarget());
+								if( v != null)
+									v.invoke(pck);
+							}
 						}
+					}catch(Exception e){
+						e.printStackTrace();
 					}
-				}catch(Exception e){
-					e.printStackTrace();
 				}
+				
 				
 			}
 		});
+		
+		t.start();
 	}
 	
 	
@@ -74,4 +105,5 @@ public class MVCReactor{
 	Socket sock;
 	boolean stop = false;
 	Thread thread;
+	ErrorHandler errorHandler = new ErrorHandler();
 }

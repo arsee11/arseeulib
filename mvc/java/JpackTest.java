@@ -45,10 +45,19 @@ class JpackTest{
 		String str = new String(buf, 8, buf.length-8);
 		System.out.println(str);
 	}
+	
+	void testSerializer_Notparams(){
+		JPack pck = new JPack("member", "memberlist", "registry");
+		byte[] buf = pck.getSerializer().solve();
+		
+		String str = new String(buf, 8, buf.length-8);
+		System.out.println(str);
+	}
 
 	public static void main(String[] args){
 		new JpackTest().testUnserializer();
 		new JpackTest().testSerializer();
+		new JpackTest().testSerializer_Notparams();
 	}
 
 }

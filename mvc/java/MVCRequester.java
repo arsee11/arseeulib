@@ -9,7 +9,7 @@ import java.io.*;
 public class MVCRequester{
 	public MVCRequester(Socket s, Pack pck){
 		this.sock = s;
-		this.pack = pck;
+		this.pack = pck;	
 	}
 	
 	public MVCRequester(Pack pck){
@@ -33,12 +33,14 @@ public class MVCRequester{
 	}
 	
     	public void appnedParam(){
-		packTable.add(params);
+		packTable.add((HashMap<String, Object>)params.clone());
 		params.clear();
 	}
 	
     	public void post(Socket s){
 		try{
+			pack.setParamTable( (Pack.ParamTable)packTable.clone());
+			packTable.clear();
 			byte[] buf = pack.getSerializer().solve();
 			OutputStream w = s.getOutputStream();
 			w.write(buf);
@@ -54,6 +56,6 @@ public class MVCRequester{
 	
 	protected Socket sock;
 	protected Pack pack;
-	protected Pack.ParamTable packTable;
-	protected HashMap<String, Object> params;
+	protected Pack.ParamTable packTable = new Pack.ParamTable();
+	protected HashMap<String, Object> params = new HashMap<String, Object>();
 }

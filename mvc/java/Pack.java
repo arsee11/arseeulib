@@ -50,7 +50,6 @@ public abstract class Pack{
 					throw new Exception("head failed");
 
 				payloadLen = Util.bytes2Int(buf, 4);
-				System.out.println("payloadLen:"+payloadLen);
 				if( buf.length-8 < payloadLen )
 				{
 					setStatus(false);
