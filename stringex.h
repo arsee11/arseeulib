@@ -105,7 +105,7 @@ inline std::string wstr2str(const std::wstring &str)
     return str1;
 }
 
-void str_trim(string& str, char totrim)
+inline void str_trim(string& str, char totrim)
 {
 	size_t i = 0;
 

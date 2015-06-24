@@ -97,6 +97,7 @@ public:
 				pck->append_param(i);
 			
 			_params.clear();
+			pck->status(true);
 			return pck;
 		}
 			

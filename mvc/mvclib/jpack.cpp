@@ -10,7 +10,7 @@
 //****************************
 
 #include <utility>
-#include "../json/json.h"
+#include "json/json.h"
 
 #ifndef JPACK_H
 #include "../jpack.h"
@@ -110,24 +110,31 @@ int JUnSerializer::Parse(pack_t &pck, stream_t &stream)
 	
 	if( rd.parse( stream, root, false) )
 	{
-		pck.source( root["source"].asString()	);
-		pck.action( root["action"].asString()	);
-		pck.target(  root["target"].asString()	);
-		Json::Value& params = root["params"];
-		for(int i=0; i<params.size(); i++)
-		{
-			Json::Value& param_item = params["param"+t2str(i)];
-			pack_t::param_item_t ppitem;
-			for(int j=0; j< param_item.size(); j++)
+		try{
+			pck.source( root["source"].asString()	);
+			pck.action( root["action"].asString()	);
+			pck.target(  root["target"].asString()	);
+			Json::Value& params = root["params"];
+			for(int i=0; i<params.size(); i++)
 			{
-				Json::Value& param = param_item[j];				
-				ppitem[param["name"].asString()] = param["value"].asString();
+				Json::Value& param_item = params["param"+t2str(i)];
+				pack_t::param_item_t ppitem;
+				for(int j=0; j< param_item.size(); j++)
+				{
+					Json::Value& param = param_item[j];				
+					ppitem[param["name"].asString()] = param["value"].asString();
+				}
+				pck.append_param(ppitem);
 			}
-			pck.append_param(ppitem);
-		}
 
-		pck.status(true);
-		return 1;
+			pck.status(true);
+			return 1;
+		}
+		catch(exception& e){
+			//pck.error(e.what());
+			pck.status(false);
+			return 0;
+		}
 	}
 	
 	return 0;
