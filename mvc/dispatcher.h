@@ -34,6 +34,8 @@ public:
 	typedef typename control_t::obj_t obj_t;
 
 public:
+	//ToDo:: 每个action 都要遍历一遍所有的 Dispatcher ，效率不高，待优化
+	//且如果没找到相应的 Dispatcher ，应该返回错误
 	template<class Receiver, class OBJECTS_COLLECTION, class Pack>
 	static void Execute(Receiver& rev, OBJECTS_COLLECTION &objs, Pack &pck, typename Pack::pack_list_t &replies)
 	{

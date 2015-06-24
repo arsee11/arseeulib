@@ -4,11 +4,11 @@ import mylib.mvc.java.JPack;
 import mylib.mvc.java.Pack;
 import mylib.mvc.java.Util;
 
-import java.util.HashMap;
+import java.util.*;
 
 class JpackTest{
 	void testUnserializer(){
-		String str = "{\"action\":\"registry\",\"source\":\"member\",\"target\":\"memberlist\",\"params\":[{\"param0\":[{\"name\":\"id\",\"value\":\"Jim\"},{\"name\":\"pwd\",\"value\":\"123\"}],\"param1\":[{\"name\":\"id\",\"value\":\"Alex\"},{\"name\":\"pwd\",\"value\":\"123\"}]}]}";
+		String str = "{\"action\":\"registry\",\"source\":\"member\",\"target\":\"memberlist\",\"params\":{\"param0\":[{\"name\":\"id\",\"value\":\"Jim\"},{\"name\":\"pwd\",\"value\":\"123\"}],\"param1\":[{\"name\":\"id\",\"value\":\"Alex\"},{\"name\":\"pwd\",\"value\":\"123\"}]}}";
 		byte[] buf = new byte[str.length()+8];
 		System.arraycopy(Pack.HEAD, 0, buf, 0, 4);
 		JPack pck = new JPack();
@@ -24,6 +24,13 @@ class JpackTest{
 		System.out.println("action:"+pck.getAction());
 		System.out.println("source:"+pck.getSource());
 		System.out.println("target:"+pck.getTarget());
+		for(HashMap<String, Object> p:pck.getParamTable()){
+			Iterator it = p.entrySet().iterator();
+			while(it.hasNext()){
+				Map.Entry e = (Map.Entry)it.next();
+				System.out.println(e.getKey()+"="+ e.getValue());
+			}
+		}
 	}
 
 	void testSerializer(){

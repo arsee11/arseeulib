@@ -5,14 +5,15 @@ package mylib.mvc.java;
 import java.lang.Exception;
 
 public class Util{
+	//low order
 	public  static byte[] int2Bytes(int i, byte[] bytes, int offset)throws Exception  {   
 		if( bytes==null || bytes.length-offset < 4 )
 			throw new Exception("bytes==null||bytes.length-offset<4");
 
-		bytes[0+offset] = (byte)((i >> 24) & 0xFF);
-		bytes[1+offset] = (byte)((i >> 16) & 0xFF);
-		bytes[2+offset] = (byte)((i >> 8) & 0xFF); 
-		bytes[3+offset] = (byte)(i & 0xFF);
+		bytes[0+offset] = (byte)(i & 0xFF);
+		bytes[1+offset] = (byte)((i >> 8) & 0xFF);
+		bytes[2+offset] = (byte)((i >> 16) & 0xFF); 
+		bytes[3+offset] = (byte)((i >> 24)& 0xFF);
 		return bytes;
 	}
 
@@ -22,13 +23,14 @@ public class Util{
 		return bytes;
 	}
 	
+	//low order
 	public static int bytes2Int(byte[] bytes, int offset)throws Exception {
 		if( bytes==null || bytes.length-offset < 4 )
 			throw new Exception("bytes==null||bytes.length-offset<4");
 
 		int value= 0;
 		for (int i = 0; i < 4; i++) {
-			int shift= (4 - 1 - i) * 8;
+			int shift= (i) * 8;
 			value +=(bytes[i+offset] & 0x000000FF) << shift;
 		}
 

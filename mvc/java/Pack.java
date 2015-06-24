@@ -40,7 +40,7 @@ public abstract class Pack{
 	}
 	
 	public abstract class Unserializer{
-		public void solve(byte[] buf) throws Exception{
+		public int solve(byte[] buf) throws Exception{
 			if( buf.length < 8 )
 				throw new Exception("buf to small");
 
@@ -53,7 +53,7 @@ public abstract class Pack{
 				if( buf.length-8 < payloadLen )
 				{
 					setStatus(false);
-					return;
+					return 0;
 				}
 			}catch(Exception e){
 				throw e;
@@ -61,6 +61,8 @@ public abstract class Pack{
 
 			if( !parseBody(buf, 8, payloadLen) )
 				throw new Exception("payload invalid");
+				
+			return buf.length - (payloadLen+8);
 
 		}
 

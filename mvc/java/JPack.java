@@ -31,7 +31,7 @@ public class JPack extends Pack{
 			
 			if( getParamTable().size() > 0 )
 			{
-				strbuf.append(",\"params\":[{");
+				strbuf.append(",\"params\":{");
 				int count=0;
 				for(HashMap<String, Object> i:getParamTable()){
 					if( i.size() == 0 )
@@ -57,7 +57,7 @@ public class JPack extends Pack{
 					count++;
 					strbuf.append("]");
 				}
-				strbuf.append("}]");
+				strbuf.append("}");
 			}
 				
 			strbuf.append("}");		
@@ -77,10 +77,12 @@ public class JPack extends Pack{
 				trgt = jb.getString("target");
 				act = jb.getString("action");
 						
-				JSONArray ja = jb.getJSONArray("params");
+				//JSONArray ja = jb.getJSONArray("params");
+				JSONObject params = jb.getJSONObject("params");
 				Pack.ParamTable pt = new Pack.ParamTable();
-				for(int i=0; i<ja.length(); i++){
-					JSONArray ja2 = ja.getJSONObject(i).getJSONArray("param"+i);
+				String[] names = JSONObject.getNames(params);
+				for(int i=0; i<names.length; i++){
+					JSONArray ja2 = params.getJSONArray(names[i]);
 					HashMap<String, Object> p = new HashMap<String, Object>();
 					for(int j=0; j<ja2.length(); j++){
 						JSONObject param = ja2.getJSONObject(j);

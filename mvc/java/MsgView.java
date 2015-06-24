@@ -7,7 +7,7 @@ import mylib.mvc.java.JPack;
 class MsgView implements MVCView{
 	
 	@Override
-	public String getName(){ return "msg";}
+	public String getName(){ return "msgview";}
 	
 	@Override
 	public boolean invoke(Pack pck){
