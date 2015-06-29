@@ -2,6 +2,9 @@
 
 import java.net.*;
 import java.io.*;
+import java.util.Base64;
+import java.util.Vector;
+import java.util.List;
 import mylib.mvc.java.MVCReactor;
 import mylib.mvc.java.MVCRequester;
 import mylib.mvc.java.JPack;
@@ -37,19 +40,41 @@ class Client{
 			String from = stdin.readLine();
 			System.out.print("To:");
 			String to = stdin.readLine();
-			System.out.print("Msg:");
-			String msg = stdin.readLine();
+			//System.out.print("Msg:");
+			//String msg = stdin.readLine();
 			rqt.setSource("errorview");
 			rqt.setTarget("msg");
 			rqt.setAction("tran_msg");
 			rqt.addParam("from", from);
 			rqt.addParam("to", to);
-			rqt.addParam("msg", msg);
+			String emsg = new String( Base64.getEncoder().encode(readFromFile()) );
+			rqt.addParam("msg", emsg);
 			rqt.appnedParam();
 			rqt.post(s);
 			
 		}catch(IOException e){
 			e.printStackTrace();
+		}
+	}
+	
+	static byte[] readFromFile(){
+		try{
+			FileReader fr = new FileReader("a.jpg");
+			int b;
+			List barr = new Vector();
+			while( (b=fr.read())!=-1)
+			{
+				barr.add((byte)b);
+			}
+			
+			byte[] bs = new byte[barr.size()];
+			for( int i=0;i<barr.size(); i++)
+				bs[i] = (byte)barr.get(i);
+				
+			return bs;
+		}catch(IOException e){
+			e.printStackTrace();
+			return null;
 		}
 	}
 }

@@ -3,12 +3,14 @@
 import mylib.mvc.java.JPack;
 import mylib.mvc.java.Pack;
 import mylib.mvc.java.Util;
+import java.io.*;
 
 import java.util.*;
 
 class JpackTest{
 	void testUnserializer(){
-		String str = "{\"action\":\"registry\",\"source\":\"member\",\"target\":\"memberlist\",\"params\":{\"param0\":[{\"name\":\"id\",\"value\":\"Jim\"},{\"name\":\"pwd\",\"value\":\"123\"}],\"param1\":[{\"name\":\"id\",\"value\":\"Alex\"},{\"name\":\"pwd\",\"value\":\"123\"}]}}";
+		//String str = "{\"action\":\"registry\",\"source\":\"member\",\"target\":\"memberlist\",\"params\":{\"param0\":[{\"name\":\"id\",\"value\":\"Jim\"},{\"name\":\"pwd\",\"value\":\"123\"}],\"param1\":[{\"name\":\"id\",\"value\":\"Alex\"},{\"name\":\"pwd\",\"value\":\"123\"}]}}";
+		String str  = new String(readFromFile());
 		byte[] buf = new byte[str.length()+8];
 		System.arraycopy(Pack.HEAD, 0, buf, 0, 4);
 		JPack pck = new JPack();
@@ -61,6 +63,27 @@ class JpackTest{
 		System.out.println(str);
 	}
 
+	static byte[] readFromFile(){
+		try{
+			FileReader fr = new FileReader("log.txt");
+			int b;
+			List barr = new Vector();
+			while( (b=fr.read())!=-1)
+			{
+				barr.add((byte)b);
+			}
+			
+			byte[] bs = new byte[barr.size()];
+			for( int i=0;i<barr.size(); i++)
+				bs[i] = (byte)barr.get(i);
+				
+			return bs;
+		}catch(IOException e){
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
 	public static void main(String[] args){
 		new JpackTest().testUnserializer();
 		new JpackTest().testSerializer();

@@ -3,6 +3,7 @@
 import mylib.mvc.java.MVCView;
 import mylib.mvc.java.Pack;
 import mylib.mvc.java.JPack;
+import java.util.Base64;
 
 class MsgView implements MVCView{
 	
@@ -15,7 +16,7 @@ class MsgView implements MVCView{
 		for(int i=0; i<pck.getParamTable().size(); i++)
 		{
 			System.out.println("From:"+pck.getParam(i, "from"));
-			System.out.println("Msg :"+pck.getParam(i, "msg"));
+			System.out.println("Msg :"+new String( Base64.getDecoder().decode( (String)pck.getParam(i, "msg"))));
 		}
 
 		return true;
