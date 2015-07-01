@@ -190,11 +190,11 @@ public:
 	UnSerializerAbstr() = delete;
 
 	UnSerializerAbstr(size_t buf_len)
-		:_buf_len(buf_len)
+		:_buf_len(3*buf_len)
 	{
 		//cout<<"UnSerializerAbstr()"<<endl;
-		_buf = new char[3*_buf_len];
-		memset(_buf, 0, 3*_buf_len);
+		_buf = new char[_buf_len];
+		memset(_buf, 0, _buf_len);
 	}
 
 	~UnSerializerAbstr()
@@ -231,22 +231,29 @@ public:
 	virtual const char* Header(const char* stream, size_t len, size_t *head_len)=0;
 
 private:
-	//@return nullptr judge fail,
-	//otherwise ptr to pack stream except header.
+	//@return nullptr if judge fail,
+	//otherwise ptr to pack stream except header and length fields.
 	const char* Judge(const char *stream, size_t len)
 	{
 		//make sure less memory copy
 		const char *pbuf = nullptr;
+		if(_size+len >= _buf_len) //overload
+		{
+			_size = 0;//clear _buf
+		//	return nullptr;
+		}
+
 		if(_size == 0)
 		{
 			size_t head_len= 0;
 			pbuf = Header(stream, len, &head_len);
-
+			
 			if(pbuf != nullptr)
 			{
-				pbuf = Payload(pbuf, len-head_len, &_payload_len);
+				size_t head_start = pbuf-stream-head_len;
+				pbuf = Payload(pbuf, len-head_start-head_len, &_payload_len);
 				//head field, paylaod_len field.
-				size_t nleft = len-head_len-pack_t::LenField;
+				long nleft = len-head_start-head_len-pack_t::LenField;
 				//more than pack
 				if(_payload_len < nleft)
 				{
@@ -257,17 +264,23 @@ private:
 				//less than pack
 				else if(_payload_len > nleft) 
 				{
-					memcpy(_buf, pbuf, len);
+					//copy form start of head to stream's end
+					size_t hplen = head_len;
+					if(nleft >= 0)
+						hplen += pack_t::LenField;
+					
+					memcpy(_buf, pbuf-hplen, len-(pbuf-hplen-stream));
 					_size = len;
 					pbuf = nullptr;
 				}
 				//complete pack
 			}
-			else
-			{
-				memcpy(_buf, stream, len);
-				_size = len;
-			}
+			//not found header drop the datas
+		//	else
+		//	{
+		//		memcpy(_buf, stream, len);
+		//			_size = len;
+		//	}
 		}
 		else
 		{
@@ -277,7 +290,8 @@ private:
 			pbuf = Header(_buf, _size, &head_len);
 			if(pbuf != nullptr)
 			{
-				pbuf = Payload(pbuf, len-head_len, &_payload_len);
+				size_t head_start = pbuf-_buf-head_len;
+				pbuf = Payload(pbuf, len-head_start-head_len, &_payload_len);
 				size_t plen = _payload_len + head_len + pack_t::LenField;
 				if(_size < plen)
 					pbuf = nullptr;
@@ -286,6 +300,7 @@ private:
 			}
 		}
 
+		cout<<"_paylod_len:"<<_payload_len<<",_size:"<<_size<<endl;
 		return pbuf;
 	}
 
