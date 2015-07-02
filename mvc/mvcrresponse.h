@@ -93,6 +93,7 @@ public:
 		if(_params.size() > 0)
 		{
 			pack_t* pck=new pack_t(_name, _view, _action);
+			pck->type("response");
 			for(auto &i:_params)
 				pck->append_param(i);
 			

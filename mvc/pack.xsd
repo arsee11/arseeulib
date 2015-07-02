@@ -5,34 +5,59 @@ xmlns="http://www.w3school.com.cn"
 elementFormDefault="qualified">
 
 <xs:element name="pack">
-	<xs:element name="head" type="xs:string">
-		<xs:complexType>
-		<xs:element name="type" type="xs:string" >
+	<xs:complexType>
+	<xs:sequence>
+
+		<xs:element name="type" >
 			<xs:simpleType>
 				<xs:restriction base="xs:string">
 					<xs:enumeration value="request"/>
 					<xs:enumeration value="response"/>
+					<xs:enumeration value="push" />
 				</xs:restriction>
 			</xs:simpleType>
 		</xs:element>
-		<xs:element name="id" type="xs:integer"/>
-		</xs:complexType>
-	</xs:element>
-	
-	<xs:element name="action" type="xs:string"/>
-	<xs:element name="target" type="xs:string"/>
-	<xs:element name="source" type="xs:string"/>
-	
-	<xs:element name="params">
-		<xs:complexType>
-		<xs:element name="param" maxOccurs="unbounded">
+		
+		<xs:element name="coutinue" maxOccurs="1" minOccurs="0" >
+			<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="next" />
+				<xs:enumeration value="end" />
+			</xs:restriction>
+			</xs:simpleType>
+		</xs:element>	
+		
+		<xs:element name="action" type="xs:string"/>
+		<xs:element name="target" type="xs:string" maxOccurs="1" minOccurs="0"/>
+		<xs:element name="source" type="xs:string"/>
+		
+		<xs:element name="paramType" type="xs:string" />
+		<xs:element name="paramEncodeing" >
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="plain" />
+					<xs:enumeration value="base64" />
+					<xs:enumeration value="hex" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:element>
+		
+		<xs:element name="params">
 			<xs:complexType>
-			<xs:element name="name" type="xs:string"/>
-			<xs:element name="value" type="xs:string"/>
+			<xs:sequence>
+				<xs:element name="param" maxOccurs="unbounded">
+					<xs:complexType>
+					<xs:all>
+						<xs:element name="name" type="xs:string"/>
+						<xs:element name="value" type="xs:string"/>
+					</xs:all>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
 			</xs:complexType>
 		</xs:element>
-		</xs:complexType>
-	</xs:element>
+	</xs:sequence>
+	</xs:complexType>
 </xs:element>
 
 </xs:schema>

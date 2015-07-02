@@ -41,7 +41,7 @@ template<
 class Pack
 {
 public:
-	typedef Pack pack_t;
+	typedef Pack<Serializer, UnSerializer> pack_t;
 	typedef std::shared_ptr<pack_t> pack_ptr_t;
 	typedef std::vector<pack_ptr_t> pack_list_t;
 	typedef std::string stream_t;
@@ -146,9 +146,26 @@ public:
 	stream_t source()const{ return std::move(_source); }
 	void source(const stream_t &val ){ _source=val; }
 	void source(stream_t &&val ){ source(val); }
+	
+	stream_t type()const{ return std::move(_type); }
+	void type(const stream_t &val ){ _type=val; }
+	void type(stream_t &&val ){ type(val); }
+	
+	stream_t get_continue()const{ return std::move(_continue); }
+	void set_continue(const stream_t &val ){ _continue=val; }
+	void set_continue(stream_t &&val ){ set_continue(val); }
+	
+	stream_t param_type()const{ return std::move(_paramt); }
+	void param_type(const stream_t &val ){ _paramt=val; }
+	void param_type(stream_t &&val ){ param_type(val); }
+	
+	stream_t param_encoding()const{ return std::move(_parame); }
+	void param_encoding(const stream_t &val ){ _parame=val; }
+	void param_encoding(stream_t &&val ){ param_encoding(val); }
 
 	void append_param(param_item_t& val){ _params.push_back(val); }
 	const params_pack_t& params()const{return _params;} 
+	
 	//stream_t get_param(size_t i, stream_t &&name)		{ return get_param(i, name); }
 	//stream_t get_param(size_t i, const char *name )	{ return get_param(i, stream_t(name)); }
 	stream_t get_param(size_t i, const stream_t &name)	
@@ -159,21 +176,70 @@ public:
 		return stream_t();
 	}
 	
-
+	
+	pack_t& operator+=( pack_t& rhs)
+	{
+		if( IsMatch(rhs) )
+		{
+			params_pack_t::iterator &i = this->_params.begin();
+			params_pack_t::const_iterator &j = rhs.params().begin();
+			for(; i!= _params.end(); ++i, ++j)
+			{
+				for( auto &m : (*i) )
+				{
+					m.second += (*j).find(m.first)->second;
+				}
+			}
+		}
+		
+		return (*this);		
+	}
+	
+		
 	void Reset()
 	{
 		_status = false;
 		_action="";
 		_target="";
 		_source="";
+		_type="request";
+		_continue="";
+		_paramt="text";
+		_parame="plain";		
 		_params.clear();
 	}
+private:
+	bool IsMatch(pack_t& other)
+	{
+		if (this->action() != other.action())
+			return false;
 
+		if( this->_params.size() != other.params().size() )
+			return false;
+		
+		params_pack_t::iterator &i = this->_params.begin();
+		params_pack_t::const_iterator &j = other.params().begin();
+		for(; i!= _params.end(); ++i, ++j)
+		{
+			for( auto &m : (*i) )
+			{
+				if((*j).find(m.first) == (*j).end() )
+					return false;
+			}
+		}
+		
+		return true;
+	}
+	
 private:
 	bool _status =false;
 	stream_t _action="";
 	stream_t _target="";
 	stream_t _source="";
+	stream_t _type="request";
+	stream_t _continue="";
+	stream_t _paramt="text";
+	stream_t _parame="plain";
 	params_pack_t _params;
 };
 
@@ -237,10 +303,9 @@ private:
 	{
 		//make sure less memory copy
 		const char *pbuf = nullptr;
-		if(_size+len >= _buf_len) //overload
+		if(_size+len > _buf_len) //overload
 		{
 			_size = 0;//clear _buf
-		//	return nullptr;
 		}
 
 		if(_size == 0)
@@ -275,12 +340,7 @@ private:
 				}
 				//complete pack
 			}
-			//not found header drop the datas
-		//	else
-		//	{
-		//		memcpy(_buf, stream, len);
-		//			_size = len;
-		//	}
+			//if did not found header then drop the datas
 		}
 		else
 		{
@@ -300,7 +360,7 @@ private:
 			}
 		}
 
-		cout<<"_paylod_len:"<<_payload_len<<",_size:"<<_size<<endl;
+		//cout<<"_paylod_len:"<<_payload_len<<",_size:"<<_size<<endl;
 		return pbuf;
 	}
 
@@ -322,7 +382,6 @@ protected:
 	size_t _payload_len = 0;
 	size_t _buf_len;
 	size_t _size = 0;
-
 };
 
 

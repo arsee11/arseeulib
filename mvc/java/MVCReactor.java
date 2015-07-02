@@ -26,7 +26,7 @@ public class MVCReactor{
 		}
 	}
 	
-	final int MAX_BUF_LEN=1024;
+	final int MAX_BUF_LEN=1500;
 
 	public MVCReactor(){}
 

@@ -18,7 +18,7 @@ public abstract class Pack{
 		}
 	}
 	
-
+		
 	public abstract class Serializer{
 		public byte[] solve(){
 			StringBuffer strbuf = new StringBuffer();			
@@ -70,19 +70,28 @@ public abstract class Pack{
 	}
 
 	public Pack(){ this.status = false; }
-	public Pack( String src, String trgt, String act ){
-		this.src = src;
-		this.trgt = trgt;
+	public Pack(String type, String act, String paramType, String paramEncoding ){
+		this.type = type;
+		this.paramt = paramType;
+		this.parame = paramEncoding;
 		this.act = act;
 	}
 
-	public void setSource(String value){ src = value; }
-	public void setTarget(String value){ trgt= value; }
-	public void setAction(String value){ act = value; }
+	public void setSource		(String value){ src = value; }
+	public void setTarget		(String value){ trgt= value; }
+	public void setAction		(String value){ act = value; }
+	public void setType			(String value){ type = value; }
+	public void setContinue		(String value){ cont = value; }	
+	public void setParamType	(String value){ paramt = value; }	
+	public void setParamEncoding(String value){ parame = value; }	
 	
-	public String getSource(){ return src;  }
-	public String getTarget(){ return trgt; }
-	public String getAction(){ return act;  }
+	public String getSource()		{ return src;  }
+	public String getTarget()		{ return trgt; }
+	public String getAction()		{ return act;  }
+	public String getType()			{ return type; }
+	public String getContinue()		{ return cont; }
+	public String getParamType()	{ return paramt; }
+	public String getParamEncoding(){ return parame; }
 	public Object getParam(int i, String name)
 	{
 		if( paramTable.size() > i )
@@ -100,9 +109,13 @@ public abstract class Pack{
 	public abstract Serializer getSerializer();
 	public abstract Unserializer getUnserializer();
 	
+	protected boolean status = false;	
+	protected String type="request";
+	protected String cont="end";
 	protected String src;
 	protected String trgt;
 	protected String act;
-	protected boolean status;
+	protected String paramt="text";
+	protected String parame="plain";	
 	protected ParamTable paramTable =  new ParamTable();
 }

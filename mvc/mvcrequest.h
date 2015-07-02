@@ -21,15 +21,15 @@
 
 NAMESP_BEGIN
 
-template<class LOGIC, class Receiver>
+template<class Logic>
 class RRequest
 {
 private:
-	typedef LOGIC logic_t;
+	typedef Logic logic_t;
 	typedef std::unique_ptr<logic_t > logic_ptr_t;
 
 public:
-	void AttachReceiver(Receiver* rev){ _receiver = rev; }
+	void AttachContext(RequestContext* val){ _who = val; }
 	void AttachLogic(logic_t *logic)
 	{
 		_logic = logic_ptr_t(logic);
@@ -37,14 +37,15 @@ public:
 
 	template<class OBJECT, class Argumet>
 	auto Execute(OBJECT* obj, const Argumet &arg)
-	->decltype(Invoker<logic_t::PC>::Invoke((Receiver*)nullptr, obj, arg, (logic_t*)nullptr)) 
+	->decltype(Invoker<logic_t::PC>::Invoke(obj, arg, (logic_t*)nullptr)) 
 	{
-		return Invoker<logic_t::PC>::Invoke(_receiver, obj, arg, _logic.get()); 
+		_logic->set_request_conext(_conext);
+		return Invoker<logic_t::PC>::Invoke(obj, arg, _logic.get()); 
 	}
 
 private:
-	logic_ptr_t _logic;
-	Receiver* _receiver = nullptr; 
+	logic_ptr_t 	_logic;
+	RequestContext* _context = nullptr; 
 };
 
 

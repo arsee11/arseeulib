@@ -42,39 +42,26 @@ const char* Head0xff(const char *stream, size_t len, size_t *head_len)
 
 JSerializer::stream_t JSerializer::Resolve(const pack_ptr_t &pck)
 {
-	Json::FastWriter wr;
-	Json::Value root;
-	root["source"] = pck->source();
-	root["target"] = pck->target();
-	root["action"] = pck->action();
-	Json::Value param;
-	Json::Value params;
-	int k=0;
-	for(auto &i : pck->params())
-	{
-		Json::Value param_item;
-		for(auto &j : i)
-		{
-			Json::Value param;
-			param["name"]  = j.first;
-			param["value"] = j.second;
-			param_item.append(param);
-		}
-		params["param"+t2str(k)] = param_item;
-		++k;
-	}
-			
-	root["params"] = params;
-	return std::move(wr.write(root));
+	return Resolve(*(pck.get()));
 }
 
 JSerializer::stream_t JSerializer::Resolve(const pack_t &pck)
 {
 	Json::FastWriter wr;
 	Json::Value root;
-	root["source"] = pck.source();
-	root["target"] = pck.target();
-	root["action"] = pck.action();
+	if( !pck.source().empty() )
+		root["source"		] = pck.source();
+		
+	if( !pck.source().empty() )
+		root["target"		] = pck.target();
+	
+	root["action"		] = pck.action();
+	root["type"  		] = pck.type();
+	if( !pck.get_continue().empty() )
+		root["continue"		] = pck.get_continue();
+		
+	root["paramType"	] = pck.param_type();
+	root["paramEncoding"] = pck.param_encoding();
 	Json::Value param;
 	Json::Value params;
 	int k = 0;
@@ -111,9 +98,14 @@ int JUnSerializer::Parse(pack_t &pck, stream_t &stream)
 	if( rd.parse( stream, root, false) )
 	{
 		try{
-			pck.source( root["source"].asString()	);
-			pck.action( root["action"].asString()	);
-			pck.target(  root["target"].asString()	);
+			pck.source			( root["source"		].asString()	);
+			pck.action			( root["action"		].asString()	);
+			pck.target			( root["target"		].asString()	);
+			pck.type			( root["type"		].asString()	);
+			pck.set_continue	( root["continue"	].asString()	);
+			pck.param_type		( root["paramType"	].asString()	);
+			pck.param_encoding	( root["paramEncoding"].asString()	);
+			
 			Json::Value& params = root["params"];
 			for(int i=0; i<params.size(); i++)
 			{

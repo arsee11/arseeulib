@@ -53,24 +53,23 @@ NAMESP_BEGIN
 //Remote Control.
 //Inter-proccess.
 //@PACK inter pack.
-//@Receiver the obj who receive the pack.
-//@LOGIC request method.
-template<class PACK 
-	,class Receiver 
-	,class LOGIC
+//@Whoes the obj who send the pack here.
+//@Logic request method.
+template<class Pack 
+	,class Logic
 >
 class RControl
 {
 
 public:
-	typedef PACK pack_t;
+	typedef Pack pack_t;
 	typedef typename pack_t::params_pack_t 	params_pack_t;
 	typedef typename pack_t::pack_ptr_t  	pack_ptr_t;
 	typedef typename pack_t::pack_list_t 	pack_list_t;
 	
-	typedef LOGIC logic_t;
+	typedef Logic logic_t;
 	typedef typename logic_t::obj_t obj_t;
-	typedef RRequest<logic_t, Receiver> request_t;
+	typedef RRequest<logic_t> request_t;
 	typedef RResponse<pack_t> response_t;
 	typedef typename response_t::view_t view_t;
 	
@@ -88,19 +87,19 @@ public:
 		:RControl(view, logic)
 	{}
 	
-	RControl(view_t& view, Receiver* rev)
+	RControl(view_t& view, RequestContext* context)
 		:_view(view)
 	{
-		_rqt.AttachReceiver(rev);
+		_rqt.AttachContext(context);
 		_rqt.AttachLogic( new logic_t() );
 	}
 
-	RControl(view_t&& view, Receiver* rev)
-		:RControl(view, rev)
+	RControl(view_t&& view, RequestContext* context)
+		:RControl(view, context)
 	{}
 	
 	
-	bool Execute(obj_t* obj, const pack_t& pck) throw(std::exception)
+	bool Request(obj_t* obj, const pack_t& pck) throw(std::exception)
 	{
 		const typename pack_t::params_pack_t &params = pck.params();
 		for(auto &i:params)

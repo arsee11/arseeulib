@@ -33,11 +33,11 @@ template<>
 struct Invoker<0>
 {
 	//@T: The Invoked obj.
-	template<class Receiver, class SRC, class T>
-	static auto Invoke(Receiver *rev, SRC *src, T &t)
-	->decltype(t->Execute(rev, src))
+	template<class SRC, class T>
+	static auto Invoke(SRC *src, T &t)
+	->decltype(t->Execute(src))
 	{
-		return t->Execute(rev, src);
+		return t->Execute(src);
 	}	
 };
 
@@ -48,16 +48,16 @@ struct Invoker<1>
 	//@PARAM_PACK:params value pack,
 	//            [{name:value},{name:value}].
 	//@T		 :The Invoked obj.
-	template<class Receiver, class SRC, class PARAM_PACK, class T>
-	static auto Invoke(Receiver* rev, SRC *src, const PARAM_PACK &pp, T *t)
-	->decltype(t->Execute(rev, src, typename T::p1_t() ))
+	template<class SRC, class PARAM_PACK, class T>
+	static auto Invoke(SRC *src, const PARAM_PACK &pp, T *t)
+	->decltype(t->Execute(src, typename T::p1_t() ))
 	{
 		typedef ParamPlace< typename T::p1_t,0> 	_1pp;	
 			
 		_1pp::name = T::p1();	
 		ParamTransfor<PARAM_PACK, _1pp> pt = { pp };
 		//template specify Get<0> is a template.
-		return t->Execute(rev, src, pt.template Get<0>() );
+		return t->Execute(src, pt.template Get<0>() );
 	}	
 	
 	//@PARAM_PACK:params value pack
@@ -82,9 +82,9 @@ struct Invoker<2>
 {
 	//@PARAM_PACK:params value pack,
 	//@T		 :The Invoked obj.
-	template<class Receiver, class SRC, class PARAM_PACK, class T>
-	static auto Invoke(Receiver* rev, SRC *src, const PARAM_PACK &pp, T *t)
-	->decltype( t->Execute(rev, src, typename T::p1_t(), typename T::p2_t()) )
+	template<class SRC, class PARAM_PACK, class T>
+	static auto Invoke(SRC *src, const PARAM_PACK &pp, T *t)
+	->decltype( t->Execute(src, typename T::p1_t(), typename T::p2_t()) )
 	{
 		typedef ParamPlace< typename T::p1_t,0> 	_1pp;	
 		typedef ParamPlace< typename T::p2_t,1> 	_2pp;	
@@ -94,7 +94,7 @@ struct Invoker<2>
 		//cout << T::_p1 << " " << T::_p2 << endl;
 		//cout << _1pp::name << " " << _2pp::name << endl;
 		ParamTransfor<PARAM_PACK, _1pp, _2pp> pt = { pp };
-		return t->Execute(rev, src
+		return t->Execute(src
 			,pt.template Get<0>()
 			,pt.template Get<1>()
 		);
@@ -125,9 +125,9 @@ struct Invoker<3>
 {
 	//@PARAM_PACK:params value pack,
 	//@T		 :The Invoked obj.
-	template<class Receiver, class SRC, class PARAM_PACK, class T>
-	static auto Invoke(Receiver* rev, SRC *src, const PARAM_PACK &pp, T *t)
-	->decltype( t->Execute(rev, src, typename T::p1_t(), typename T::p2_t(), typename T::p3_t()) )
+	template<class SRC, class PARAM_PACK, class T>
+	static auto Invoke(SRC *src, const PARAM_PACK &pp, T *t)
+	->decltype( t->Execute(src, typename T::p1_t(), typename T::p2_t(), typename T::p3_t()) )
 	{
 		typedef ParamPlace< typename T::p1_t, 0> 	_1pp;
 		typedef ParamPlace< typename T::p2_t, 1> 	_2pp;
@@ -139,7 +139,7 @@ struct Invoker<3>
 		
 		ParamTransfor<PARAM_PACK, _1pp, _2pp, _3pp> pt = { pp };
 		//cout<<typeid(pt.template Get<0>()).name()<< pt.template Get<0>()<<typeid(pt.template Get<1>()).name()<< pt.template Get<1>()<<typeid(pt.template Get<2>()).name()<< pt.template Get<2>()<<endl; 
-		return t->Execute(rev, src
+		return t->Execute(src
 			, pt.template Get<0>()
 			, pt.template Get<1>()
 			, pt.template Get<2>() 
@@ -174,9 +174,9 @@ struct Invoker<4>
 {
 	//@PARAM_PACK:params value pack,
 	//@T		 :The Invoked obj.
-	template<class Receiver, class SRC, class PARAM_PACK, class T>
-	static auto Invoke(Receiver* rev, SRC *src, const PARAM_PACK &pp, T *t)
-	->decltype( t->Execute(rev, src, typename T::p1_t(), typename T::p2_t(), typename T::p3_t()) )
+	template<class SRC, class PARAM_PACK, class T>
+	static auto Invoke(SRC *src, const PARAM_PACK &pp, T *t)
+	->decltype( t->Execute(src, typename T::p1_t(), typename T::p2_t(), typename T::p3_t()) )
 	{
 		typedef ParamPlace< typename T::p1_t, 0> 	_1pp;
 		typedef ParamPlace< typename T::p2_t, 1> 	_2pp;
@@ -189,7 +189,7 @@ struct Invoker<4>
 		_4pp::name = T::p4();
 		
 		ParamTransfor<PARAM_PACK, _1pp, _2pp, _3pp, _4pp> pt = { pp };
-		return t->Execute(rev, src
+		return t->Execute(src
 			, pt.template Get<0>()
 			, pt.template Get<1>()
 			, pt.template Get<2>()

@@ -1,4 +1,4 @@
-//receiver.h
+//mvc_request_context.h
 //copyright	: Copyright (c) 2014 arsee.
 //license	: GNU GPL v2.
 //author	: arsee
@@ -9,7 +9,10 @@
 //record 
 //****************************
 
-#ifndef RECEIVER_H
+#ifndef MVC_REQUEST_CONTEXT_H
+#define MVC_REQUEST_CONTEXT_H
+
+#ifndef remote_id_H
 #define RECEIVER_H
 
 #ifndef NAMESPDEF_H
@@ -18,15 +21,21 @@
 
 #include <string>
 
+#ifndef STRINGEX_H
+#include "../stringex.h"
+#endif
+
 NAMESP_BEGIN
 
-struct Receiver
+struct RequestContext
 {
 	int id;
 	std::string ip;
 	unsigned short port;
+
+	string id_str()const{ return ip+":"+t2str(port) };
 };
 
 NAMESP_END
 
-#endif /*RECEIVER_H*/
+#endif /*MVC_REQUEST_CONTEXT_H*/

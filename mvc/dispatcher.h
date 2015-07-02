@@ -20,38 +20,110 @@
 #include "../namespdef.h"
 #endif
 
+#ifndef COLLECTION_H
+#include "collection.h"
+#endif
+
 #include <iostream>
+#include <exception>
 
 
 NAMESP_BEGIN
 
+//exceptions
+calss dispatcher_notfound_exp : public std::exception
+{
+};
 
-template<class CONTROL>
-class Dispatcher
+
+
+///////////////////////////////////////////////////////////////////
+//IDispatcher
+template<class ObjectsCollection, class Pack>
+class IDispatcher
+{
+public:
+	typedef Pack pack_t;
+	typedef typename pack_t::pack_list_t pack_list_t;
+	typedef ObjectsCollection objcollection_t;
+	
+	virtual pack_list_t Execute(RequestContext& context, ObjectsCollection &objs, pack_t &pck) throw(dispatcher_notfound_exp)=0;
+};
+
+
+
+/////////////////////////////////////////////////
+///Dispatcher
+template<class CONTROL, class RequestContext, class ObjectsCollection>
+class Dispatcher : public IDispatcher<RequestContext, ObjectsCollection, typename CONTROL::pack_t>
 {
 public:
 	typedef CONTROL control_t;
 	typedef typename control_t::obj_t obj_t;
 
 public:
-	//ToDo:: 每个action 都要遍历一遍所有的 Dispatcher ，效率不高，待优化
-	//且如果没找到相应的 Dispatcher ，应该返回错误
-	template<class Receiver, class OBJECTS_COLLECTION, class Pack>
-	static void Execute(Receiver& rev, OBJECTS_COLLECTION &objs, Pack &pck, typename Pack::pack_list_t &replies)
+	static std::string name(){ return control_t::rqt_name(); }
+	
+	//
+	pack_list_t Execute(RequestContext& context, ObjectsCollection &objs, pack_t &pck) override
 	{
-		typedef Pack pack_t;
-		//std::cout << pck.Action() << std::endl;
-		if ( pck.action() == control_t::rqt_name() )
+		pack_t& cont_pack = _context2pack_map[context.id_str()];
+		pack_list_t replies;
+		if( !pack.get_continue().empty() )
 		{
-			std::string tname = control_t::target();
-			control_t ctrl(pck.source(), &rev);
+			cont_pack += pack;
+		}
+		else
+		{
+			control_t ctrl(pack.source(), &context);
 			obj_t* obj = objs.template GetObj<obj_t>();
-			ctrl.Execute(obj, pck);
+			ctrl.Request(obj, pack);
 			ctrl.Reply(replies);
 		}
+		
+		if( pack.get_continue() == "next" )
+		{
+			RResponse rsp;
+			rsp.add_param("code", 0);
+			rsp.append_param();
+			replies.push_back( pack_ptr_t(rsp.Reply()) );
+		}
+		else if( pack.get_continue() == "end" )
+		{
+			control_t ctrl(cont_pack.source(), &context);
+			obj_t* obj = objs.template GetObj<obj_t>();
+			ctrl.Request(obj, cont_pack);
+			ctrl.Reply(replies);
+			cont_pack.Reset();
+		}
+
+		return std::move(replies);
 	}
+
+private:
+	std::map<std::string, pack_t> _context2pack_map;
 };
 
+
+template<class... ConcreteDispathers>
+class DispatcherHandler
+{
+	typedef Collection<IDispatcher, ConcreteDispathers> collection_t;
+	
+public:
+	static IDispatcher::pack_list_t Handle(RequestContext& context
+		   ,IDispatcher::objcollection_t &objs
+		   ,IDispatcher::pack_t &pck
+	) throw(dispatcher_notfound_exp)
+	{
+		typename collection_t::obj_ptr_t disp = collection_t::instance().Get( pck.action() );
+		if(disp == nullptr)
+			throw dispatcher_notfound_exp();
+			
+		return disp->Execute(context, objs, pck);
+	}
+	
+};
 
 NAMESP_END
 

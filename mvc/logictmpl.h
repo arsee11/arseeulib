@@ -41,9 +41,15 @@ class BaseLogicTmpl:
 public:
 	typedef Response response_t;
 
+public:
+	void set_request_context(RequestContext* val){ _request_context = val; }
+	RequestContext* get_reqeust_context(){ return _request_context; }
+	
 protected:
 	typedef BaseLogicTmpl<n, Derived, Response, PushResponse, Ts...> base_t;
-	typedef PushResponse pusher_t;
+	typedef PushResponse pusher_t;	
+		
+	RequestContext* _request_context =nullptr;
 	
 public:
 	BaseLogicTmpl()=default;

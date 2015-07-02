@@ -25,9 +25,19 @@ public class JPack extends Pack{
 		public String buildBody(){
 			StringBuffer strbuf = new StringBuffer();
 			strbuf.append("{");
-			strbuf.append("\"action\":").append("\"").append(getAction()).append("\",");
-			strbuf.append("\"source\":").append("\"").append(getSource()).append("\",");
-			strbuf.append("\"target\":").append("\"").append(getTarget()).append("\"");
+			strbuf.append("\"type\":"    		).append("\"").append(getType()    		).append("\",");
+			if( getContinue.size() > 0 )
+				strbuf.append("\"continue\":"	).append("\"").append(getContinue()		).append("\",");
+				
+			strbuf.append("\"action\":"  		).append("\"").append(getAction()		).append("\",");
+			if( getSource.size() > 0 )
+				strbuf.append("\"source\":"  	).append("\"").append(getSource()		).append("\",");
+				
+			if( getTarget.size() > 0 )
+				strbuf.append("\"target\":"     ).append("\"").append(getTarget()   	).append("\",");
+			
+			strbuf.append("\"paramType\":"  	).append("\"").append(getParamType()	).append("\",");
+			strbuf.append("\"paramEncoding\":"  ).append("\"").append(getParamEncoding()).append("\"");
 			
 			if( getParamTable().size() > 0 )
 			{
@@ -73,9 +83,13 @@ public class JPack extends Pack{
 			Pack pck = new JPack(); 
 			try{
 				JSONObject jb = new JSONObject(str);
-				src = jb.getString("source");
-				trgt = jb.getString("target");
-				act = jb.getString("action");
+				src  	= jb.getString("source");
+				trgt 	= jb.getString("target");
+				act  	= jb.getString("action");
+				type  	= jb.getString("type");
+				cont 	= jb.getString("continue");
+				paramt  = jb.getString("paramType");
+				parame  = jb.getString("paramEncoding");
 						
 				//JSONArray ja = jb.getJSONArray("params");
 				JSONObject params = jb.getJSONObject("params");
