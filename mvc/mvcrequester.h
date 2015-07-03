@@ -65,16 +65,20 @@ public:
 	void sender(const Sockptr &s){ _sock = s; }
 	Sockptr sender()const{ return _sock ; }
 
-	RequesterTmp()=default;
+	RequesterTmp()
+	{
+		_pack.type("request");
+	}
+
 	virtual ~RequesterTmp(){ _listen_status = false; if(_listener_thread.joinable()) _listener_thread.join(); };
 
 	void source(const std::string& val){ _source = val; }
 	void source(std::string&& val){ source(val); }
 	void source(const char* val){ source(std::string(val)); }
 
-	void action(const std::string& val){ _action = val; }
-	void action(std::string&& val){ action(val); }
-	void action(const char* val){ action(std::string(val)); }
+	void set_continue(const std::string& val){ _pack.set_continue(val); }
+	void set_continue(std::string&& val){ set_continuea(val); }
+	void set_continue(const char* val){ set_continue(std::string(val)); }
 	
 	void add_param(const std::string &name, const std::string& value){ _pack_item[name]=value; }
 	void add_param(std::string &&name, const std::string& value){ add_param(name, value); }

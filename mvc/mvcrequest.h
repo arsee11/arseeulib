@@ -19,6 +19,10 @@
 #include "invoker.h"
 #endif
 
+#ifndef MVC_REQUEST_CONTEXT_H
+#include "mvcrequest_context.h"
+#endif
+
 NAMESP_BEGIN
 
 template<class Logic>
@@ -29,7 +33,7 @@ private:
 	typedef std::unique_ptr<logic_t > logic_ptr_t;
 
 public:
-	void AttachContext(RequestContext* val){ _who = val; }
+	void AttachContext(RequestContext* val){ _context = val; }
 	void AttachLogic(logic_t *logic)
 	{
 		_logic = logic_ptr_t(logic);
@@ -39,7 +43,7 @@ public:
 	auto Execute(OBJECT* obj, const Argumet &arg)
 	->decltype(Invoker<logic_t::PC>::Invoke(obj, arg, (logic_t*)nullptr)) 
 	{
-		_logic->set_request_conext(_conext);
+		_logic->set_request_context(_context);
 		return Invoker<logic_t::PC>::Invoke(obj, arg, _logic.get()); 
 	}
 

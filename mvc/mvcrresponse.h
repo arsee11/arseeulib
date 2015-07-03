@@ -186,6 +186,7 @@ public:
 	{
 		typename Session::session_ptr_t ss =Session::instance().get(ip, port);
 		typename pack_t::pack_ptr_t  pck(new pack_t(_name, _view, "push") );
+		pck->type("push");
 		for(auto &i:_params)
 				pck->append_param(i);
 		

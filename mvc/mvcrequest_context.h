@@ -12,9 +12,6 @@
 #ifndef MVC_REQUEST_CONTEXT_H
 #define MVC_REQUEST_CONTEXT_H
 
-#ifndef remote_id_H
-#define RECEIVER_H
-
 #ifndef NAMESPDEF_H
 #include "../namespdef.h"
 #endif
@@ -33,7 +30,7 @@ struct RequestContext
 	std::string ip;
 	unsigned short port;
 
-	string id_str()const{ return ip+":"+t2str(port) };
+	string id_str()const{ return ip+":"+t2str(port); }
 };
 
 NAMESP_END

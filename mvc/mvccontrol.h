@@ -33,6 +33,10 @@
 #include "mvcrequest.h"
 #endif
 
+#ifndef MVC_REQUEST_CONTEXT_H
+#include "mvcrequest_context.h"
+#endif
+
 NAMESP_BEGIN
 
 
@@ -117,6 +121,9 @@ public:
 	
 	void Reply(pack_list_t& pcks)
 	{
+		if( _rsp == nullptr )
+			return;
+
 		pack_ptr_t pck( _rsp->Reply() );
 		if(pck!=nullptr && pck->status())
 			pcks.push_back(pck);

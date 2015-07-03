@@ -34,15 +34,15 @@
 
 NAMESP_BEGIN
 
-template<class Pack, class Receiver, class Logic>
+template<class Pack, class ObjectsCollection, class Logic>
 class MvcTrait
 {
 private:
-	typedef RControl<Pack, Receiver, Logic> ctrl_t;
+	typedef RControl<Pack, Logic> ctrl_t;
 	typedef typename ctrl_t::response_t rsp_t;
 	
 public:
-	typedef Dispatcher<ctrl_t> dispth_t;	
+	typedef Dispatcher<ctrl_t, ObjectsCollection> dispth_t;	
 };
 
 NAMESP_END

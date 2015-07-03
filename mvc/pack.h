@@ -181,8 +181,8 @@ public:
 	{
 		if( IsMatch(rhs) )
 		{
-			params_pack_t::iterator &i = this->_params.begin();
-			params_pack_t::const_iterator &j = rhs.params().begin();
+			params_pack_t::iterator i = this->_params.begin();
+			params_pack_t::const_iterator j = rhs.params().begin();
 			for(; i!= _params.end(); ++i, ++j)
 			{
 				for( auto &m : (*i) )
@@ -217,8 +217,8 @@ private:
 		if( this->_params.size() != other.params().size() )
 			return false;
 		
-		params_pack_t::iterator &i = this->_params.begin();
-		params_pack_t::const_iterator &j = other.params().begin();
+		params_pack_t::iterator i = this->_params.begin();
+		params_pack_t::const_iterator j = other.params().begin();
 		for(; i!= _params.end(); ++i, ++j)
 		{
 			for( auto &m : (*i) )
@@ -278,7 +278,13 @@ public:
 		if( ( pstream = Judge(stream, len) ) != nullptr )
 		{
 			stream_t s(pstream, _payload_len);
-			return Parse(pck, s); 
+			int r=0;
+			if( (r=Parse(pck, s))>0 )
+			{
+				pck.status(true);
+				return r;
+			}
+			
 		}
 
 		return -1;

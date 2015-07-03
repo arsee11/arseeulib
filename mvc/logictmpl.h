@@ -31,6 +31,10 @@
 #include "jpack.h"
 #endif
 
+#ifndef MVC_REQUEST_CONTEXT_H
+#include "mvcrequest_context.h"
+#endif
+
 NAMESP_BEGIN
 
 //BaseLogicTmpl
@@ -43,7 +47,7 @@ public:
 
 public:
 	void set_request_context(RequestContext* val){ _request_context = val; }
-	RequestContext* get_reqeust_context(){ return _request_context; }
+	RequestContext* get_request_context(){ return _request_context; }
 	
 protected:
 	typedef BaseLogicTmpl<n, Derived, Response, PushResponse, Ts...> base_t;
