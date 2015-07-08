@@ -1,6 +1,6 @@
-//MVCReactor.java
+//Reactor.java
 
-package mylib.mvc.java;
+package mylib.rqh.java;
 
 import java.net.*;
 import java.lang.*;
@@ -8,7 +8,7 @@ import java.util.*;
 import java.io.*;
 
 
-public class MVCReactor{
+public class Reactor{
 	
 	public class ErrorHandler{
 		void Handle(String errorString, Exception e){
@@ -28,11 +28,11 @@ public class MVCReactor{
 	
 	final int MAX_BUF_LEN=1500;
 
-	public MVCReactor(){}
+	public Reactor(){}
 
-	public MVCReactor(ErrorHandler eh){ this.errorHandler = eh;}
+	public Reactor(ErrorHandler eh){ this.errorHandler = eh;}
 
-	public MVCReactor(Socket sock)
+	public Reactor(Socket sock)
 	{
 		this.sock = sock;
 	}

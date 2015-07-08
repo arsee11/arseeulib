@@ -1,10 +1,10 @@
 //ErrorView.java
 
-import mylib.mvc.java.MVCView;
-import mylib.mvc.java.Pack;
-import mylib.mvc.java.JPack;
+import mylib.rqh.java.MVCView;
+import mylib.rqh.java.Pack;
+import mylib.rqh.java.JPack;
 
-class ErrorView implements MVCView{
+class ErrorView implements View{
 	
 	@Override
 	public String getName(){ return "errorview";}

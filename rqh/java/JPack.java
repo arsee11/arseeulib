@@ -1,7 +1,7 @@
 
 //JPack.java
 
-package mylib.mvc.java;
+package mylib.rqh.java;
 
 import org.json.*;
 import java.util.*;
@@ -9,8 +9,8 @@ import java.util.*;
 public class JPack extends Pack{
 	
 	public JPack(){ super(); }
-	public JPack( String src, String trgt, String act ){
-		super(src, trgt, act);
+	public JPack( String type, String act, String paramType, String paramEncoding ){
+		super(type, act, paramType, paramEncoding);
 	}
 
 	@Override
@@ -26,14 +26,14 @@ public class JPack extends Pack{
 			StringBuffer strbuf = new StringBuffer();
 			strbuf.append("{");
 			strbuf.append("\"type\":"    		).append("\"").append(getType()    		).append("\",");
-			if( getContinue.size() > 0 )
+			if( getContinue().length() > 0 )
 				strbuf.append("\"continue\":"	).append("\"").append(getContinue()		).append("\",");
 				
 			strbuf.append("\"action\":"  		).append("\"").append(getAction()		).append("\",");
-			if( getSource.size() > 0 )
+			if( getSource().length() > 0 )
 				strbuf.append("\"source\":"  	).append("\"").append(getSource()		).append("\",");
 				
-			if( getTarget.size() > 0 )
+			if( getTarget().length() > 0 )
 				strbuf.append("\"target\":"     ).append("\"").append(getTarget()   	).append("\",");
 			
 			strbuf.append("\"paramType\":"  	).append("\"").append(getParamType()	).append("\",");
@@ -83,11 +83,14 @@ public class JPack extends Pack{
 			Pack pck = new JPack(); 
 			try{
 				JSONObject jb = new JSONObject(str);
-				src  	= jb.getString("source");
-				trgt 	= jb.getString("target");
+				try{
+					src  	= jb.getString("source");
+					trgt 	= jb.getString("target");
+					cont 	= jb.getString("continue");
+				}catch(JSONException e){}
+				
 				act  	= jb.getString("action");
-				type  	= jb.getString("type");
-				cont 	= jb.getString("continue");
+				type  	= jb.getString("type");				
 				paramt  = jb.getString("paramType");
 				parame  = jb.getString("paramEncoding");
 						

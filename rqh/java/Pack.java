@@ -1,6 +1,6 @@
 //Pack.java
 
-package mylib.mvc.java;
+package mylib.rqh.java;
 
 import java.util.ArrayList;
 import java.util.HashMap;

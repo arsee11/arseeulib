@@ -57,82 +57,23 @@ public:
 public:
 	Pack(){}
 	
-	
-	Pack(const stream_t &src, const stream_t &trgt
-		, const stream_t &act, const params_pack_t &params
-	)
-		:_source(src)
-		,_target(trgt)
-		,_action(act)
-		,_params(params)
-		,_status(true)
-	{
-	}
-
-	Pack(const stream_t &src, stream_t &&trgt, stream_t &&act
-		, const params_pack_t &params
-	)
-		:Pack(src, trgt, act, params)
-	{
-	}
-	
-	
-	
-	Pack(stream_t &&src, stream_t &&trgt, stream_t &&act
-		, params_pack_t &&params
-	)
-		:Pack(src, trgt, act, params)
-	{
-	}
-	
-	Pack(const stream_t &src, const stream_t &trgt, const stream_t &act)
-		:_source(src)
-		,_target(trgt)
-		,_action(act)
+	Pack(const stream_t &act, const stream_t &type)
+		:_action(act)
+		,_type(type)
 	{
 	} 
 	
-	Pack(stream_t &&src, stream_t &&trgt, stream_t &&act)
-		:Pack(src, trgt, act)
+	Pack(const stream_t &act, const stream_t &type
+		,const stream_t &param_type, const stream_t& param_encoding
+	)
+		:_action(act)
+		,_type(type)
+		,_paramt(param_type)
+		,_parame(param_encoding)
 	{
-	}
+	} 
 	
-	Pack(const stream_t &src, stream_t &&trgt, stream_t &&act)
-		:Pack(src, trgt, act)
-	{
-	}
-
-	Pack(stream_t &&src, const stream_t &trgt, stream_t &&act)
-		:Pack(src, trgt, act)
-	{
-	}
-
-	Pack(stream_t &&src, stream_t &&trgt, const stream_t &act)
-		:Pack(src, trgt, act)
-	{
-	}
-
-	Pack(stream_t &&src, const stream_t &act)
-		:Pack(src, act)
-	{
-	}
 	
-	Pack(stream_t &&src, stream_t &&act)
-		:Pack(src, act)
-	{
-	}
-	
-	Pack(const stream_t &src, stream_t &&act)
-		:Pack(src, act)
-	{
-	}
-	
-	Pack(const stream_t &src, const stream_t &act)
-		:_source(src)
-		,_action(act)
-	{
-	}
-
 	bool status()const{ return _status; }
 	void status(bool val){ _status = val; }
 

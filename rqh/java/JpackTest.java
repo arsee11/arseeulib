@@ -1,8 +1,8 @@
 //JpackTest.java
 
-import mylib.mvc.java.JPack;
-import mylib.mvc.java.Pack;
-import mylib.mvc.java.Util;
+import mylib.rqh.java.JPack;
+import mylib.rqh.java.Pack;
+import mylib.rqh.java.Util;
 import java.io.*;
 
 import java.util.*;

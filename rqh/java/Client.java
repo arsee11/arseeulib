@@ -5,9 +5,9 @@ import java.io.*;
 import java.util.Base64;
 import java.util.Vector;
 import java.util.List;
-import mylib.mvc.java.MVCReactor;
-import mylib.mvc.java.MVCRequester;
-import mylib.mvc.java.JPack;
+import mylib.rqh.java.Reactor;
+import mylib.rqh.java.Requester;
+import mylib.rqh.java.JPack;
 
 class Client{
 	final static int REMOTE_PORT = 11111;
@@ -26,13 +26,23 @@ class Client{
 			MVCRequester rqt = new MVCRequester(new JPack());
 			System.out.print("id:");
 			String id = stdin.readLine();
-			System.out.print("pwd:");
-			String pwd = stdin.readLine();
+			System.out.print("pwd1:");
+			String pwd1 = stdin.readLine();
 			rqt.setSource("errorview");
 			rqt.setTarget("member");
 			rqt.setAction("login");
+			rqt.setContinue("next");
+			System.out.print("pwd2:");
+			
 			rqt.addParam("id", id);
-			rqt.addParam("key", pwd);
+			rqt.addParam("key", pwd1);
+			rqt.appnedParam();
+			rqt.post(s);
+			
+			String pwd2 = stdin.readLine();
+			rqt.addParam("key", pwd2);
+			rqt.addParam("id", "");
+			rqt.setContinue("end");
 			rqt.appnedParam();
 			rqt.post(s);
 			
@@ -47,8 +57,8 @@ class Client{
 			rqt.setAction("tran_msg");
 			rqt.addParam("from", from);
 			rqt.addParam("to", to);
-			String emsg = new String( Base64.getEncoder().encode(readFromFile()) );
-			rqt.addParam("msg", emsg);
+			String msg = new String( Base64.getEncoder().encode(readFromFile()) );
+			rqt.addParam("msg", msg);
 			rqt.appnedParam();
 			rqt.post(s);
 			

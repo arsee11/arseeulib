@@ -1,11 +1,11 @@
 //MsgView.java
 
-import mylib.mvc.java.MVCView;
-import mylib.mvc.java.Pack;
-import mylib.mvc.java.JPack;
+import mylib.rqh.java.View;
+import mylib.rqh.java.Pack;
+import mylib.rqh.java.JPack;
 import java.util.Base64;
 
-class MsgView implements MVCView{
+class MsgView implements View{
 	
 	@Override
 	public String getName(){ return "msgview";}
