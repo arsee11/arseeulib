@@ -1,21 +1,10 @@
-//mvccontrol.h
+//control.h
 //copyright	: Copyright (c) 2014 arsee.
 //license	: GNU GPL v2.
 //author	: arsee
 
-//****************************
-//modify:	
-//2014-12-15
-//record 
-//****************************
-//****************************
-//modify:	
-//2015-01-05
-//update
-//****************************
-
-#ifndef MVC_CONTROL_H
-#define MVC_CONTROL_H
+#ifndef CONTROL_H
+#define CONTROL_H
 
 #ifndef UTILITY_H
 #include "utility.h"
@@ -26,15 +15,15 @@
 #endif
 
 #ifndef MVC_RESPONSE_H
-#include "mvcrresponse.h"
+#include "rresponse.h"
 #endif
 
-#ifndef MVC_REQUEST_H
-#include "mvcrequest.h"
+#ifndef REQUEST_H
+#include "request.h"
 #endif
 
-#ifndef MVC_REQUEST_CONTEXT_H
-#include "mvcrequest_context.h"
+#ifndef REQUEST_CONTEXT_H
+#include "request_context.h"
 #endif
 
 NAMESP_BEGIN
@@ -138,4 +127,4 @@ private:
 
 NAMESP_END;
 
-#endif /*MVC_CONTROL_H*/
+#endif /*CONTROL_H*/

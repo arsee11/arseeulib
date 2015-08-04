@@ -1,4 +1,4 @@
-//mvcrequester.h
+//requester.h
 //copyright	: Copyright (c) 2014 arsee.
 //license	: GNU GPL v2.
 //author	: arsee
@@ -9,8 +9,8 @@
 //record 
 //****************************
 
-#ifndef MVC_REQUESTER_H
-#define MVC_REQUESTER_H
+#ifndef REQUESTER_H
+#define REQUESTER_H
 
 #include <string>
 #include <exception>
@@ -201,4 +201,4 @@ typedef TcpRequester<Jpack> JTcpRequester;
 
 NAMESP_END
 
-#endif/*MVC_REQUESTER_H*/
+#endif/*REQUESTER_H*/

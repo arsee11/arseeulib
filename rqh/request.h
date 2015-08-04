@@ -1,7 +1,7 @@
-//file: mvcrequest.h
+//file: request.h
 
-#ifndef MVC_REQUEST_H
-#define MVC_REQUEST_H
+#ifndef REQUEST_H
+#define REQUEST_H
 
 #include <memory>
 #include <map>
@@ -19,8 +19,8 @@
 #include "invoker.h"
 #endif
 
-#ifndef MVC_REQUEST_CONTEXT_H
-#include "mvcrequest_context.h"
+#ifndef REQUEST_CONTEXT_H
+#include "request_context.h"
 #endif
 
 NAMESP_BEGIN
@@ -124,4 +124,4 @@ private:
 
 NAMESP_END;
 
-#endif /*MVC_REQUEST_H*/
+#endif /*REQUEST_H*/

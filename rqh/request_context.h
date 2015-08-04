@@ -9,8 +9,8 @@
 //record 
 //****************************
 
-#ifndef MVC_REQUEST_CONTEXT_H
-#define MVC_REQUEST_CONTEXT_H
+#ifndef REQUEST_CONTEXT_H
+#define REQUEST_CONTEXT_H
 
 #ifndef NAMESPDEF_H
 #include "../namespdef.h"

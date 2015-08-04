@@ -1,4 +1,4 @@
-//mvcresponse.h
+//rresponse.h
 //copyright	: Copyright (c) 2014 arsee.
 //license	: GNU GPL v2.
 //author	: arsee
@@ -9,8 +9,8 @@
 //record 
 //****************************
 
-#ifndef MVC_RRESPONSE_H
-#define MVC_RRESPONSE_H
+#ifndef RRESPONSE_H
+#define RRESPONSE_H
 
 #ifndef UTILITY_H
 #include "utility.h"
@@ -208,4 +208,4 @@ protected:
 
 NAMESP_END;
 
-#endif /*MVC_RRESPONSE_H*/
+#endif /*RRESPONSE_H*/

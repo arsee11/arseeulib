@@ -1,4 +1,4 @@
-//mvcrobject.h
+//object.h
 //copyright	: Copyright (c) 2014 arsee.
 //license	: GNU GPL v2.
 //author	: arsee
@@ -9,8 +9,8 @@
 //record 
 //****************************
 
-#ifndef MVC_OBJECT_H
-#define MVC_OBJECT_H
+#ifndef OBJECT_H
+#define OBJECT_H
 
 #include<list>
 #include<algorithm>
@@ -221,4 +221,4 @@ class DataMemberSetter
 
 NAMESP_END;
 
-#endif /*MVC_OBJECT_H*/
+#endif /*OBJECT_H*/

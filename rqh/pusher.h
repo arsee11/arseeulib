@@ -24,16 +24,11 @@
 #include <memory>
 #include <list>
 
-#ifndef MVC_VIEW_H
-#include "mvcview.h"
-#endif
-
 NAMESP_BEGIN
 
 
 /////////////////////////////////////////////////
-//RResponse
-//Remote Response
+//Pusher
 template<class Pack>
 class Pusher
 {

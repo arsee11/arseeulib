@@ -1,7 +1,7 @@
-//file: mvcresponse_abstr.h
+//file: response_abstr.h
 
-#ifndef MVCRESPONSE_H
-#define MVCRESPONSE_H
+#ifndef RESPONSE_H
+#define RESPONSE_H
 
 
 #ifndef NAMESPDEF_H
@@ -54,4 +54,4 @@ private:
 };
 
 NAMESP_END;
-#endif /*MVCRESPONSE_H*/
+#endif /*RESPONSE_H*/

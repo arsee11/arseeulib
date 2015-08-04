@@ -1,11 +1,11 @@
-//mvcresponseto.h
+//responseto.h
 //copyright	: Copyright (c) 2014 arsee.
 //license	: GNU GPL v2.
 //author	: arsee
 
 
-#ifndef MVCLRESPONSE_H
-#define MVCLRESPONSE_H
+#ifndef LRESPONSE_H
+#define LRESPONSE_H
 
 #ifndef NAMESPDEF_H
 #include "../namespdef.h"
@@ -135,4 +135,4 @@ public:
 
 NAMESP_END
 
-#endif/*MVCLRESPONSE_H*/
+#endif/*LRESPONSE_H*/

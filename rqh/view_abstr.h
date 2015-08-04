@@ -1,7 +1,7 @@
-//file: mvcview_abstr.h
+//file: view_abstr.h
 
-#ifndef MVCVIEW_ABSTR_H
-#define MVCVIEW_ABSTR_H
+#ifndef VIEW_ABSTR_H
+#define VIEW_ABSTR_H
 
 
 #ifndef NAMESPDEF_H
@@ -19,4 +19,4 @@ public:
 
 NAMESP_END;
 
-#endif /*MVCVIEW_ABSTR_H*/
+#endif /*VIEW_ABSTR_H*/

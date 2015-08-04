@@ -16,70 +16,112 @@
 #pragma once
 #endif
 
-#ifndef MVC_OBJECT_H
-#include "mvcobject.h"
-#endif
-
-#ifndef UTILITY_H
-#include "utility.h"
-#endif
-
 #ifndef NAMESPDEF_H
 #include "../namespdef.h"
 #endif
 
-#include <exception>
-
-#ifndef UDPSOCK_H
+#ifndef UDPSOCk_H
 #include "../net/udpsock.h"
+#endif
+
+#ifndef REQUEST_CONTEXT_H
+#include "reqest_context.h"
+#endif
+
+#ifndef DISPATCHER_H
+#include "dispatcher.h"
 #endif
 
 NAMESP_BEGIN
 
 //////////////////////////////////////////////////////
-template<class Channel, class ObjCollection, class... Dispachters>
+template<class Pack, class... Dispachters>
 class UdpServer
 {
-	typedef typename Channel::pack_t pack_t;
-	typedef typename Channel::conf_t conf_t;
+	typedef typename Pack pack_t;
+
+	enum{ MaxBufSize=65535 };
+
+	
 
 public:
-	UdpServer(conf_t &conf)
+	UdpServer(unsigned short local_port)
 	{
-		_chn.Init(conf);
+		Init(port);
 	}
 
-	bool Run()throw(std::exception)
+	~UdpServer(conf_t &conf)
 	{
-		net::AddrPair addr;
+		close();
+	}
+
+	template< class Objs, class Loger>
+	bool Run(Objs& objs, Loger& loger)throw(std::exception)
+	{
 		pack_t pck;
-		_chn.Read(pck);
-
-		std::vector<pack_t> replies;
-		ArgIteration<Dispachters...>::Handle(ObjCollection::Instance(), pck, replies);
-
-		for (auto &i : replies)
+		Read(pck);
+		if(pck.status())
 		{
-			_chn.Write(i);
+			Requestconext context = {0, _remote_addr.ip, _remote_addr.port};
+			typename pack_t::pack_list_t replies =
+			try{
+				DispatcherHandler<Dispachters...>::Handle(context, objs, pck);
+			}
+			catch(dispatcher_notfound_exp& e){
+				//errorhandle
+				loger.add(e.what(), __LINE__);
+				return false;
+			}
+
+			for (auto &i : replies)
+			{
+				Write(i);
+			}
 		}
+
 		return true;
 	}
+	
+private:
+	void Init(unsigned short local_port)
+	{
+		_udp = std::unique_ptr<net::UdpPeer>(net::UdpSock::Create(local_port));
+	}
+	
+	void Close()
+	{
+		_udp->Close();
+	}
+
+	void Read(pack_t &pck)
+	{
+		net::UdpPeer::byte_t buf[MaxBufSize];
+		_udp->Read(buf, MaxBufSize, _remote_addr);
+		typename pack_t::unserial_t unserializer_t;
+		auto fuc = std::bind(unserializer_t, std::placeholders::_1);
+		pck = std::move( fuc( pack_t::stream_t(buf) ) );
+	}
+
+	void Write(pack_t &pck)
+	{
+		typename pack_t::serial_t serializer_t;
+		auto fuc = std::bind(serializer_t, pck, std::placeholders::_1);
+		size_t len = 0;
+		typename pack_t::stream_t stream = fuc(len);
+		_udp->Write(stream.c_str(), len, _remote_addr);
+	}
 
 private:
-	enum{ DispatcherCount = ArgCounter<Dispachters...>::value };
+	std::unique_ptr<net::UdpPeer> _udp;
+	net::AddrPair _remote_addr;
 
-private:
-	Channel _chn;
 };
+
 
 //////////////////////////////////////////////////////
 template<class Preactor, class Acceptor>
 class PreactorServer
 {
-public:
-	//typedef typename TransType<ObjectsCollection, Dispachters...>::result objs_colletion_t;
-	//typedef typename chn_t::pack_t pack_t;
-
 public:
 	PreactorServer(size_t max_session, net::SockConfig &conf)
 		:_preactor(max_session)
@@ -99,9 +141,6 @@ public:
 
 		return true;
 	}
-
-private:
-	//enum{ DispatcherCount = ArgCounter<Dispachters...>::value };
 
 private:
 	Preactor _preactor;

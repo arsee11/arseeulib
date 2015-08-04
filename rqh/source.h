@@ -1,7 +1,7 @@
-//file: mvcrsource.h
+//file: rsource.h
 
-#ifndef MVC_SOURCE_H
-#define MVC_SOURCE_H
+#ifndef SOURCE_H
+#define SOURCE_H
 
 #ifndef GLOBALDEF_H
 #include "../namespdef.h"
@@ -22,4 +22,4 @@ public:
 
 NAMESP_END;
 
-#endif /*MVC_SOURCE_H*/
+#endif /*SOURCE_H*/

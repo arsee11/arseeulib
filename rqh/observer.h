@@ -1,4 +1,4 @@
-//mvcobserver.h
+//observer.h
 //copyright	: Copyright (c) 2014 arsee.
 //license	: GNU GPL v2.
 //author	: arsee
@@ -9,8 +9,8 @@
 //record 
 //****************************
 
-#ifndef MVC_OBSERVER_H
-#define MVC_OBSERVER_H
+#ifndef OBSERVER_H
+#define OBSERVER_H
 
 #include <string>
 #include <exception>
@@ -176,4 +176,4 @@ typedef TcpObserver<Jpack> JTcpObserver;
 
 NAMESP_END
 
-#endif/*MVC_OBSERVER_H*/
+#endif/*OBSERVER_H*/
