@@ -1,5 +1,15 @@
+//db.h
+//copyright	: Copyright (c) 2014 arsee.
+//license	: GNU GPL v2.
+//author	: arsee
+
+
 #ifndef DB_H
 #define DB_H
+
+#if defined(_MSC_VER_)
+#pragma once
+#endif
 
 #ifndef MYSQLDB_H
 #include "MysqlDb.h"
@@ -9,29 +19,17 @@
 #include <memory>
 #include <vector>
 
-#define DB_TYPE MYSQL_T
+#ifndef NAMESPDEF_H
+#include "../namespdef.h"
+#endif
 
-#define MYSQL_T 0
-
-template<class DB_T>
-class Db;
-
-
-////////////////////////////////////////////////////////////////////////////////////////
-template<int db>
-struct DbTrait;
-
-template<>
-struct DbTrait<MYSQL_T>
-{
-	typedef  Db<MysqlDb> db_t;
-};
+NAMESP_BEGIN
 
 //////////////////////////////////////////////////////////////////////
 template<class T>
-class DbRowIterator
+class RowIterator
 {
-	typedef DbRowIterator<T> my_t;
+	typedef RowIterator<T> my_t;
 	typedef typename T::db_row_t::column_t column_t;
 	typedef typename T::db_row_t row_t;
 
@@ -60,7 +58,7 @@ public:
 
 	my_t& operator++()
 	{
-		_row = _t->NextRow();
+		_row = _t->next();
 		return (*this);
 	}
 	
@@ -114,23 +112,23 @@ private:
 
 ////////////////////////////////////////////////////////////////////////////////////////
 //只有一个result_set(结果集)
-template<class RETSULT_SET, class ROW>
-class ResultSetWrapp
+template<class Result, class Row>
+class ResultWrapp
 {
-	typedef ResultSetWrapp<RETSULT_SET, ROW> my_t;
+	typedef ResultWrapp<Result_SET, Row> my_t;
 	
 public:
 	typedef std::auto_ptr<my_t> pointer;	
-	typedef RETSULT_SET result_set_t;	
-	typedef ROW db_row_t;
-	typedef DbRowIterator<my_t> iterator;	
+	typedef Result result_t;	
+	typedef Row db_row_t;
+	typedef RowIterator<my_t> iterator;	
 	
-	ResultSetWrapp(RETSULT_SET &res)
+	ResultSetWrapp(Result_SET &res)
 	{
 		_res = res;
 	}
 
-	RETSULT_SET* operator->()
+	Result_SET* operator->()
 	{
 		return _res;
 	}
@@ -140,24 +138,22 @@ public:
 		_res.Release();
 	}
 
-	iterator Begin()
+	iterator begin()
 	{
 		return iterator(this, _res.Begin());
 	}
 	
-	iterator End()
+	iterator end()
 	{
 		return iterator(this, _res.End() );
 	}
-
-	db_row_t NextRow()
+	
+	///next row
+	db_row_t next()
 	{
-		return _res.NextRow();
+		return _res.next();
 	}
 	
-	db_row_t Row(unsigned i)
-	{
-	}
 
 	unsigned ColsCount()
 	{
@@ -174,10 +170,8 @@ private:
 	{
 	}
 
-	result_set_t _res;
+	result_t _res;
 };	
-
-
 
 
 
@@ -203,7 +197,7 @@ public:
 		_db.Open(h);
 	}
 
-	result_set_t* ExecuteQuery(const char *query_str)
+	result_set_t* Query(const char *query_str)
 	{
 		return new result_set_t( _db.ExecuteQuery(query_str) );
 	}
@@ -253,5 +247,6 @@ private:
 	db_t _db;
 };
 
+NAMESP_END
 
 #endif/*DB_H*/

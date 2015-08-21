@@ -1,10 +1,12 @@
 //fd.h
+//copyright	:Copyright (c) 2014 arsee.
+//license	:GNU GPL V2.
 
 #ifndef FD_H
 #define FD_H
 
 #include <utility>
-#include <ext/hash_map>
+#include <map>
 #include <list>
 #include <string>
 #include <exception>
@@ -16,6 +18,14 @@
 #ifndef FD_DEF_H 
 #include "fddef.h"
 #endif
+
+#ifndef NAMESPDEF_H
+#include "../namespdef.h"
+#endif
+
+NAMESP_BEGIN
+namespace net
+{
 
 class FdExp:
 	public std::exception
@@ -90,7 +100,7 @@ public:
 	}
 
 private:
-	__gnu_cxx::hash_map<int, evt_ptr_t> _evts;
+	std::map<int, evt_ptr_t> _evts;
 
 	evt_ptr_t _evt_state = nullptr;
 
@@ -107,7 +117,7 @@ class FdHolder
 public:
 	typedef std::shared_ptr<Fd> fd_ptr_t;
 	typedef std::list<fd_ptr_t> fd_list_t;
-	typedef __gnu_cxx::hash_map<fd_t, fd_ptr_t> fd_container_t;
+	typedef std::map<fd_t, fd_ptr_t> fd_container_t;
 
 	typedef Manager<false> normal_manager_t ;
 	typedef Manager<true,false,false,false> accept_manager_t ;
@@ -205,5 +215,8 @@ public:
 		fdh._fd_cont[fd] = pfd; 
 	}
 };
+
+}//net
+NAMESP_END
 
 #endif /*FD_H*/

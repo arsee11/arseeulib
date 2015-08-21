@@ -27,6 +27,8 @@ typedef int socklen_t;
 #endif
 
 NAMESP_BEGIN
+namespace net
+{
 
 UdpPeer* UdpSock::Create(const std::string &ip, unsigned short port) throw(sockexcpt)
 {
@@ -105,6 +107,17 @@ int UdpPeer::Read(byte_t *buf, int len, AddrPair &addr)
 	return rlen;
 }
 
+int UdpPeer::Read(byte_t *buf, int len)
+{
+	sockaddr_in inaddr;
+	socklen_t addrlen = sizeof(inaddr);
+	memset(&inaddr, 0, sizeof(inaddr));
+	int rlen=-1;
+	rlen=recvfrom(_sock, buf, len, 0, (sockaddr *)&inaddr, &addrlen);
+		
+	return rlen;
+}
+
 int UdpPeer::Write(const byte_t *buf, int len, const AddrPair &addr)
 {
 	sockaddr_in saddr;
@@ -115,4 +128,5 @@ int UdpPeer::Write(const byte_t *buf, int len, const AddrPair &addr)
 	return sendto( _sock, buf, len, 0, (sockaddr *)&saddr, sizeof(saddr) );
 }
 
+}//net
 NAMESP_END

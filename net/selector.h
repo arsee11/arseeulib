@@ -3,7 +3,7 @@
 #ifndef SELECTOR_H	
 #define SELECTOR_H	
 
-#include <hash_map>
+#include <map>
 #include <memory>
 #include <sys/epoll.h>
 #include <fcntl.h>
@@ -18,8 +18,15 @@
 #include "fddef.h"
 #endif
 
+#ifndef NAMESPDEF_H
+#include "../namespdef.h"
+#endif
+
 using namespace std;
 
+NAMESP_BEGIN
+namespace net
+{
 
 inline void SetNoblocking(fd_t fd)
 {
@@ -27,7 +34,7 @@ inline void SetNoblocking(fd_t fd)
 	if( fcntl(fd, F_SETFL, flag|O_NONBLOCK) == -1 )
 	{
 		perror("fcntl");
-		throw exception();
+		throw std::exception();
 	}
 }
 
@@ -186,5 +193,8 @@ public:
 private:
 	int _accptfd = -1;
 };
+
+}//net
+NAMESP_END
 
 #endif /*SELECTOR_H*/	

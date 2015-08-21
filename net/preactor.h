@@ -10,7 +10,15 @@
 #include <iostream>
 #include <unistd.h>
 
+#ifndef NAMESPDEF_H
+#include "../namespdef.h"
+#endif
+
 using namespace std;
+
+NAMESP_BEGIN
+namespace net
+{
 
 //////////////////////////////////////////////////////////////////////////////
 template<class FdHolder
@@ -115,4 +123,6 @@ public:
 
 };
 
+}//net
+NAMESP_END
 #endif /*REACTOR_H*/

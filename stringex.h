@@ -8,6 +8,10 @@
 #endif
 
 #include <sstream>
+#include <string>
+#include <utility>
+#include <locale.h>
+
 
 using namespace std;
 
@@ -34,9 +38,13 @@ inline string StringBuilder(const string &val)
 	return val;
 }
 
+inline string StringBuilder(const char* val)
+{
+	return std::move(string(val));
+}
 
 template<class T>
-inline T string2t(string &value)
+inline T str2t(const string &value)
 {	
 	T out;
 	stringstream ss;
@@ -45,6 +53,80 @@ inline T string2t(string &value)
 	return  out;
 }
 
+template<class T>
+string t2str(T value)
+{
+	stringstream ss;
+	ss.clear();
+	ss << value;
+	string str;
+	ss >> str;
+	return str;
+}
+
+
+//string转wstring
+inline std::wstring str2wstr(const std::string &str)
+{
+	if(str.empty())
+		return L"";
+
+    unsigned len = str.size() * 2;
+    setlocale(LC_CTYPE, "");     //必须调用此函数
+    wchar_t *p = new wchar_t[len];
+#if defined(__GNUC__)
+	mbstowcs(p,str.c_str(),len);
+#else
+	size_t  converted = 0;
+	mbstowcs_s(&converted, p, len, str.c_str(), _TRUNCATE);
+#endif
+    std::wstring str1(p);
+    delete[] p;
+    return str1;
+}
+
+// wstring转string
+inline std::string wstr2str(const std::wstring &str)
+{
+	if( str.empty() )
+		return "";
+
+    unsigned len = str.size() * 4;
+    setlocale(LC_CTYPE, "");
+    char *p = new char[len];
+#if defined(__GNUC__)
+    wcstombs(p,str.c_str(),len);
+#else
+	size_t  converted = 0;
+	wcstombs_s(&converted, p, len, str.c_str(), len+1);
+#endif
+    std::string str1(p);
+    delete[] p;
+    return str1;
+}
+
+inline void str_trim(string& str, char totrim)
+{
+	size_t i = 0;
+
+	//前面的
+	for( ; i<str.size(); i++)
+	{
+		if( str[i] != totrim )
+			break;
+	}
+
+	str.erase(0, i);
+
+	//后面的
+	for(i=str.size()-1; i>=0&&str.size()>0; i--)
+	{
+		if( str[i] != totrim )
+			break;
+	}
+
+	str.erase(i+1);
+}
 
 NAMESP_END
 

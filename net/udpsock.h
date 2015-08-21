@@ -24,6 +24,8 @@
 
 NAMESP_BEGIN
 
+namespace net
+{
 class UdpPeer
 {
 	typedef UdpPeer my_t;
@@ -62,6 +64,7 @@ private:
 	
 public:
 	int Read(byte_t *buf, int len, AddrPair &addr);
+	int Read(byte_t *buf, int len);
 	int Write(const byte_t *buf, int len, const AddrPair &addr);
 		
 	SOCKET sock(){ return _sock; }
@@ -91,7 +94,7 @@ public:
 	static UdpPeer* Create() throw(sockexcpt);	
 };
 
-
+}//net
 NAMESP_END
 
 #endif /*UDPSOCK_H*/

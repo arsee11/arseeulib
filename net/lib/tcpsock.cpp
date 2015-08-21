@@ -24,6 +24,8 @@ typedef int socklen_t;
 #endif
 
 NAMESP_BEGIN
+namespace net
+{
 
 TcpSock::rpeer_ptr_t TcpSock::CreateClient(unsigned short lport, const std::string &rip, unsigned short rport) throw(sockexcpt)
 {
@@ -105,4 +107,5 @@ int RemotePeer::Write(const char *buf, int len)
 	return send(_sock, buf, len, 0);
 }
 
+}//net
 NAMESP_END

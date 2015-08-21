@@ -18,6 +18,13 @@
 #include "events.h"
 #endif
 
+#ifndef NAMESPDEF_H
+#include "../namespdef.h"
+#endif
+
+NAMESP_BEGIN
+namespace net
+{
 
 struct Key{
 	std::string ip;
@@ -198,5 +205,7 @@ protected:
 	Preactor *_preactor = nullptr;
 };
 
+}//net
+NAMESP_END
 
 #endif /*SESSIOIN_H*/
