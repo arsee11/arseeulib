@@ -29,6 +29,10 @@
 #include <memory>
 #include <iostream>
 
+#ifndef IOBJECT_H
+#include "iobject.h"
+#endif
+
 using namespace std;
 
 NAMESP_BEGIN
@@ -109,7 +113,7 @@ public:
 	void param_encoding(stream_t &&val ){ param_encoding(val); }
 	
 	void add_object(object_ptr_t& obj){ _object_list.push_back(obj); }
-	object_list_t object_list(){ return _object_list; }
+	object_list_t object_list()const{ return _object_list; }
 	
 	pack_t& operator+=( pack_t& rhs)
 	{
@@ -200,12 +204,12 @@ private:
 	object_list_t _object_list;
 };
 
-template<
+/*template<
 	class Serializer,
 	class UnSerializer
 >
-ObjectParamCat Pack<Serializer, UnSerializer>::ParamCat::param_cat_object;
- 
+Pack<Serializer, UnSerializer>::ObjectParamCat Pack<Serializer, UnSerializer>::ParamCat::param_cat_object;
+*/
  
 template<class DeriveSerial, class DeriveUnSerial>
 class UnSerializerAbstr

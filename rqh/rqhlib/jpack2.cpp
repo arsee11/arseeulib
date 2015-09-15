@@ -20,6 +20,10 @@
 #include "../../stringex.h"
 #endif
 
+#ifndef CLASS_SERAILIZE_PATTERN_H
+#include "../../class_serialize_pattern.h"
+#endif
+
 NAMESP_BEGIN
 
 const char* Head0xff(const char *stream, size_t len, size_t *head_len)
@@ -62,17 +66,17 @@ JSerializer::stream_t JSerializer::Resolve(const pack_t &pck)
 	str+="\"paramType\":\"" + pck.param_type()+"\",";
 	str+="\"paramSchema\":\"" + pck.param_schema()+"\",";
 	str+="\"paramEncoding\":\"" + pck.param_encoding()+"\",";
-	str+="\"params\":["
-	pack_t::object_list_t& objs = pck.get_object_list();
+	str += "\"params\":[";
+	pack_t::object_list_t& objs = pck.object_list();
 	for (size_t i=0; objs.size()-1; ++i)
 	{
-		stirng objstr = object_serialize(i);
-		str+="\"param" + t2str(k)+"\":{\"" +objstr+"\"},";
+		string objstr = class_serialize(objs[i]);
+		str+="\"param" + t2str(i)+"\":{\"" +objstr+"\"},";
 	}
 	if(objs.size() > 0 )
 	{
-		stirng objstr = object_serialize(i);
-		str+="\"param" + t2str(k)+"\":{\"" +objstr+"\"}";
+		string objstr = class_serialize(objs[objs.size()-1]);
+		str += "\"param" + t2str(objs.size() - 1) + "\":{\"" + objstr + "\"}";
 	}
 	str+="]}";
 	return str;
@@ -107,7 +111,8 @@ int JUnSerializer::Parse(pack_t &pck, stream_t &stream)
 				for(int j=0; j< param_item.size(); j++)
 				{
 					Json::Value& param = param_item[j];
-					pck.add_object(object_unserialize(param["name"].asString(), param));					
+					string name = param["className"].asString();
+					pck.add_object( pack_t::object_ptr_t(class_unserialize<IObject>(name, param)));
 				}
 			}
 

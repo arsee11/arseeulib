@@ -3,8 +3,8 @@
 //license	: GNU GPL v2.
 //author	: arsee
 
-#ifndef SERAILIZE_CLASS_PATTERN_H
-#define SERAILIZE_CLASS_PATTERN_H
+#ifndef CLASS_SERAILIZE_PATTERN_H
+#define CLASS_SERAILIZE_PATTERN_H
 
 #include <string>
 #include <string.h>
@@ -87,7 +87,7 @@ const char* encode(const std::string& str, int size)
 
 
 template<class T>
-std::string serialize(T& obj)
+std::string class_serialize(T& obj)
 {
 	std::string str = string("\"") + obj.class_info.get_class_name() + "\":{";
 	ClassInfoBase::attr_iterator i= obj.class_info.attrs.begin();
@@ -104,7 +104,7 @@ std::string serialize(T& obj)
 
 //@return new object, must delete it manual.
 template<class T, class attr_value_map>
-T* unserialize(const std::string& class_name, const attr_value_map& attr)
+T* class_unserialize(const std::string& class_name, const attr_value_map& attr)
 {
 	T *obj = (T*)ClassInfoBase::get_object(class_name.c_str());
 	if (obj == nullptr)
@@ -129,4 +129,4 @@ T* unserialize(const std::string& class_name, const attr_value_map& attr)
 
 NAMESP_END/*namespace*/
 
-#endif /*SERAILIZE_CLASS_PATTERN_H*/
+#endif /*CLASS_SERAILIZE_PATTERN_H*/

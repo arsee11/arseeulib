@@ -28,12 +28,6 @@
 
 NAMESP_BEGIN
 
-//class IObject
-//{  
-//public:
-//	virtual int Update()=0;
-//};
-
 
 //@SOURCE the data object 
 template<class SOURCE>

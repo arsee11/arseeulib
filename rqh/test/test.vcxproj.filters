@@ -18,10 +18,10 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="jpack_test.cpp">
+    <ClCompile Include="jpack_2_test.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\mvclib\jpack.cpp">
+    <ClCompile Include="..\rqhlib\jpack2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

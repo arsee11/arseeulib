@@ -27,11 +27,15 @@
 #define REGISTER_ATTR(CLASS, TYPE, NAME) \
         class_info.add_attr<TYPE, &CLASS::get_##NAME, &CLASS::set_##NAME>(#NAME, this)
 		
+#define DEF_CLASS_INHERIT_BEGIN(NAME, BASE) \
+	extern char const class_##NAME[]=#NAME; \
+	struct NAME : public BASE \
+	{
+
 #define DEF_CLASS_BEGIN(NAME) \
 	extern char const class_##NAME[]=#NAME; \
 	struct NAME \
 	{
-
 
 #define DEF_CLASS_END(NAME) \
 	ClassInfo<NAME,class_##NAME> class_info;\
