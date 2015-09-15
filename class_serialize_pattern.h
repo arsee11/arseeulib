@@ -89,9 +89,9 @@ const char* encode(const std::string& str, int size)
 template<class T>
 std::string class_serialize(T& obj)
 {
-	std::string str = string("\"") + obj.class_info.get_class_name() + "\":{";
-	ClassInfoBase::attr_iterator i= obj.class_info.attrs.begin();
-	for(; i!=obj.class_info.attrs.end(); ++i)
+	std::string str = string("\"") + obj.get_class_info()->get_class_name() + "\":{";
+	ClassInfoBase::attr_iterator i= obj.get_class_info()->attrs.begin();
+	for(; i!=obj.get_class_info()->attrs.end(); ++i)
 	{
 		shared_ptr<char> buf = i->second->get();
 		str += "\""+ i->first+"\":\""+code(buf.get(), i->second->sizeof_())+"\",";

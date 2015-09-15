@@ -23,7 +23,8 @@ DEF_CLASS_INHERIT_BEGIN(MyObject, IObject)
 		REGISTER_ATTR(MyObject, float,  b);
 		REGISTER_ATTR(MyObject, string, c);
 	}
-
+	string get_class_name(){ return class_info.get_class_name();}
+	ClassInfoBase* get_class_info(){ return &class_info; }
 	BUILD_ATTR(int,    a);
 	BUILD_ATTR(float,  b);
 	BUILD_ATTR(string, c);

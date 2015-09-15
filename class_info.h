@@ -55,6 +55,8 @@ struct ClassInfoBase
 	typedef attr_map_t::iterator attr_iterator;
 	attr_map_t attrs;
 
+	virtual const char* get_class_name()=0;
+	
 	static void* get_object(const char* class_name)
 	{	
 		return ClassFactory::instance().Create(class_name);

@@ -17,6 +17,8 @@ class IObject
 {  
 public:
 	virtual ~IObject()=0;
+	virtual const char* get_class_name()=0;
+	virtual ClassInfoBase* get_class_info()=0;
 };
 
 NAMESP_END;

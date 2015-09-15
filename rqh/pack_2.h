@@ -112,7 +112,7 @@ public:
 	void param_encoding(const stream_t &val ){ _parame=val; }
 	void param_encoding(stream_t &&val ){ param_encoding(val); }
 	
-	void add_object(object_ptr_t& obj){ _object_list.push_back(obj); }
+	void add_object(object_ptr_t obj){ _object_list.push_back(obj); }
 	object_list_t object_list()const{ return _object_list; }
 	
 	pack_t& operator+=( pack_t& rhs)
@@ -145,9 +145,9 @@ private:
 		static ParamCat& Get(string& param_schema)
 		{
 			if( param_schema == "object")
-				return _param_cat_object;
+				return param_cat_object;
 			//else
-			//	return _param_cat_param;
+			//	return param_cat_param;
 		}
 		
 		virtual void operator()(pack_t& lhs, const pack_t& rhs)=0;		
@@ -183,7 +183,7 @@ private:
 			object_list_t::const_iterator j = other.object_list().begin();
 			for(; i!= _object_list.end(); ++i, ++j)
 			{
-				if((*i)->get_class_name() != (*j)->get_class_name())
+				if( std::string((*i)->get_class_name()) != std::string((*j)->get_class_name()))
 						return false;
 			}
 			
