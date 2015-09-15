@@ -60,7 +60,7 @@ class Register
 public:
 	Register()
 	{
-		cout<< "Register()"<<endl;
+//		cout<< "Register()"<<endl;
 		ClassFactory::instance().Registry(class_name, NewT);
 	}
 	

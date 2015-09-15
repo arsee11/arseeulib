@@ -7,6 +7,7 @@
 #define SERAILIZE_CLASS_PATTERN_H
 
 #include <string>
+#include <string.h>
 
 #ifndef NAMESPDEF_H
 #include "namespdef.h"
@@ -18,11 +19,14 @@ NAMESP_BEGIN
 
 std::string code(const char* buf, int size)
 {
+	if(size == 0 )
+		return buf;
+
 	std::string str;
 	for (int i = 0; i < size; ++i)
 	{
 		char ch[8] = { 0 };
-		sprintf_s(ch, "%02x", (unsigned char)buf[i]);
+		sprintf(ch, "%02x", (unsigned char)buf[i]);
 		str += ch;		
 	}
 
@@ -63,6 +67,9 @@ char atobx(const char byte[2])
 
 const char* encode(const std::string& str, int size)
 {
+	if(size == 0 )
+		return str.c_str();
+		
 	char *buf = new char[size];
 	memset(buf, 0, size);
 	char byte[2] = { 0 };
@@ -103,7 +110,7 @@ T* unserialize(const std::string& class_name, const attr_value_map& attr)
 	if (obj == nullptr)
 		return nullptr;
 		
-	attr_value_map::const_iterator i= attr.begin();
+	typename attr_value_map::const_iterator i= attr.begin();
 	for(; i!=attr.end(); ++i)
 	{
 		ClassInfoBase::attr_iterator j = obj->class_info.attrs.find(i->first);

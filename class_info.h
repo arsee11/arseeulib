@@ -27,6 +27,16 @@
 #define REGISTER_ATTR(CLASS, TYPE, NAME) \
         class_info.add_attr<TYPE, &CLASS::get_##NAME, &CLASS::set_##NAME>(#NAME, this)
 		
+#define DEF_CLASS_BEGIN(NAME) \
+	extern char const class_##NAME[]=#NAME; \
+	struct NAME \
+	{
+
+
+#define DEF_CLASS_END(NAME) \
+	ClassInfo<NAME,class_##NAME> class_info;\
+	};
+
 NAMESP_BEGIN
 
 struct ClassInfoBase
@@ -54,11 +64,11 @@ struct ClassInfo :public ClassInfoBase
 
 	ClassInfo()
 	{
+		const register_t &r = ClassInfo<Class, class_name>::r;
 	}
 
 	template<class Type, Type (Class::*Getter)(), void (Class::*Setter)(const Type&)>
-	struct AttrWrapper :public AttrWrapperBase
-	{
+	struct AttrWrapper :public AttrWrapperBase{
 		typedef Type value_type;
 
 		AttrWrapper(Class* o, const std::string& attr_name)
@@ -86,8 +96,7 @@ struct ClassInfo :public ClassInfoBase
 	};
 
 	template<std::string(Class::*Getter)(), void (Class::*Setter)(const std::string&)>
-	struct AttrWrapper<string, Getter, Setter> :public AttrWrapperBase
-	{
+	struct AttrWrapper<string, Getter, Setter> :public AttrWrapperBase{
 		typedef std::string value_type;
 
 		AttrWrapper(Class* o, const std::string& attr_name)
