@@ -17,7 +17,7 @@
 
 NAMESP_BEGIN
 
-std::string code(const char* buf, int size)
+inline std::string code(const char* buf, int size)
 {
 	if(size == 0 )
 		return buf;
@@ -34,7 +34,7 @@ std::string code(const char* buf, int size)
 }
 
 
-int xtoi(char xch)
+inline int xtoi(char xch)
 {
 	if (xch == 'A' || xch == 'a')
 		return 10;
@@ -89,18 +89,45 @@ const char* encode(const std::string& str, int size)
 template<class T>
 std::string class_serialize(T& obj)
 {
-	std::string str = string("\"") + obj.get_class_info()->get_class_name() + "\":{";
+	std::string str = string("{\"className\":\"") + obj.get_class_info()->get_class_name()+"\","; 
 	ClassInfoBase::attr_iterator i= obj.get_class_info()->attrs.begin();
 	for(; i!=obj.get_class_info()->attrs.end(); ++i)
 	{
 		shared_ptr<char> buf = i->second->get();
-		str += "\""+ i->first+"\":\""+code(buf.get(), i->second->sizeof_())+"\",";
+		if(i == --(obj.get_class_info()->attrs.end()))
+			str += "\""+ i->first+"\":\""+code(buf.get(), i->second->sizeof_())+"\"";
+		else
+			str += "\""+ i->first+"\":\""+code(buf.get(), i->second->sizeof_())+"\",";
 	}
 	str += "}";
 
 	return str;
 }
 
+
+////@return new object, must delete it manual.
+//template<class T, class attr_value_map>
+//T* class_unserialize(const std::string& class_name, const attr_value_map& attr)
+//{
+//	T *obj = (T*)ClassInfoBase::get_object(class_name.c_str());
+//	if (obj == nullptr)
+//		return nullptr;
+//		
+//	typename attr_value_map::const_iterator i= attr.begin();
+//	for(; i!=attr.end(); ++i)
+//	{
+//		ClassInfoBase::attr_iterator j = obj->get_class_info()->attrs.find(i->first);
+//		if (j == obj->get_class_info()->attrs.end())
+//		{
+//			delete obj;
+//			return nullptr;
+//		}
+//		
+//		j->second->set( encode(i->second, j->second->sizeof_()) );
+//	}
+//	
+//	return obj;
+//}
 
 //@return new object, must delete it manual.
 template<class T, class attr_value_map>
@@ -110,22 +137,21 @@ T* class_unserialize(const std::string& class_name, const attr_value_map& attr)
 	if (obj == nullptr)
 		return nullptr;
 		
-	typename attr_value_map::const_iterator i= attr.begin();
-	for(; i!=attr.end(); ++i)
+	ClassInfoBase::attr_map_t::iterator i = obj->get_class_info()->attrs.begin();
+	for(; i!=obj->get_class_info()->attrs.end(); ++i)
 	{
-		ClassInfoBase::attr_iterator j = obj->class_info.attrs.find(i->first);
-		if (j == obj->class_info.attrs.end())
+		std::string value = attr[i->first].asString();
+		if (value.empty())
 		{
 			delete obj;
 			return nullptr;
 		}
 		
-		j->second->set( encode(i->second, j->second->sizeof_()) );
+		i->second->set( encode(value, i->second->sizeof_()) );
 	}
 	
 	return obj;
 }
-
 
 NAMESP_END/*namespace*/
 

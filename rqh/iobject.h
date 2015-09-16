@@ -11,12 +11,15 @@
 #include "../namespdef.h"
 #endif
 
+
 NAMESP_BEGIN
+
+class ClassInfoBase;
 
 class IObject
 {  
 public:
-	virtual ~IObject()=0;
+	virtual ~IObject(){};
 	virtual const char* get_class_name()=0;
 	virtual ClassInfoBase* get_class_info()=0;
 };

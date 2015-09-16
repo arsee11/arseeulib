@@ -9,9 +9,11 @@
 #pragma comment(lib, "../../lib/jsonlibd")
 #endif
 
-#ifndef CLASS_SERAILIZE_PATTERN_H
-#include "../../class_serialize_pattern.h"
-#endif
+//#ifndef CLASS_SERAILIZE_PATTERN_H
+//#include "../../class_serialize_pattern.h"
+//#endif
+
+#include "../../class_info.h"
 
 using namespace arsee;
 using namespace std;
@@ -23,7 +25,7 @@ DEF_CLASS_INHERIT_BEGIN(MyObject, IObject)
 		REGISTER_ATTR(MyObject, float,  b);
 		REGISTER_ATTR(MyObject, string, c);
 	}
-	string get_class_name(){ return class_info.get_class_name();}
+	const char* get_class_name(){ return class_info.get_class_name();}
 	ClassInfoBase* get_class_info(){ return &class_info; }
 	BUILD_ATTR(int,    a);
 	BUILD_ATTR(float,  b);
@@ -38,9 +40,12 @@ void print_pack(Jpack& npack)
 	cout << "action:" << npack.action() << endl;
 	cout << "source:" << npack.source() << endl;
 	cout << "target:" << npack.target() << endl;
+	cout << "num of objects:" << npack.object_list().size() << endl;
 	for (auto &i : npack.object_list())
 	{
-		cout<< class_serialize(*i) <<endl;
+		cout<<i->get_class_name()<<"::a="<<((MyObject*)i.get())->a<<", ";
+		cout<<i->get_class_name()<<"::b="<<((MyObject*)i.get())->b<<", ";
+		cout<<i->get_class_name()<<"::c="<<((MyObject*)i.get())->c<<endl;
 	}
 }
 
@@ -48,18 +53,24 @@ void print_pack(Jpack& npack)
 void test_serializ1()
 {
 	cout<<"test_serializ1:"<<endl;
-	Jpack pck("aaa", "text");
+	Jpack pck("aaa", "request");
 	MyObject *obj = new MyObject();
 	obj->a = 100;
 	obj->b = 10.11;
 	obj->c = "hello";
 	pck.add_object(Jpack::object_ptr_t(obj));
+	MyObject *obj2 = new MyObject();
+	obj2->a = 1010;
+	obj2->b = 101.11;
+	obj2->c = "hello,world";
+	pck.add_object(Jpack::object_ptr_t(obj2));
+
 
 	Jpack::serial_t s;
 	size_t len;
 	const char *buf = s(pck, &len);
 	cout<<"result("<<len<<"):";
-	cout<<"head:"<<*(int*)buf<<"len:"<<*(long*)(buf+sizeof(long))<<"payload:"<<buf+2*sizeof(long)<<endl;
+	cout<<"head:"<<*(int*)buf<<"len:"<<*(int*)(buf+4)<<"payload:"<<buf+8<<endl;
 }
 
 /*//no source
@@ -83,23 +94,25 @@ void test_serializ2()
 	cout<<"result("<<len<<"):";
 	cout<<"head:"<<*(int*)buf<<"len:"<<*(int*)(buf+sizeof(int))<<"payload:"<<buf+2*sizeof(int)<<endl;
 }
+*/
 
 //unserial
 void test_unserialize_1()
 {
-	cout<<"test_unserializ:"<<endl;
-	string payload="{\"action\":\"trans_msg\",\"source\":\"msgview\",\"target\":\"msg\",\"params\":{\"param0\":[{\"name\":\"msg\",\"value\":\"hello\"},{\"name\":\"from\",\"value\":\"1\"},{\"name\":\"to\",\"value\":\"2\"}]}}";
+	cout<<"test_unserialize1:"<<endl;
+	string payload="{\"action\":\"trans_msg\",\"source\":\"msgview\",\"target\":\"msg\",\"params\":{\"param0\":{\
+	                 \"className\":\"MyObject\", \"a\":\"64000000\",\"b\":\"8fc22141\",\"c\":\"hello\"}}}";
 	
+	cout<<payload<<endl;
 	char buf[1024]={0};
-	buf[0] = (char)0xfe;//invalid byte
+	buf[0] = (char)0xff;
 	buf[1] = (char)0xff;
 	buf[2] = (char)0xff;
 	buf[3] = (char)0xff;
-	buf[4] = (char)0xff;
 
 	size_t len =  payload.size();
-	memcpy(buf+5, &len, 4);
-	memcpy(buf+9, payload.c_str(), len);
+	memcpy(buf+4, &len, 4);
+	memcpy(buf+8, payload.c_str(), len);
 
 	Jpack::unserial_t us(1024);
 	Jpack npack;
@@ -107,6 +120,7 @@ void test_unserialize_1()
 	print_pack(npack);	
 }
 
+/*
 void test_userialize_2()
 {
 	string payload="{\"action\":\"trans_msg\",\"source\":\"msgview\",\"target\":\"msg\",\"params\":{\"param0\":[{\"name\":\"msg\",\"value\":\"hello\"},{\"name\":\"from\",\"value\":\"1\"},{\"name\":\"to\",\"value\":\"2\"}]}}";
@@ -273,9 +287,9 @@ void test_userialize_plus_2()
 
 int main()
 {
-	test_serializ1();
+	//test_serializ1();
 	//test_serializ2();
-	//test_unserialize_1();
+	test_unserialize_1();
 	//test_userialize_2();
 	//test_userialize_3();
 	//test_userialize_4();

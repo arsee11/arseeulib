@@ -101,7 +101,7 @@ public:
 	void set_continue(stream_t &&val ){ set_continue(val); }
 	
 	stream_t param_schema()const{ return std::move(_param_schema); }
-	void param_schema(const stream_t &val ){ param_schema=val; }
+	void param_schema(const stream_t &val ){ _param_schema=val; }
 	void param_schema(stream_t &&val ){ param_schema(val); }
 	
 	stream_t param_type()const{ return std::move(_paramt); }
