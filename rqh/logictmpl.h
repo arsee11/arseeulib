@@ -23,16 +23,16 @@
 #include "invoked.h"
 #endif
 
-#ifndef MVC_RRESPONSE_H
-#include "mvcrresponse.h"
+#ifndef RRESPONSE_H
+#include "rresponse.h"
 #endif
 
 #ifndef JPACK_H
 #include "jpack.h"
 #endif
 
-#ifndef MVC_REQUEST_CONTEXT_H
-#include "mvcrequest_context.h"
+#ifndef REQUEST_CONTEXT_H
+#include "request_context.h"
 #endif
 
 NAMESP_BEGIN

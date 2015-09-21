@@ -14,7 +14,7 @@
 #include "../namespdef.h"
 #endif
 
-#ifndef MVC_RESPONSE_H
+#ifndef RESPONSE_H
 #include "rresponse.h"
 #endif
 
@@ -36,8 +36,8 @@ NAMESP_BEGIN
 //{"source"="src","respone"="response", [{"target"="t1"},{"target"="t2"}],[{"param"=p1},{"param"=p2"}]}
 //transmission
 //A.
-//1.view->(request)->model
-//2.model->(response)->view
+//1.source->(request)->model
+//2.model->(response)->source
 //B.
 //
 //
@@ -63,34 +63,22 @@ public:
 	typedef Logic logic_t;
 	typedef typename logic_t::obj_t obj_t;
 	typedef RRequest<logic_t> request_t;
-	typedef RResponse<pack_t> response_t;
-	typedef typename response_t::view_t view_t;
+	typedef IRResponse<pack_t> response_t;
 	
 	
 	const static std::string rqt_name() { return logic_t::name(); }
 	const static std::string target(){ return logic_t::target(); }
 	
-	RControl(view_t& view, logic_t* logic)
-		:_view(view)
-	{
-		_rqt.AttachLogic(logic);
-	}
-	
-	RControl(view_t&& view, logic_t* logic)
-		:RControl(view, logic)
-	{}
-	
-	RControl(view_t& view, RequestContext* context)
-		:_view(view)
+	RControl(std::string& source, RequestContext* context)
+		:_view(source)
 	{
 		_rqt.AttachContext(context);
 		_rqt.AttachLogic( new logic_t() );
 	}
 
-	RControl(view_t&& view, RequestContext* context)
-		:RControl(view, context)
-	{}
-	
+	RControl(std::string&& source, RequestContext* context)
+		:RControl(source, context)
+	{}	
 	
 	bool Request(obj_t* obj, const pack_t& pck) throw(std::exception)
 	{
@@ -101,7 +89,7 @@ public:
 			if(_rsp == nullptr)
 				throw std::exception();
 
-			_rsp->view(_view);
+			_rsp->source(_view);
 			_rsp->action( pck.action() );
 		}
 		
@@ -122,7 +110,70 @@ private:
 	request_t  _rqt;
 	unique_ptr<response_t> _rsp = nullptr;
 	int _state = 0;
-	view_t _view;
+	std::string _view;
+};
+
+//////////////////////////////////////////////
+//Remote Control for ObjectLogic.
+//Inter-proccess.
+//@PACK inter pack.
+//@Whoes the obj who send the pack here.
+//@Logic request method.
+template<class Pack>
+class RControl<Pack, ObjectLogic<Pack> >
+{
+
+public:
+	typedef Pack pack_t;
+	typedef typename pack_t::pack_ptr_t  	pack_ptr_t;
+	typedef typename pack_t::pack_list_t 	pack_list_t;
+	
+	typedef ObjectLogic<Pack> logic_t;
+	typedef RRequestObject<pack_t> request_t;
+	typedef IRResponse<pack_t> response_t;
+			
+	const static std::string rqt_name() { return logic_t::name(); }
+	const static std::string target(){ return logic_t::target(); }
+	
+	RControl(std::string& source, logic_t* logic, RequestContext* context)
+		:_source(source)
+	{
+		_rqt.AttachContext(context);
+		_rqt.AttachLogic( logic );
+	}
+
+	RControl(std::string&& source, logic_t* logic, RequestContext* context)
+		:RControl(source, logic, context)
+	{}
+	
+	
+	bool Request(const pack_t& pck) throw(std::exception)
+	{
+		_rsp = unique_ptr<response_t>( _rqt.Execute(pck) );
+		if(_rsp == nullptr)
+			throw std::exception();
+
+		_rsp->view(_source);
+		_rsp->action( pck.action() );		
+		
+		return true;
+	}
+	
+	void Reply(pack_list_t& pcks)
+	{
+		if( _rsp == nullptr )
+			return;
+
+		pack_ptr_t pck( _rsp->Reply() );
+		if(pck!=nullptr && pck->status())
+			pcks.push_back(pck);
+	}
+
+private:
+	request_t  _rqt;
+	unique_ptr<response_t> _rsp = nullptr;
+	int _state = 0;
+	std::string _source;
 };
 
 NAMESP_END;

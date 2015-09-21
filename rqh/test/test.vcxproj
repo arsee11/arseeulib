@@ -85,8 +85,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\rqhlib\jpack2.cpp" />
-    <ClCompile Include="jpack_2_test.cpp" />
+    <ClCompile Include="control_test.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
