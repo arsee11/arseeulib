@@ -48,7 +48,7 @@ NAMESP_BEGIN
 //@PACK inter pack.
 //@Whoes the obj who send the pack here.
 //@Logic request method.
-template<class Pack 
+/*template<class Pack 
 	,class Logic
 >
 class RControl
@@ -87,7 +87,7 @@ public:
 		{
 			_rsp = unique_ptr<response_t>( _rqt.Execute(obj, i ) );
 			if(_rsp == nullptr)
-				throw std::exception();
+				throw std::exception("_rsp==nullptr");
 
 			_rsp->source(_view);
 			_rsp->action( pck.action() );
@@ -112,15 +112,15 @@ private:
 	int _state = 0;
 	std::string _view;
 };
-
+*/
 //////////////////////////////////////////////
 //Remote Control for ObjectLogic.
 //Inter-proccess.
 //@PACK inter pack.
 //@Whoes the obj who send the pack here.
 //@Logic request method.
-template<class Pack>
-class RControl<Pack, ObjectLogic<Pack> >
+template<class Pack, class Logic>
+class RControl
 {
 
 public:
@@ -128,22 +128,22 @@ public:
 	typedef typename pack_t::pack_ptr_t  	pack_ptr_t;
 	typedef typename pack_t::pack_list_t 	pack_list_t;
 	
-	typedef ObjectLogic<Pack> logic_t;
+	typedef Logic logic_t;
 	typedef RRequestObject<pack_t> request_t;
 	typedef IRResponse<pack_t> response_t;
 			
 	const static std::string rqt_name() { return logic_t::name(); }
 	const static std::string target(){ return logic_t::target(); }
 	
-	RControl(std::string& source, logic_t* logic, RequestContext* context)
+	RControl(std::string& source, RequestContext* context)
 		:_source(source)
 	{
 		_rqt.AttachContext(context);
-		_rqt.AttachLogic( logic );
+		_rqt.AttachLogic( new logic_t );
 	}
 
-	RControl(std::string&& source, logic_t* logic, RequestContext* context)
-		:RControl(source, logic, context)
+	RControl(std::string&& source, RequestContext* context)
+		:RControl(source,  context)
 	{}
 	
 	

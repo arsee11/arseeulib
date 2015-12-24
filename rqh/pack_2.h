@@ -100,10 +100,6 @@ public:
 	void set_continue(const stream_t &val ){ _continue=val; }
 	void set_continue(stream_t &&val ){ set_continue(val); }
 	
-	stream_t param_schema()const{ return std::move(_param_schema); }
-	void param_schema(const stream_t &val ){ _param_schema=val; }
-	void param_schema(stream_t &&val ){ param_schema(val); }
-	
 	stream_t param_type()const{ return std::move(_paramt); }
 	void param_type(const stream_t &val ){ _paramt=val; }
 	void param_type(stream_t &&val ){ param_type(val); }
@@ -117,7 +113,15 @@ public:
 	
 	pack_t& operator+=( pack_t& rhs)
 	{
-		ParamCat::Get(_param_schema)(*this, rhs);		
+		if( IsMatch(rhs) )
+		{
+			object_list_t::iterator i = this->object_list().begin();
+			object_list_t::const_iterator j = rhs.object_list().begin();
+			for(; i!= this->object_list().end(); ++i, ++j)
+			{
+				*(*i)+=*(*j);
+			}
+		}
 		return (*this);		
 	}
 	
@@ -130,66 +134,30 @@ public:
 		_source="";
 		_type="request";
 		_continue="";
-		_param_schema="object";
 		_paramt="text";
 		_parame="plain";		
 		_object_list.clear();
 	}
 	
 private:
-	//connect params
-	class ObjectParamCat;
-	
-	class ParamCat{
-		
-		static ParamCat& Get(string& param_schema)
-		{
-			if( param_schema == "object")
-				return param_cat_object;
-			//else
-			//	return param_cat_param;
-		}
-		
-		virtual void operator()(pack_t& lhs, const pack_t& rhs)=0;		
-		virtual bool IsMatch(pack_t& other)=0;
-		
-		static ObjectParamCat param_cat_object;
-	};
-		
-	class ObjectParamCat:public ParamCat {
-		
-		virtual void operator()(pack_t& lhs, const pack_t& rhs)
-		{
-			if( IsMatch(rhs) )
-			{
-				object_list_t::iterator i = lhs.object_list().begin();
-				object_list_t::const_iterator j = rhs.object_list().begin();
-				for(; i!= lhs.object_list().end(); ++i, ++j)
-				{
-					*(*i)+=*(*j);
-				}
-			}
-		}
-		
-		virtual bool IsMatch(pack_t& other)
-		{
-			if (this->action() != other.action())
-				return false;
+	bool IsMatch(pack_t& other)
+	{
+		if (this->action() != other.action())
+			return false;
 
-			if( this->_object_list.size() != other.object_list().size() )
-				return false;
-			
-			object_list_t::iterator i = this->_object_list.begin();
-			object_list_t::const_iterator j = other.object_list().begin();
-			for(; i!= _object_list.end(); ++i, ++j)
-			{
-				if( std::string((*i)->get_class_name()) != std::string((*j)->get_class_name()))
-						return false;
-			}
-			
-			return true;
+		if( this->_object_list.size() != other.object_list().size() )
+			return false;
+		
+		object_list_t::iterator i = this->_object_list.begin();
+		object_list_t::const_iterator j = other.object_list().begin();
+		for(; i!= _object_list.end(); ++i, ++j)
+		{
+			if( std::string((*i)->get_class_name()) != std::string((*j)->get_class_name()))
+					return false;
 		}
-	};	
+		
+		return true;
+	}
 	
 private:
 	bool _status =false;
@@ -198,7 +166,6 @@ private:
 	stream_t _source="";
 	stream_t _type="request";
 	stream_t _continue="";
-	stream_t _param_schema="object"; //object or value
 	stream_t _paramt="text";
 	stream_t _parame="plain";
 	object_list_t _object_list;

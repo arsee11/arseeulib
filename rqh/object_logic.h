@@ -24,16 +24,21 @@
 #include "rresponse.h"
 #endif
 
+#ifndef IOBJECT_H
+#include "iobject.h"
+#endif
+
 NAMESP_BEGIN
 
 template<class Pack>
 class ObjectLogic
 {
-protected:
+public:
 	typedef std::shared_ptr<IObject> object_ptr_t;
 	typedef std::vector<object_ptr_t> object_list_t;
 		
 public:
+	virtual ~ObjectLogic(){}
 	virtual IRResponse<Pack>* Exec(object_list_t& objs)=0;
 	void set_request_context(RequestContext* val){ _request_context = val; }
 	RequestContext* get_request_context(){ return _request_context; }

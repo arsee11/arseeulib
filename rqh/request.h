@@ -27,6 +27,10 @@
 #include "rresponse.h"
 #endif
 
+#ifndef OBJECT_LOGIC_H
+#include "object_logic.h"
+#endif
+
 NAMESP_BEGIN
 
 template<class Logic>
@@ -71,11 +75,10 @@ public:
 		_logic = logic_ptr_t(logic);
 	}
 
-	template<class Pack>
 	IRResponse<Pack>* Execute(const Pack &pack)
 	{
 		_logic->set_request_context(_context);
-		typename Pack::object_list_t &objs = pack.object_list();
+		typename Pack::object_list_t objs = pack.object_list();
 		return _logic->Exec(objs); 
 	}
 

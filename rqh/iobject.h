@@ -22,6 +22,7 @@ public:
 	virtual ~IObject(){};
 	virtual const char* get_class_name()=0;
 	virtual ClassInfoBase* get_class_info()=0;
+	virtual IObject& operator+=(const IObject& rhs)=0;
 };
 
 NAMESP_END;

@@ -147,7 +147,9 @@ T* class_unserialize(const std::string& class_name, const attr_value_map& attr)
 			return nullptr;
 		}
 		
-		i->second->set( encode(value, i->second->sizeof_()) );
+		const char* val = encode(value, i->second->sizeof_());
+		i->second->set(val);
+	//	delete[] val;
 	}
 	
 	return obj;

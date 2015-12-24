@@ -25,7 +25,7 @@
 #endif
 
 #ifndef REQUEST_CONTEXT_H
-#include "reqest_context.h"
+#include "request_context.h"
 #endif
 
 #ifndef DISPATCHER_H
@@ -38,7 +38,8 @@ NAMESP_BEGIN
 template<class Pack, class... Dispachters>
 class UdpServer
 {
-	typedef typename Pack pack_t;
+	typedef Pack pack_t;
+	typedef typename pack_t::pack_ptr_t pack_ptr_t;
 
 	enum{ MaxBufSize=65535 };
 
@@ -47,29 +48,29 @@ class UdpServer
 public:
 	UdpServer(unsigned short local_port)
 	{
-		Init(port);
+		Init(local_port);
 	}
 
-	~UdpServer(conf_t &conf)
+	~UdpServer()
 	{
-		close();
+		Close();
 	}
 
-	template< class Objs, class Loger>
-	bool Run(Objs& objs, Loger& loger)throw(std::exception)
+	template<class Loger>
+	bool Run(Loger& loger)throw(std::exception)
 	{
 		pack_t pck;
 		Read(pck);
 		if(pck.status())
 		{
-			Requestconext context = {0, _remote_addr.ip, _remote_addr.port};
-			typename pack_t::pack_list_t replies =
+			RequestContext context = {0, _remote_addr.ip, _remote_addr.port};
+			typename pack_t::pack_list_t replies;
 			try{
-				DispatcherHandler<Dispachters...>::Handle(context, objs, pck);
+				replies = DispatcherHandler<Dispachters...>::Handle(context, pck);
 			}
 			catch(dispatcher_notfound_exp& e){
 				//errorhandle
-				loger.add(e.what(), __LINE__);
+				loger.add(e.what(), __FILE__, __LINE__);
 				return false;
 			}
 
@@ -77,6 +78,10 @@ public:
 			{
 				Write(i);
 			}
+		}
+		else
+		{
+			loger.add("pack read error",__FILE__, __LINE__);
 		}
 
 		return true;
@@ -96,19 +101,17 @@ private:
 	void Read(pack_t &pck)
 	{
 		net::UdpPeer::byte_t buf[MaxBufSize];
-		_udp->Read(buf, MaxBufSize, _remote_addr);
-		typename pack_t::unserial_t unserializer_t;
-		auto fuc = std::bind(unserializer_t, std::placeholders::_1);
-		pck = std::move( fuc( pack_t::stream_t(buf) ) );
+		size_t len = _udp->Read(buf, MaxBufSize, _remote_addr);
+		typename pack_t::unserial_t us(65535);
+		us(pck, buf, len); 
 	}
 
-	void Write(pack_t &pck)
+	void Write(pack_ptr_t& pck)
 	{
-		typename pack_t::serial_t serializer_t;
-		auto fuc = std::bind(serializer_t, pck, std::placeholders::_1);
+		typename pack_t::serial_t s;
 		size_t len = 0;
-		typename pack_t::stream_t stream = fuc(len);
-		_udp->Write(stream.c_str(), len, _remote_addr);
+		const char* stream = s(pck, &len);
+		_udp->Write(stream, len, _remote_addr);
 	}
 
 private:

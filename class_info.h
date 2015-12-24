@@ -27,13 +27,19 @@
 #define REGISTER_ATTR(CLASS, TYPE, NAME) \
         class_info.add_attr<TYPE, &CLASS::get_##NAME, &CLASS::set_##NAME>(#NAME, this)
 		
+#define DECLARE_CLASS_NAME(NAME) \
+	extern char const class_##NAME[]
+
+#define DEF_CLASS_NAME(NAME) \
+	char const class_##NAME[]=#NAME 
+
 #define DEF_CLASS_INHERIT_BEGIN(NAME, BASE) \
-	extern char const class_##NAME[]=#NAME; \
+	extern char const class_##NAME[]; \
 	struct NAME : public BASE \
 	{
 
 #define DEF_CLASS_BEGIN(NAME) \
-	extern char const class_##NAME[]=#NAME; \
+	extern char const class_##NAME[]; \
 	struct NAME \
 	{
 
@@ -49,9 +55,11 @@ struct ClassInfoBase
 		virtual std::shared_ptr<char> get() = 0;
 		virtual void set(const char* val) = 0;
 		virtual int sizeof_() = 0;
+		virtual ~AttrWrapperBase(){};
 	};
 
-	typedef std::map<std::string, AttrWrapperBase*> attr_map_t;
+	typedef std::shared_ptr<AttrWrapperBase> attr_wrapper_ptr_t;
+	typedef std::map<std::string, attr_wrapper_ptr_t> attr_map_t;
 	typedef attr_map_t::iterator attr_iterator;
 	attr_map_t attrs;
 
@@ -60,6 +68,11 @@ struct ClassInfoBase
 	static void* get_object(const char* class_name)
 	{	
 		return ClassFactory::instance().Create(class_name);
+	}
+
+	virtual ~ClassInfoBase()
+	{
+		
 	}
 };
 
@@ -72,6 +85,8 @@ struct ClassInfo :public ClassInfoBase
 	{
 		const register_t &r = ClassInfo<Class, class_name>::r;
 	}
+
+	ClassInfo(const int& other):ClassInfo(){}
 
 	template<class Type, Type (Class::*Getter)(), void (Class::*Setter)(const Type&)>
 	struct AttrWrapper :public AttrWrapperBase{
@@ -133,9 +148,12 @@ struct ClassInfo :public ClassInfoBase
 	template<class Type, Type(Class::*Getter)(), void(Class::*Setter)(const Type&)>
 	void add_attr(const char *attr_name, Class* obj)
 	{
-		attrs[attr_name] = new AttrWrapper<Type, Getter, Setter>(obj, attr_name);
+		attrs[attr_name] = ClassInfoBase::attr_wrapper_ptr_t(
+			new AttrWrapper<Type, Getter, Setter>(obj, attr_name));
 	}
 
+	operator int(){ return 0; }
+	ClassInfo<Class, class_name> operator=(int rhs){ return *this; }
 	const char* get_class_name(){ return class_name; }
 	
 	const static Register<Class, class_name> r;

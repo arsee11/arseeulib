@@ -53,7 +53,7 @@ public:
 	{}
 	
 	IRResponse(const std::string &name)
-		:IRResponse(name)
+		:_name(name)
 	{}
 	
 	IRResponse(std::string &&name)
@@ -64,6 +64,8 @@ public:
 	void action	(const std::string& val){ _action = val; }
 	
 	virtual pack_t* Reply()=0;
+	virtual void Success()=0;
+	virtual void Fail()=0;
 	
 protected:
 	std::string _view;
@@ -72,82 +74,15 @@ protected:
 };
 
 
-/////////////////////////////////////////////////
-//RResponse
-//Remote Response
-template<class Pack, bool isObject=false>
-class RResponse :public IRResponse<Pack>
-{	
-public:
-	typedef typename pack_t::params_pack_t 	params_pack_t;	
-	
-public:
-	RResponse(const std::string &name, std::string &view)
-		:base_t(name, view)
-	{
-	}
-
-	RResponse(std::string &&name, std::string &view)
-		:RResponse(name, view)
-	{}
-
-	RResponse(const std::string &name)
-		:base_t(name)
-	{}
-
-	RResponse(std::string &&name)
-		:RResponse(name)
-	{}
-	
-	template<class T>
-	void add_param(std::string &&key, const T& value)
-	{ 
-		_pack_item[key] = StringBuilder(value); 
-	}
-
-
-	template<class T>
-	void add_param(const char* key, const T value)
-	{
-		_pack_item[key] = StringBuilder(value); 
-	}
-	
-	void append_param()
-	{
-		_params.push_back(_pack_item);
-		_pack_item.clear();
-	}
-
-	pack_t* Reply()
-	{
-		if(_params.size() > 0)
-		{
-			pack_t* pck=new pack_t(_name, _view, _action);
-			pck->type("response");
-			for(auto &i:_params)
-				pck->append_param(i);
-			
-			_params.clear();
-			pck->status(true);
-			return pck;
-		}
-			
-		return nullptr;
-	}
-				
-protected:
-	typename pack_t::param_item_t _pack_item;
-	params_pack_t _params;	
-};
-
 
 /////////////////////////////////////////////////
 //RResponse
 //Remote Response
 template<class Pack>
-class RResponse<Pack,true> :public IRResponse<Pack>
+class RResponse:public IRResponse<Pack>
 {
 public:
+	typedef typename IRResponse<Pack>::pack_t pack_t;
 	typedef typename pack_t::object_ptr_t 	object_ptr_t;
 	typedef typename pack_t::object_list_t 	object_list_t;
 	typedef IRResponse<Pack> base_t;
@@ -175,16 +110,17 @@ public:
 		_objs.push_back(obj);
 	}
 
+	virtual void Success(){}
+	virtual void Fail(){};
+
 	pack_t* Reply()
 	{
-		if (add_object.size() > 0)
+		if (_objs.size() > 0)
 		{
-			pack_t* pck = new pack_t(_name, _view, _action);
-			pck->type("response");
+			pack_t* pck = new pack_t(base_t::_action, "response");
 			for (auto &i : _objs)
 				pck->add_object(i);
 
-			_params.clear();
 			pck->status(true);
 			return pck;
 		}

@@ -1,4 +1,4 @@
-//mvccontrol.h
+//rqh.h
 //copyright	: Copyright (c) 2014 arsee.
 //license	: GNU GPL v2.
 //author	: arsee
@@ -9,15 +9,15 @@
 //record 
 //****************************
 
-#ifndef MVC_H
-#define MVC_H
+#ifndef RQH_H 
+#define RQH_H 
 
-#ifndef MVC_REQUEST_H
-#include "mvcrequest.h"
+#ifndef REQUEST_H
+#include "request.h"
 #endif
 
-#ifndef MVC_CONTROL_H
-#include "mvccontrol.h"
+#ifndef CONTROL_H
+#include "control.h"
 #endif
 
 #ifndef DISPATCHER_H
@@ -34,17 +34,18 @@
 
 NAMESP_BEGIN
 
-template<class Pack, class ObjectsCollection, class Logic>
-class MvcTrait
+template<class Pack, class Logic>
+class RqhTrait
 {
 private:
 	typedef RControl<Pack, Logic> ctrl_t;
 	typedef typename ctrl_t::response_t rsp_t;
 	
 public:
-	typedef Dispatcher<ctrl_t, ObjectsCollection> dispth_t;	
+	typedef Dispatcher<ctrl_t > dispth_t;	
 };
+
 
 NAMESP_END
 
-#endif /*MVC_H*/
+#endif /*RQH_H*/

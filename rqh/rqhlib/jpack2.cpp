@@ -55,7 +55,7 @@ JSerializer::stream_t JSerializer::Resolve(const pack_t &pck)
 	if( !pck.source().empty() )
 		str+="\"source\":\"" + pck.source()+"\",";
 		
-	if( !pck.source().empty() )
+	if( !pck.target().empty() )
 		str+="\"target\":\"" +pck.target()+"\",";
 	
 	str+="\"action\":\"" + pck.action()+"\",";
@@ -66,19 +66,19 @@ JSerializer::stream_t JSerializer::Resolve(const pack_t &pck)
 	str+="\"paramType\":\"" + pck.param_type()+"\",";
 	str+="\"paramSchema\":\"" + pck.param_schema()+"\",";
 	str+="\"paramEncoding\":\"" + pck.param_encoding()+"\",";
-	str += "\"params\":[";
-	pack_t::object_list_t& objs = pck.object_list();
-	for (size_t i=0; objs.size()-1; ++i)
+	str += "\"params\":{";
+	const pack_t::object_list_t& objs = pck.object_list();
+	for (size_t i=0; i<objs.size()-1; ++i)
 	{
-		string objstr = class_serialize(objs[i]);
-		str+="\"param" + t2str(i)+"\":{\"" +objstr+"\"},";
+		string objstr = class_serialize(*(objs[i].get()));
+		str+="\"param" + t2str(i)+"\":" +objstr+",";
 	}
 	if(objs.size() > 0 )
 	{
-		string objstr = class_serialize(objs[objs.size()-1]);
-		str += "\"param" + t2str(objs.size() - 1) + "\":{\"" + objstr + "\"}";
+		string objstr = class_serialize(*(objs[objs.size()-1].get()));
+		str += "\"param" + t2str(objs.size() - 1) + "\":" + objstr;
 	}
-	str+="]}";
+	str+="}}";
 	return str;
 }
 
@@ -108,12 +108,10 @@ int JUnSerializer::Parse(pack_t &pck, stream_t &stream)
 			for(int i=0; i<params.size(); i++)
 			{
 				Json::Value& param_item = params["param"+t2str(i)];
-				for(int j=0; j< param_item.size(); j++)
-				{
-					Json::Value& param = param_item[j];
-					string name = param["className"].asString();
-					pck.add_object( pack_t::object_ptr_t(class_unserialize<IObject>(name, param)));
-				}
+				string name = param_item["className"].asString();
+				IObject* obj = class_unserialize<IObject>(name, param_item);
+				if(obj != nullptr)
+					pck.add_object( pack_t::object_ptr_t(obj));
 			}
 
 			return 1;
