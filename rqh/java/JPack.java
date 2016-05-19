@@ -4,7 +4,6 @@
 package mylib.rqh.java;
 
 import org.json.*;
-import java.util.*;
 
 public class JPack extends Pack{
 	
@@ -39,33 +38,19 @@ public class JPack extends Pack{
 			strbuf.append("\"paramType\":"  	).append("\"").append(getParamType()	).append("\",");
 			strbuf.append("\"paramEncoding\":"  ).append("\"").append(getParamEncoding()).append("\"");
 			
-			if( getParamTable().size() > 0 )
+			if( getObjects().size() > 0 )
 			{
 				strbuf.append(",\"params\":{");
 				int count=0;
-				for(HashMap<String, Object> i:getParamTable()){
-					if( i.size() == 0 )
-						break;
+				for(Object i:getObjects()){
+											
+					if( count == 0)
+						strbuf.append("\"param"+count+"\":");
+					else
+						strbuf.append(",\"param"+count+"\":");
 						
-					Iterator j = i.entrySet().iterator();
-					if( j.hasNext() ){
-						if( count == 0)
-							strbuf.append("\"param"+count+"\":[");
-						else
-							strbuf.append(",\"param"+count+"\":[");
-							
-						Map.Entry e = (Map.Entry)j.next();
-						strbuf.append("{\"name\":" ).append("\"").append(e.getKey()  ).append("\",");
-						strbuf.append("\"value\":").append("\"").append(e.getValue()).append("\"}");
-					}
-					
-					while(j.hasNext()){
-						Map.Entry e = (Map.Entry)j.next();
-						strbuf.append(",{\"name\":" ).append("\"").append(e.getKey()  ).append("\",");
-						strbuf.append("\"value\":").append("\"").append(e.getValue()).append("\"}");
-					}
-					count++;
-					strbuf.append("]");
+					strbuf.append( ObjectSerialization.Serialize(i) );
+					count++;					
 				}
 				strbuf.append("}");
 			}
@@ -80,7 +65,6 @@ public class JPack extends Pack{
 		@Override
 		public boolean parseBody(byte[] buf, int offset, int len){
 			String str = new String(buf, offset, len);
-			Pack pck = new JPack(); 
 			try{
 				JSONObject jb = new JSONObject(str);
 				try{
@@ -94,29 +78,27 @@ public class JPack extends Pack{
 				paramt  = jb.getString("paramType");
 				parame  = jb.getString("paramEncoding");
 						
-				//JSONArray ja = jb.getJSONArray("params");
 				JSONObject params = jb.getJSONObject("params");
-				Pack.ParamTable pt = new Pack.ParamTable();
 				String[] names = JSONObject.getNames(params);
-				for(int i=0; i<names.length; i++){
-					JSONArray ja2 = params.getJSONArray(names[i]);
-					HashMap<String, Object> p = new HashMap<String, Object>();
-					for(int j=0; j<ja2.length(); j++){
-						JSONObject param = ja2.getJSONObject(j);
-						p.put(param.getString("name"), param.getString("value"));					
-					}
-					
-					pt.add(p);
+				for(int i=0; names!=null&&i<names.length; i++){
+					JSONObject jo = params.getJSONObject(names[i]);					
+					Object obj = ObjectSerialization.Unserialize(jo);
+					addObject(obj);
 				}
-				paramTable = pt;
 			}catch(JSONException e){
 				setStatus(false);
-				System.out.println(e.toString());
+				e.printStackTrace();
+
+				return false;
+			}catch(Exception e){
+				setStatus(false);
+				e.printStackTrace();
 
 				return false;
 			}
 			
 			setStatus(true);
+			
 			return true;
 		}
 	}

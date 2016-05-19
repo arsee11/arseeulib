@@ -3,25 +3,23 @@
 package mylib.rqh.java;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.lang.Exception;
 
 public abstract class Pack{
 
 	public static final byte[] HEAD = {(byte)0xFF, (byte)0xFF, (byte)0xFF, (byte)0xFF};
 	
-	public static class ParamTable extends ArrayList<HashMap<String, Object>>{
-		public void AddColumn(String name, Object value){
-		}
-		
-		public void AddItem(){
-		}
+	public static class ObjectList extends ArrayList<Object>{
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -2883802619673642177L;
 	}
 	
 		
 	public abstract class Serializer{
 		public byte[] solve(){
-			StringBuffer strbuf = new StringBuffer();			
 			String str = buildBody();
 			int len = str.length();
 			byte[] buf = new byte[8+len];
@@ -92,30 +90,28 @@ public abstract class Pack{
 	public String getContinue()		{ return cont; }
 	public String getParamType()	{ return paramt; }
 	public String getParamEncoding(){ return parame; }
-	public Object getParam(int i, String name)
-	{
-		if( paramTable.size() > i )
-			return paramTable.get(i).get(name);
-			
-		return new String();
-	}
+	
+	public ObjectList getObjects(){	return objects;	}
+	public void addObject(Object obj){ objects.add(obj);}
 	
 	public boolean getStatus(){ return status;  }
 	public void setStatus(boolean value ){ status=value;  }
 	
-	public void  setParamTable(ParamTable table){ paramTable = table;  }
-	public Pack.ParamTable getParamTable(){ return paramTable;    }
-
+	public boolean getResult(){ return result;  }
+	public void setResult(boolean value ){ result=value;  }
+	
+	
 	public abstract Serializer getSerializer();
 	public abstract Unserializer getUnserializer();
 	
 	protected boolean status = false;	
+	protected boolean result=false;
 	protected String type="request";
 	protected String cont="end";
-	protected String src;
-	protected String trgt;
-	protected String act;
+	protected String src="";
+	protected String trgt="";
+	protected String act="";
 	protected String paramt="text";
 	protected String parame="plain";	
-	protected ParamTable paramTable =  new ParamTable();
+	protected ObjectList objects =  new ObjectList();
 }

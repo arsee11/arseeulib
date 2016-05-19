@@ -3,7 +3,6 @@
 package mylib.rqh.java;
 
 import java.net.*;
-import java.lang.*;
 import java.util.*;
 import java.io.*;
 
@@ -51,11 +50,11 @@ public class Reactor{
 		}
 	}
 	
-	public void register(MVCView view){
+	public void register(View view){
 		views.put(view.getName(), view);
 	}
 	
-	public void unregister(MVCView view){
+	public void unregister(View view){
 		views.remove(view.getName());
 	}
 	
@@ -79,7 +78,7 @@ public class Reactor{
 							System.out.println("recv("+len+"):"+new String(buf, 8, len-8));
 							ArrayList<Pack> pcks = readPack(buf, len);
 							for( Pack pck : pcks ){
-								MVCView v = views.get(pck.getTarget());
+								View v = views.get(pck.getTarget());
 								if( v != null)
 									v.invoke(pck);
 							}
@@ -119,7 +118,7 @@ public class Reactor{
 	
 	}
 	
-	HashMap<String, MVCView> views = new HashMap<String, MVCView>();
+	HashMap<String, View> views = new HashMap<String, View>();
 	Socket sock;
 	boolean stop = false;
 	Thread thread;

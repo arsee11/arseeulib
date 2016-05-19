@@ -1,6 +1,6 @@
 //Util.java
 
-package mylib.mvc.java;
+package mylib.rqh.java;
 
 import java.lang.Exception;
 
@@ -17,11 +17,21 @@ public class Util{
 		return bytes;
 	}
 
+		
 	public  static byte[] int2Bytes(int i)throws Exception  {   
 		byte[] bytes = new byte[4];   
 		int2Bytes(i, bytes, 0);
 		return bytes;
 	}
+	
+			
+	public  static byte[] float2Bytes(float i)throws Exception  {   
+		byte[] bytes = new byte[4];  
+		int ival = Float.floatToIntBits(i);
+		int2Bytes(ival, bytes, 0);
+		return bytes;
+	}
+	
 	
 	//low order
 	public static int bytes2Int(byte[] bytes, int offset)throws Exception {

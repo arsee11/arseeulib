@@ -3,7 +3,6 @@
 package mylib.rqh.java;
 
 import java.net.*;
-import java.util.*;
 import java.io.*;
 
 public class Requester{
@@ -41,20 +40,15 @@ public class Requester{
 		pack.setParamEncoding(value);
 	}
 	
-    public void addParam (String name, Object value){
-		params.put(name, value);
+    public <T>void addParam (T obj){
+		pack.addObject(obj);
 	}
 	
-    public void appnedParam(){
-		packTable.add((HashMap<String, Object>)params.clone());
-		params.clear();
-	}
+
 	
     public void post(Socket s){
 		try{
 			pack.setStatus(true);
-			pack.setParamTable( (Pack.ParamTable)packTable.clone());
-			packTable.clear();
 			byte[] buf = pack.getSerializer().solve();
 			OutputStream w = s.getOutputStream();
 			w.write(buf);
@@ -71,6 +65,4 @@ public class Requester{
 	
 	protected Socket sock;
 	protected Pack pack;
-	protected Pack.ParamTable packTable = new Pack.ParamTable();
-	protected HashMap<String, Object> params = new HashMap<String, Object>();
 }
