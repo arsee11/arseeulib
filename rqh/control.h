@@ -135,14 +135,14 @@ public:
 	const static std::string rqt_name() { return logic_t::name(); }
 	const static std::string target(){ return logic_t::target(); }
 	
-	RControl(std::string& source, RequestContext* context)
+	RControl(std::string& source, RequestContext* context=nullptr)
 		:_source(source)
 	{
 		_rqt.AttachContext(context);
 		_rqt.AttachLogic( new logic_t );
 	}
 
-	RControl(std::string&& source, RequestContext* context)
+	RControl(std::string&& source, RequestContext* context=nullptr)
 		:RControl(source,  context)
 	{}
 	

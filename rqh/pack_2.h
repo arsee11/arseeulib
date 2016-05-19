@@ -78,6 +78,9 @@ public:
 	} 
 	
 	
+	bool result()const{ return _result; }
+	void result(bool val){ _result= val; }
+
 	bool status()const{ return _status; }
 	void status(bool val){ _status = val; }
 
@@ -129,6 +132,7 @@ public:
 	void Reset()
 	{
 		_status = false;
+		_result= false;
 		_action="";
 		_target="";
 		_source="";
@@ -160,7 +164,8 @@ private:
 	}
 	
 private:
-	bool _status =false;
+	bool _status=false;
+	bool _result=false;
 	stream_t _action="";
 	stream_t _target="";
 	stream_t _source="";

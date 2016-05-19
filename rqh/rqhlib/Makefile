@@ -1,16 +1,16 @@
 SRC=./
 Inc=../
-JSONInc=-I/home/arsee_p/lib/jsoncpp-master/include/
+JSONInc=-I./
 JSONLib=json_reader.cpp.o json_value.cpp.o json_writer.cpp.o
 CXX=g++
-FLAGS=--std=c++11 
+FLAGS=-g -std=c++11 
 OBJ=../../lib/librqh.a
 
-$(OBJ): jpack.o 
-	ar rs $(OBJ) jpack.o $(JSONLib)
+$(OBJ): jpack2.o 
+	ar rs $(OBJ) jpack2.o $(JSONLib)
 
-jpack.o: $(Inc)pack.h $(Inc)jpack.h $(Inc)../namespdef.h
+jpack2.o: jpack2.cpp $(Inc)pack_2.h $(Inc)../namespdef.h
 	g++ $(FLAGS) $(JSONInc) -I$(Inc) -c $(SRC)jpack2.cpp
 
 clean:
-	rm -f jpack.o 
+	rm -f jpack2.o $(OBJ)

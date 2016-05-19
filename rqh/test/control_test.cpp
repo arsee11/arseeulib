@@ -9,7 +9,6 @@
 #endif
 
 #include "../../class_info.h"
-#include "../object_logic.h"
 #include "../control.h"
 #include "../iobject.h"
 
@@ -24,11 +23,13 @@ DEF_CLASS_INHERIT_BEGIN(MyObject, IObject)
 		REGISTER_ATTR(MyObject, string, c);
 	}
 	const char* get_class_name(){ return class_info.get_class_name();}
-	ClassInfoBase* get_class_info(){ return &class_info; }
+	MyObject& operator+=(const IObject& rhs){ return *this;}
 	BUILD_ATTR(int,    a);
 	BUILD_ATTR(float,  b);
 	BUILD_ATTR(string, c);
 DEF_CLASS_END(MyObject)
+
+DEF_CLASS_NAME(MyObject);
 
 class Logic : public ObjectLogic<Jpack>
 {
@@ -43,10 +44,12 @@ public:
 			cout<<i->get_class_name()<<"::b="<<((MyObject*)i.get())->b<<", ";
 			cout<<i->get_class_name()<<"::c="<<((MyObject*)i.get())->c<<endl;
 		}
+
+		return nullptr;
 	}
 };
 
-typedef RControl<Jpack, ObjectLogic<Jpack> > control_t;
+typedef RControl<Jpack, Logic > control_t;
 
 void test_execute()
 {
@@ -67,9 +70,12 @@ void test_execute()
 	Jpack::unserial_t us(1024);
 	Jpack pack;
 	us(pack, buf, len+9);
-	Logic logic;
-	control_t ctrl(string("sourceView"), &logic, nullptr);
+	control_t ctrl(string("sourceView"));
+	try{
 	ctrl.Request(pack);
+	}catch(std::exception& e){
+		cout<<e.what();
+	}
 	
 }
 

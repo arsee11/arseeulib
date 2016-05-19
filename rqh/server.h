@@ -71,7 +71,7 @@ public:
 			catch(dispatcher_notfound_exp& e){
 				//errorhandle
 				loger.add(e.what(), __FILE__, __LINE__);
-				return false;
+//				return false;
 			}
 
 			for (auto &i : replies)
@@ -102,6 +102,8 @@ private:
 	{
 		net::UdpPeer::byte_t buf[MaxBufSize];
 		size_t len = _udp->Read(buf, MaxBufSize, _remote_addr);
+		cout<<"len:"<<len<<endl;
+		cout<<"rev("<<*((int*)(buf+4))<<"):"<<std::string(buf+8)<<endl;
 		typename pack_t::unserial_t us(65535);
 		us(pck, buf, len); 
 	}
@@ -112,6 +114,8 @@ private:
 		size_t len = 0;
 		const char* stream = s(pck, &len);
 		_udp->Write(stream, len, _remote_addr);
+		cout<<"len:"<<len<<endl;
+		cout<<"send:"<<std::string(stream+8)<<endl;
 	}
 
 private:

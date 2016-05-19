@@ -28,10 +28,6 @@
 #include <memory>
 #include <list>
 
-#ifndef MVC_VIEW_H
-#include "view.h"
-#endif
-
 NAMESP_BEGIN
 
 template<class Pack>
@@ -115,17 +111,15 @@ public:
 
 	pack_t* Reply()
 	{
+		pack_t* pck = new pack_t(base_t::_action, "response");
+		pck->status(true);
 		if (_objs.size() > 0)
 		{
-			pack_t* pck = new pack_t(base_t::_action, "response");
 			for (auto &i : _objs)
 				pck->add_object(i);
 
-			pck->status(true);
-			return pck;
 		}
-
-		return nullptr;
+		return pck;
 	}
 
 protected:

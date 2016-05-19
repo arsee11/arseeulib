@@ -15,9 +15,9 @@
 #include "../namespdef.h"
 #endif
 
-#ifndef INVOKER_H
-#include "invoker.h"
-#endif
+//#ifndef INVOKER_H
+//#include "invoker.h"
+//#endif
 
 #ifndef REQUEST_CONTEXT_H
 #include "request_context.h"
@@ -31,9 +31,10 @@
 #include "object_logic.h"
 #endif
 
+
 NAMESP_BEGIN
 
-template<class Logic>
+/*template<class Logic>
 class RRequest
 {
 private:
@@ -59,7 +60,7 @@ private:
 	logic_ptr_t 	_logic;
 	RequestContext* _context = nullptr; 
 };
-
+*/
 
 template<class Pack>
 class RRequestObject

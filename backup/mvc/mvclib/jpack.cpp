@@ -20,10 +20,6 @@
 #include "../../stringex.h"
 #endif
 
-#ifndef CLASS_SERAILIZE_HANDLER_H
-#include "../../class_serialize_handler.h"
-#endif
-
 NAMESP_BEGIN
 
 const char* Head0xff(const char *stream, size_t len, size_t *head_len)
@@ -51,40 +47,48 @@ JSerializer::stream_t JSerializer::Resolve(const pack_ptr_t &pck)
 
 JSerializer::stream_t JSerializer::Resolve(const pack_t &pck)
 {
-	string str = "{";
+	Json::FastWriter wr;
+	Json::Value root;
 	if( !pck.source().empty() )
-		str+="\"source\":\"" + pck.source()+"\",";
+		root["source"		] = pck.source();
 		
-	if( !pck.target().empty() )
-		str+="\"target\":\"" +pck.target()+"\",";
+	if( !pck.source().empty() )
+		root["target"		] = pck.target();
 	
-	str+="\"action\":\"" + pck.action()+"\",";
-	str+="\"type\":\"" +pck.type()+"\",";
+	root["action"		] = pck.action();
+	root["type"  		] = pck.type();
 	if( !pck.get_continue().empty() )
-		str+="\"continue\":\"," +pck.get_continue();
+		root["continue"		] = pck.get_continue();
 		
-	str+="\"paramType\":\"" + pck.param_type()+"\",";
-	str+="\"paramEncoding\":\"" + pck.param_encoding()+"\",";
-	str += "\"params\":{";
-	const pack_t::object_list_t& objs = pck.object_list();
-	for (size_t i=0; objs.size()>0&&i<objs.size()-1; ++i)
+	root["paramType"	] = pck.param_type();
+	root["paramEncoding"] = pck.param_encoding();
+	Json::Value param;
+	Json::Value params;
+	int k = 0;
+	for (auto &i : pck.params())
 	{
-		string objstr = ClassSerializer<IObject>()(ss, *(objs[i].get()));
-		str+="\"param" + t2str(i)+"\":" +objstr+",";
+		Json::Value param_item;
+		for (auto &j : i)
+		{
+			Json::Value param;
+			param["name"] = j.first;
+			param["value"] = j.second;
+			param_item.append(param);
+		}
+		params["param" + t2str(k)] = param_item;
+		++k;
 	}
-	if(objs.size() > 0 )
-	{
-		string objstr = ClassSerializer<IObject>()(ss, *(objs[objs.size()-1].get()));
-		str += "\"param" + t2str(objs.size() - 1) + "\":" + objstr;
-	}
-	str+="}}";
-	return str;
+
+	root["params"] = params;
+	return std::move(wr.write(root));
 }
 
 size_t JSerializer::Header()
 {
 	return Head0xff(_head);
 }
+
+
 
 int JUnSerializer::Parse(pack_t &pck, stream_t &stream)
 {
@@ -106,9 +110,13 @@ int JUnSerializer::Parse(pack_t &pck, stream_t &stream)
 			for(int i=0; i<params.size(); i++)
 			{
 				Json::Value& param_item = params["param"+t2str(i)];
-				IObject* obj = ClassUnserialize<IObject>()(us, param_item);
-				if(obj != nullptr)
-					pck.add_object( pack_t::object_ptr_t(obj));
+				pack_t::param_item_t ppitem;
+				for(int j=0; j< param_item.size(); j++)
+				{
+					Json::Value& param = param_item[j];				
+					ppitem[param["name"].asString()] = param["value"].asString();
+				}
+				pck.append_param(ppitem);
 			}
 
 			return 1;

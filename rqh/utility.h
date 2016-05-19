@@ -34,7 +34,7 @@ struct ArgCounter<T, Args...>
  
 ///////////////////////////////////////////////
 //IfElseThen Begin
-template<bool pre, class A, class B>
+/*template<bool pre, class A, class B>
 struct IfElseThen;
 
 template<class A, class B>
@@ -48,6 +48,7 @@ struct IfElseThen<false, A, B>
 {
 	typedef B value;
 };
+*/
 //IfElseThen End
 ///////////////////////////////////////////////
 

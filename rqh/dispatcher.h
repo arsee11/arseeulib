@@ -37,6 +37,13 @@ NAMESP_BEGIN
 //exceptions
 class dispatcher_notfound_exp : public std::exception
 {
+	public:
+	const char* what()const noexcept override
+	{
+		return msg;
+	}
+
+	const char* msg = "dispatcher_notfound_exp";
 };
 
 
