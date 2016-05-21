@@ -90,18 +90,18 @@ protected:
 
 
 //////////////////////////////////////////////////////////////////////////////
-template<class FdHolder,
-	bool tcp,
-	template<bool> class SELECTOR
+template<class FdHolder
+	,template<bool> class SELECTOR
+	,bool tcp = true
 >
 class Preactor;
 
 
 //////////////////////////////////////////////////////////////////////////////
-template<class FdHolder,
-	template<bool>class  SELECTOR
+template<class FdHolder
+	,template<bool>class  SELECTOR
 >
-class Preactor<FdHolder, true, SELECTOR> :
+class Preactor<FdHolder, SELECTOR, true> :
 	public PreactorBase<FdHolder, SELECTOR<true> >
 {
 	typedef PreactorBase<FdHolder, SELECTOR<true> > base_t;

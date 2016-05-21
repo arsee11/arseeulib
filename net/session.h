@@ -120,12 +120,12 @@ struct Buf
 
 typedef std::shared_ptr<Buf> buf_t;
 
-template<size_t insize, class Preactor, class Derived>
+///@param insize max buf size
+///@param Preactor Preactor class type
+template<size_t insize, class Preactor>
 class Session
 {
 public:
-	//typedef SessionContainer<Session<insize, Preactor> > ss_container_t;
-	typedef SessionContainer<Derived> ss_container_t;
 
 public:
 	Session(fd_t fd, std::string remoteip, unsigned short remote_port)

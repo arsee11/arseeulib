@@ -124,35 +124,6 @@ private:
 
 };
 
-
-//////////////////////////////////////////////////////
-template<class Preactor, class Acceptor>
-class PreactorServer
-{
-public:
-	PreactorServer(size_t max_session, net::SockConfig &conf)
-		:_preactor(max_session)
-	{
-		_preactor.RegistryAcceptor(new Acceptor(conf.lip.c_str(), conf.lport));
-	}
-
-	bool Run()throw()
-	{
-		try{
-			_preactor.EventLoop();
-		}
-		catch (...)
-		{
-			//error handle
-		}
-
-		return true;
-	}
-
-private:
-	Preactor _preactor;
-};
-
 NAMESP_END
 
 #endif/*SERVER_H*/
