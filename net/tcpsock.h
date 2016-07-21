@@ -101,7 +101,7 @@ public:
 	}
 
 	//new RemotePeer, 
-	RemotePeer* Accept(char *buf, int len);
+	RemotePeer* Accept()throw(sockexcpt);
 
 	SOCKET sock(){ return _sock; }
 

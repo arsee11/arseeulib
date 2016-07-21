@@ -73,8 +73,48 @@ TcpSock::rpeer_ptr_t TcpSock::CreateClient(const std::string &rip, unsigned shor
 
 TcpSock::lpeer_ptr_t TcpSock::CreateServer(const std::string &ip, unsigned short port) throw(sockexcpt)
 {
-	int s = socket(AF_INET, SOCK_STREAM, 0);
-	return nullptr;
+	SOCKET s = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	if(s ==INVALID_SOCKET)
+		return nullptr;
+	
+	sockaddr_in addr;
+	memset(&addr, 0, sizeof(addr));
+	addr.sin_family = AF_INET;
+	addr.sin_port = htons(port);
+	addr.sin_addr.s_addr = ip.empty()?INADDR_ANY:inet_addr(ip.c_str());
+	if (bind(s, (sockaddr *)&addr, sizeof(addr)) == SOCKET_ERROR)
+	{
+		throw sockexcpt("bind");
+	}
+	
+	if (listen(s, 5) == SOCKET_ERROR)
+	{
+		throw sockexcpt("listen");
+	}
+		
+	return  lpeer_ptr_t(new LocalPeer(s, ip, port));
+}
+
+
+TcpSock::lpeer_ptr_t TcpSock::CreateServer(unsigned short port) throw(sockexcpt)
+{
+	std::string ip="";
+	return CreateServer(ip, port);
+}
+
+RemotePeer* LocalPeer::Accept() throw(sockexcpt)
+{
+	sockaddr_in addr;
+	socklen_t len = sizeof(addr);
+	SOCKET s;
+	if ((s=accept(s, (sockaddr*)&addr, &len))== SOCKET_ERROR)
+	{
+		throw sockexcpt("accept");
+	}
+	
+	uint16_t rport = ntohs(addr.sin_port);
+	char* rip = inet_ntoa(addr.sin_addr);
+	return  new RemotePeer(s, SockConfig(_port, rport, _ip, rip));
 }
 
 int RemotePeer::Read(char *buf, int len, int timeout)
