@@ -1,34 +1,43 @@
 //@file worker_runnable.h
 
-class Work
-{
-public:
-	virtual int operator()()=0;
-}
-
-
-template<class Fountor>
-class WorkTmpl
-{
-public:
-	/**
-	*f(int i, float j);
-	*int a; float b;
-	*WorkTmpl w(std::bind(f, a, b));
-	*/
-	WorkTmpl(Foutor);
-
-private:
-	Fountor _func;
-};
+#include <queue>
+#include <functional>
 
 class WorkerRunnable
 {
 public:
-	void work();
+	WorkerRunnable()
+	{
+	}
+
+	void work()
+	{
+		while( !_is_stop )
+		{
+			if(_work_queue.size() > 0)
+			{
+				auto f = _work_queue.front();
+				_work_queue.pop();
+				f();
+			}
+		}
+	}
 	
-	void Post(Work* w);
+	void stop(){ _is_stop = true;}
+
+	template<class Function>
+	void post(Function& f)
+	{
+		_work_queue.push(f);
+	}
+
+	template<class Function>
+	void post(Function&& f)
+	{
+		post(f);
+	}
 
 private:
-	list<work_ptr_t> _work_queue;
-}
+	std::queue<std::function<void()>> _work_queue;
+	bool _is_stop = false;
+};

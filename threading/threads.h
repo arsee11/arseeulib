@@ -1,16 +1,7 @@
-/*
-***************************
-* 文 件 名：hlg_runnable.h
-* 摘    要：线程
-* 作    者：黄立观
-* 版    本：0.1
-* 替换版本：0.0
-* 更新时间：2012-03-17
-**************************
-*/
+///@file threads.h
 
-#ifndef HLG_RUNNABLE_H
-#define HLG_RUNNABLE_H
+#ifndef THREADS_H
+#define THREADS_H
 
 
 #include <string>
@@ -18,9 +9,6 @@
 #ifndef NAMESPDEF_H
 #include "namespdef.h"
 #endif
-
-using namespace std;
-
 
 
 NAMESP_BEGIN
@@ -36,12 +24,12 @@ typedef pthread_t FD; //
 class ThreadExp
 {
 public:
-	ThreadExp(string msg)
+	ThreadExp(std::string msg)
 		:Msg(msg)		
 	{
 	}
 
-	string Msg;
+	std::string Msg;
 };
 
 
@@ -121,4 +109,4 @@ private:
 
 NAMESP_END/*namespace*/
 
-#endif /*HLG_RUNNABLE_H*/
+#endif /*THREADS_H*/

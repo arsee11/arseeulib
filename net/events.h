@@ -132,22 +132,20 @@ public:
 		char *buf = _handler->inbuf();	
 		int nwant = _handler->in_bufsize();
 		int len =0;
-		int ntotal=0;
-		while( (len = read(_fd, buf, nwant) )>0 )
+		int tlen=0;
+		while( (len = read(_fd, buf+tlen, nwant) )>0 )
 		{
-			_handler->InputHandle(len);
+			tlen+=len;
 		}
 
 		if(len==-1 && errno==EAGAIN)
 		{
-//			cout<<"Again"<<endl;
+			WorkerThreads::instance().post(std::bind(handler_t::InputHandle, _handler, len));
 			_preactor->PostSend(_fd);
 		}
+
 		if(len==0)
-		{
-//			cout<<"recv 0 bytes"<<endl;
 			_preactor->PostClose(_fd);
-		}
 	}
 
 private:
