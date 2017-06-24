@@ -38,16 +38,16 @@ inline void SetNoblocking(fd_t fd)
 	}
 }
 
-class EpollBase
+class Epoll
 {
 public:
-	EpollBase(size_t max)
+	Epoll(size_t max)
 		:_max(max)
 	{
 		Init();
 	}
 
-	virtual ~EpollBase()
+	virtual ~Epoll()
 	{
 	}
 	
@@ -81,11 +81,12 @@ public:
 		_nfds>0 ? 0 : --_nfds;
 	}
 
-	size_t Select(epoll_event *ehs)
+	netevent_set_t Select(netevent_set_t& ehs)
 	{
 #ifdef DEBUG
 		cout<<"EpollBase::selecting..."<<endl;
 #endif
+		epoll_event ehs[_max];
 		int nfds = epoll_wait(_efd, ehs, _max, -1);
 		if(nfds == -1)
 		{
@@ -94,7 +95,29 @@ public:
 			return 0;
 		}
 
-		return nfds;
+		netevent_set_t events;
+		for(size_t i=0; i<nfds; ++i)
+		{			
+			if(ehs[i].events&EPOLLIN || ehs[i].events&EPOLLPRI)
+			{
+				NetInputEvent event(ehs[i].data.fd);
+				events.push_back(event);
+			}
+			else if(ehs[i].events&EPOLLOUT )
+			{
+				NetOutputEvent event(ehs[i].data.fd);
+				events.push_back(event);
+			}
+			else if(ehs[i].events&EPOLLRDHUP )
+			{
+				NetCloseEvent event(ehs[i].data.fd);
+				events.push_back(event);
+			}
+			else
+			{
+			}
+		}
+		return std::move(events);
 	}
 
 	void ModifySend(fd_t fd)
@@ -143,26 +166,16 @@ private:
 
 };
 
-template<bool tcp=false>
-class Epoll
-{
-};
-
-template<>
-class Epoll<true>:
-	public EpollBase
+template<class SelectedHandler>
+class Selector
 {
 public:
-	Epoll(size_t max)
-		:EpollBase(max)
+	Selector(size_t max)
+		:_selector(max)
 	{
 	}
 
-	void SetAcceptor(int accptfd)
-	{
-		_accptfd = accptfd;
-	}
-
+	
 	//@hldr return the alivable fds container,
 	//@return number of alivable fds.
 	template<class Holder>
@@ -171,27 +184,18 @@ public:
 #ifdef DEBUG
 		cout<<"selecting..."<<endl;
 #endif
-		epoll_event ehs[_max];
-		size_t nfds = EpollBase::Select(ehs);
-		for(size_t i=0; i<nfds; ++i)
+		
+		netevent_set_t events = _selector.Select();
+		for(auto i : events)
 		{
-			if(ehs[i].events & EPOLLIN )
-			{
-				if(ehs[i].data.fd == _accptfd)
-					hldr.Turn2Accept(ehs[i].data.fd);
-				else					
-					hldr.Turn2In(ehs[i].data.fd);
-			}
-
-			if(ehs[i].events & EPOLLOUT )
-				hldr.Turn2Out(ehs[i].data.fd);
+			hldr->SendEvent(i);
 		}
 
-		return nfds;
+		return events->size();
 	}
 
 private:
-	int _accptfd = -1;
+	SelectedHandler _selector;
 };
 
 }//net
