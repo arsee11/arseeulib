@@ -25,9 +25,16 @@ template<class Selector, class EventQueueHolder>
 class Proactor
 {
 	typedef Selector selector_t; 
-	typedef Proactor
+	typedef Proactor<selector_t, EventQueueHolder> my_t;
+	
 public:
-	Preactor(size_t max):_selector(max){}
+	Preactor(size_t max):_selector(max){
+		_event_queue.addFilter( std::bind(&my_t::filterEvent, this, _1) );
+	}
+	
+	void setEventListener(EventListener* el){
+		_event_queue.setListener(el);
+	}
 	
 	void run()
 	{
@@ -40,28 +47,40 @@ public:
 			
 			for(auto event : events)
 			{
-		        	event.setListener(this);
-				event.wakeup();
+		        	_event_queue.push(e);	
+				_event_queue.wakeup();
 			}			
 		}
 	}
-
-	void onInput(fd_t fd)
+	
+private:
+	bool filterEvent(Event* e){
+		if(e->type() == InputEvent::type )
+		{
+			onInput(e);	
+			return true;
+		}
+		
+		return false;
+	}
+	
+	void onInput(InputEvent* e)
 	{
+		InputEvent::sender* s = e->sender();
 		char* buf = new char[MAX_BUF_LEN];
-		size_t rlen = read(fd, buf, MAX_BUF_LEN);
+		size_t rlen = s->read(buf, MAX_BUF_LEN);
 		if( rlen > 0 )
 		{
-			RecvDataCompletedEvent e(fd, buf, rlen);
+			RecvDataCompletedEvent e(s, buf, rlen);
 			_event_queue.push(e);	
 			_event_queue.wakeup();
 		}
 	}
 	
-	void onOutput(fd_t, fd)
+	void onOutput(OutputEvent* e)
 	{
-		SendDataCompletedEvent e(fd);
-		_event_queue.push(e);	
+		SendDataCompletedEvent se( e->sender() );
+		_event_queue.push(se);	
 		_event_queue.wakeup();
 	}
 	
