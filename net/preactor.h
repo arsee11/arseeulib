@@ -1,9 +1,9 @@
-//preactor.h 
+//proactor.h 
 //copyright	:Copyright (c) 2014 arsee.
 //license	:GNU GPL V2.
 
-#ifndef REACTOR_H
-#define REACTOR_H
+#ifndef ROACTOR_H
+#define ROACTOR_H
 
 #include <algorithm>
 #include <list>
@@ -21,51 +21,69 @@ namespace net
 {
 
 //////////////////////////////////////////////////////////////////////////////
-template<class FdHolder
-	,class Selector
->
-class PreactorBase
+template<class Selector, class EventQueueHolder>
+class Proactor
 {
 	typedef Selector selector_t; 
-	typedef FdHolder fd_holder_t;
-	typedef typename fd_holder_t::fd_ptr_t fd_ptr_t;
-	typedef typename fd_holder_t::fd_list_t fd_list_t;
-
+	typedef Proactor<selector_t, EventQueueHolder> my_t;
+	
 public:
-	PreactorBase(size_t max):_selector(max){}
-
-	//@h Handler pointer it must be created from heap(use new operator).
-	template<class Handler> 
-	inline void RegistryHandler(shared_ptr<Handler> &h)
-	{
-		_selector.Attach( h->fd() );	
-		FdHolder::normal_manager_t::Attach(_fdhldr, h->fd(), h, this );
+	Preactor(size_t max):_selector(max){
+		_event_queue.addFilter( std::bind(&my_t::filterEvent, this, _1) );
 	}
-
-	template<class Handler> 
-	inline void RemoveHandle(const Handler *h)
-	{
-		_selector.Detach( h->fd() );
-		_fdhldr.Detach( h->fd() );
+	
+	void setEventListener(EventListener* el){
+		_event_queue.setListener(el);
 	}
-
-	void EventLoop()
+	
+	void run()
 	{
 //		cout<<"evnet loop..."<<endl;
 		while(true)
 		{
-			size_t n =  _selector.Select(_fdhldr);
+			netevent_set_t events =  _selector.Select();
 			if( n = 0 )
 				continue;
-
-			fd_list_t alive_fds = _fdhldr.GetAlive();
-			for(auto &i:alive_fds)
+			
+			for(auto event : events)
 			{
-				i->Wakeup();
-			}
+		        	_event_queue.push(e);	
+				_event_queue.wakeup();
+			}			
 		}
 	}
-
+	
+private:
+	bool filterEvent(Event* e){
+		if(e->type() == InputEvent::type )
+		{
+			onInput(e);	
+			return true;
+		}
+		
+		return false;
+	}
+	
+	void onInput(InputEvent* e)
+	{
+		InputEvent::sender* s = e->sender();
+		char* buf = new char[MAX_BUF_LEN];
+		size_t rlen = s->read(buf, MAX_BUF_LEN);
+		if( rlen > 0 )
+		{
+			RecvDataCompletedEvent e(s, buf, rlen);
+			_event_queue.push(e);	
+			_event_queue.wakeup();
+		}
+	}
+	
+	void onOutput(OutputEvent* e)
+	{
+		SendDataCompletedEvent se( e->sender() );
+		_event_queue.push(se);	
+		_event_queue.wakeup();
+	}
+	
 	void PostSend(int fd)
 	{
 		_selector.ModifySend(fd);
@@ -85,44 +103,9 @@ public:
 
 protected:
 	selector_t _selector;
-	fd_holder_t _fdhldr;	
-};
-
-
-//////////////////////////////////////////////////////////////////////////////
-template<class FdHolder
-	,template<bool> class SELECTOR
-	,bool tcp = true
->
-class Preactor;
-
-
-//////////////////////////////////////////////////////////////////////////////
-template<class FdHolder
-	,template<bool>class  SELECTOR
->
-class Preactor<FdHolder, SELECTOR, true> :
-	public PreactorBase<FdHolder, SELECTOR<true> >
-{
-	typedef PreactorBase<FdHolder, SELECTOR<true> > base_t;
-
-public:
-	Preactor(size_t max)
-		:base_t(max)
-	{
-	}
-
-	//@h Aceeptor pointer it must be created from heap(use new operator).
-	template<class Acceptor> 
-	inline void RegistryAcceptor(Acceptor *h)
-	{
-		base_t::_selector.SetAcceptor( h->fd() );	
-		base_t::_selector.Attach( h->fd() );	
-		FdHolder::accept_manager_t::Attach(base_t::_fdhldr, h->fd(), h, this );
-	}
-
+	EventQueueHolder _event_queue;	
 };
 
 }//net
 NAMESP_END
-#endif /*REACTOR_H*/
+#endif /*ROACTOR_H*/

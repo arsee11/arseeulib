@@ -2,6 +2,7 @@ mylib
 =====
 
 smoe utilty codes
+needed c++11
 
 Build:
 	
