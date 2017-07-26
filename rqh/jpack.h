@@ -54,7 +54,8 @@ public:
 	}
 
 	int Parse(pack_t &pck, stream_t &stream)override;	
-	const char* Header(const char* stream, size_t len, size_t *head_len);
+	int Parse(pack_ptr_t &pck, stream_t &stream)override;
+	bool Header(BufferWrapper& buf, size_t *head_len);
 };
 
 typedef Pack<JSerializer, JUnSerializer> Jpack;

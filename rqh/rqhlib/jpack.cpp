@@ -22,7 +22,7 @@
 
 NAMESP_BEGIN
 
-const char* Head0xff(const char *stream, size_t len, size_t *head_len)
+const char* Head0xff(BufferWrapper& buf, size_t *head_len)
 {
 	int head = 0;
 	memset(&head, 0xff, 4);
@@ -31,9 +31,9 @@ const char* Head0xff(const char *stream, size_t len, size_t *head_len)
 	{
 		for(size_t i=0; i<=len-4; ++i)
 		{
-			int tmp = *(int*)(stream+i);
+			int tmp = *(int*)(_buf+i);
 			if(tmp == head)
-				return stream+i+4;
+				return _buf+i+4;
 		}
 	}
 
@@ -130,9 +130,9 @@ int JUnSerializer::Parse(pack_t &pck, stream_t &stream)
 	return 0;
 }
 
-const char* JUnSerializer::Header(const char* stream, size_t len, size_t *head_len)
+const char* JUnSerializer::Header(BufferWrapper& buf, size_t *head_len)
 {
-	return Head0xff(stream, len, head_len);
+	return Head0xff(buf, head_len);
 }
 
 NAMESP_END

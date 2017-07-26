@@ -21,28 +21,35 @@
 #endif
 
 #ifndef CLASS_SERAILIZE_HANDLER_H
-#include "../../class_serialize_handler.h"
+#include "../class_serialize_handler.h"
 #endif
 
 NAMESP_BEGIN
 
-const char* Head0xff(const char *stream, size_t len, size_t *head_len)
+bool Head0xff(BufferWrapper& buf, size_t *head_len)
 {
 	int head = 0;
 	memset(&head, 0xff, 4);
 	*head_len = 4;
+	size_t len = buf.size();
 	if( len > 4 )
 	{
-		for(size_t i=0; i<=len-4; ++i)
+		for(size_t i=0; i<= len-4; ++i)
 		{
-			int tmp = *(int*)(stream+i);
+			int tmp = *(int*)(buf.rptr());
 			if(tmp == head)
-				return stream+i+4;
+			{
+				 buf.rptr(4);
+				return true;
+			}
+
+			buf.rptr(1);
 		}
 	}
 
-	return nullptr;
+	return false;
 }
+
 
 JSerializer::stream_t JSerializer::Resolve(const pack_ptr_t &pck)
 {
@@ -86,8 +93,14 @@ size_t JSerializer::Header()
 	return Head0xff(_head);
 }
 
+int JUnSerializer::Parse(pack_ptr_t &pck, stream_t &stream)
+{
+	return Parse(*(pck.get()), stream);
+}
+
 int JUnSerializer::Parse(pack_t &pck, stream_t &stream)
 {
+	cout<<"parse:"<<stream<<endl;
 	Json::Reader rd;
 	Json::Value root;
 	
@@ -122,9 +135,9 @@ int JUnSerializer::Parse(pack_t &pck, stream_t &stream)
 	return 0;
 }
 
-const char* JUnSerializer::Header(const char* stream, size_t len, size_t *head_len)
+bool JUnSerializer::Header(BufferWrapper& buf, size_t *head_len)
 {
-	return Head0xff(stream, len, head_len);
+	return Head0xff(buf, head_len);
 }
 
 NAMESP_END

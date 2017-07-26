@@ -10,7 +10,7 @@
 #endif
 
 #ifndef CLASS_INFO_H
-#include "../../class_info.h"
+#include "../class_info.h"
 #endif
 
 using namespace arsee;

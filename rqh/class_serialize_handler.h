@@ -112,6 +112,7 @@ inline void* UnserializeString(const char* buf, size_t size)
 
 struct UsBase
 {
+	virtual ~UsBase(){}
 	virtual void* operator()(Json::Value& schema, const std::string&attr_name, std::string& attr_type , size_t size)
 	{
 		return UnserializeBase(schema.asString().c_str(), size);

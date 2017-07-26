@@ -33,6 +33,10 @@
 #include "iobject.h"
 #endif
 
+#ifndef BUFFER_WRAPPER_H
+#include "../buffer_wrapper.h"
+#endif
+
 using namespace std;
 
 NAMESP_BEGIN
@@ -176,13 +180,7 @@ private:
 	object_list_t _object_list;
 };
 
-/*template<
-	class Serializer,
-	class UnSerializer
->
-Pack<Serializer, UnSerializer>::ObjectParamCat Pack<Serializer, UnSerializer>::ParamCat::param_cat_object;
-*/
- 
+
 template<class DeriveSerial, class DeriveUnSerial>
 class UnSerializerAbstr
 {
@@ -195,42 +193,37 @@ public:
 	UnSerializerAbstr() = delete;
 
 	UnSerializerAbstr(size_t buf_len)
-		:_buf_len(3*buf_len)
+		:_buf(3*buf_len)
 	{
-		//cout<<"UnSerializerAbstr()"<<endl;
-		_buf = new char[_buf_len];
-		memset(_buf, 0, _buf_len);
-	}
-
-	~UnSerializerAbstr()
-	{
-		//cout<<"~UnSerializerAbstr()"<<endl;
-		delete[] _buf;
-		_buf = nullptr;
 	}
 
 	//@return >0 successed, otherwise failed.
-	int operator()(pack_t &pck, const char* stream, size_t len)
+	int operator()(typename pack_t::pack_list_t &pcks, const char* stream, size_t len)
 	{
-		pck.Reset();
-		const char *pstream = nullptr;	
-		if( ( pstream = Judge(stream, len) ) != nullptr )
+		cout<<stream+8<<endl;
+		_buf.put(stream, len);
+		while( Judge() )
 		{
-			stream_t s(pstream, _payload_len);
-			int r=0;
-			if( (r=Parse(pck, s))>0 )
+			char* buf = new char[_payload_len];
+			_buf.get(buf, _payload_len);
+			stream_t s(buf, _payload_len);
+			//stream_t s(_buf.rptr(), _payload_len);
+			//_buf.rptr(_payload_len);
+			pack_ptr_t pck = pack_ptr_t(new pack_t);	
+			if( Parse(pck, s) > 0 )
 			{
-				pck.status(true);
-				return r;
+				pck->status(true);
+				pcks.push_back(pck);
 			}			
 		}
 
-		return -1;
+		return pcks.size();
 	}
 
 	//parse the raw @stream
 	//@return >0 success, otherwise failed.
 	virtual int Parse(pack_t &pack, stream_t &stream)=0;
+	virtual int Parse(pack_ptr_t &pack, stream_t &stream)=0;
 
 	//check the pack header, derive classes must override this method.
 	//@stream the raw stream input,
@@ -238,94 +231,47 @@ public:
 	//@head_len return pack header len,
 	//@return if nullptr means the header not found, 
 	//otherwise ptr to pack stream except header.
-	virtual const char* Header(const char* stream, size_t len, size_t *head_len)=0;
+	virtual bool Header(BufferWrapper& buf, size_t *head_len)=0;
 
 private:
 	//@return nullptr if judge fail,
 	//otherwise ptr to pack stream except header and length fields.
-	const char* Judge(const char *stream, size_t len)
+	bool Judge()
 	{
-		//make sure less memory copy
-		const char *pbuf = nullptr;
-		if(_size+len > _buf_len) //overload
+		size_t head_len= 0;
+		if(Header(_buf, &head_len))
 		{
-			_size = 0;//clear _buf
-		}
-
-		if(_size == 0)
-		{
-			size_t head_len= 0;
-			pbuf = Header(stream, len, &head_len);
+			Payload(&_payload_len);
+			if(_payload_len > 0)
+			{
+				if(_buf.size()>=_payload_len)
+					return true;
+				
+				_buf.rptr( -(long)(head_len+pack_t::LenField) );
+			}
+			else
+				_buf.rptr(-(long)head_len);
 			
-			if(pbuf != nullptr)
-			{
-				size_t head_start = pbuf-stream-head_len;
-				pbuf = Payload(pbuf, len-head_start-head_len, &_payload_len);
-				//head field, paylaod_len field.
-				long nleft = len-head_start-head_len-pack_t::LenField;
-				//more than pack
-				if(_payload_len < nleft)
-				{
-					size_t right_size = nleft - _payload_len;
-					memcpy(_buf, pbuf+_payload_len, right_size);
-					_size = right_size;
-				}
-				//less than pack
-				else if(_payload_len > nleft) 
-				{
-					//copy form start of head to stream's end
-					size_t hplen = head_len;
-					if(nleft >= 0)
-						hplen += pack_t::LenField;
-					
-					memcpy(_buf, pbuf-hplen, len-(pbuf-hplen-stream));
-					_size = len;
-					pbuf = nullptr;
-				}
-				//complete pack
-			}
-			//if did not found header then drop the datas
-		}
-		else
-		{
-			size_t head_len= 0;
-			memcpy(_buf+_size, stream, len);
-			_size += len;
-			pbuf = Header(_buf, _size, &head_len);
-			if(pbuf != nullptr)
-			{
-				size_t head_start = pbuf-_buf-head_len;
-				pbuf = Payload(pbuf, len-head_start-head_len, &_payload_len);
-				size_t plen = _payload_len + head_len + pack_t::LenField;
-				if(_size < plen)
-					pbuf = nullptr;
-				else
-					_size -= plen; 
-			}
 		}
 
-		//cout<<"_paylod_len:"<<_payload_len<<",_size:"<<_size<<endl;
-		return pbuf;
+		return false;
 	}
 
-	const char* Payload(const char* stream, size_t len, size_t *payload_len)
+	void Payload(size_t *payload_len)
 	{
-		if(len < pack_t::LenField)
+		if( _buf.size() < pack_t::LenField)
 		{
 			*payload_len=0;
-			return stream;
+			return;
 		}
 
-		//sizeof(int)==4
-		*payload_len = *(int*)stream;
-		return stream + pack_t::LenField; 
+		*payload_len = *(int*)_buf.rptr();
+		_buf.rptr(pack_t::LenField);
 	}
 
 protected:
-	char *_buf = nullptr;
+	BufferWrapper _buf;
 	size_t _payload_len = 0;
-	size_t _buf_len;
-	size_t _size = 0;
 };
 
 
@@ -396,7 +342,7 @@ inline size_t Head0xff(char *&head)
 	return 4;
 }
 
-extern const char* Head0xff(const char *stream, size_t len, size_t *head_len);
+extern bool Head0xff(BufferWrapper& buf, size_t *head_len);
 
 NAMESP_END
 

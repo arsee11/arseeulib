@@ -21,7 +21,7 @@
 
 #define BUILD_ATTR(TYPE, NAME) \
         TYPE get_##NAME(){ return NAME; }\
-        void set_##NAME(const TYPE& val){ NAME = val; }\
+        void set_##NAME(const TYPE& val){ /*cout<<#NAME<<"="<<val<<endl;*/NAME = val; }\
         TYPE NAME
 
 #define REGISTER_ATTR(CLASS, TYPE, NAME) \

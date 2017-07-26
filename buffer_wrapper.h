@@ -30,6 +30,7 @@ public:
 	}
 	
 	size_t size(){ return _size;}
+	size_t maxsize(){ return _maxsize;}
 
 	void put(const char* buf, size_t size);
 	size_t get(char* buf, size_t size);

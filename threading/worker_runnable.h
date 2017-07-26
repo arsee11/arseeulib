@@ -2,6 +2,8 @@
 
 #include <queue>
 #include <functional>
+#include <mutex>
+
 
 class WorkerRunnable
 {
@@ -14,12 +16,17 @@ public:
 	{
 		while( !_is_stop )
 		{
+			std::function<void()> func = nullptr;
+			_mutex.lock();
 			if(_work_queue.size() > 0)
 			{
-				auto f = _work_queue.front();
+				func = _work_queue.front();
 				_work_queue.pop();
-				f();
 			}
+			_mutex.unlock();
+
+			if(func != nullptr)
+				func();
 		}
 	}
 	
@@ -28,16 +35,19 @@ public:
 	template<class Function>
 	void post(Function& f)
 	{
+		std::lock_guard<std::mutex> g(_mutex);
 		_work_queue.push(f);
 	}
 
 	template<class Function>
 	void post(Function&& f)
 	{
-		post(f);
+		std::lock_guard<std::mutex> g(_mutex);
+		_work_queue.push(f);
 	}
 
 private:
 	std::queue<std::function<void()>> _work_queue;
+	std::mutex _mutex;
 	bool _is_stop = false;
 };
