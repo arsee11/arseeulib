@@ -1,31 +1,22 @@
 //generic_factory.h
 //copyright	: Copyright (c) 2017 arsee.
-//license	: GNU GPL v2.
+//license	: base on LGPL.
 //author	: arsee
-
-
 
 #ifndef GENERIC_FACTORY_H
 #define GENERIC_FACTORY_H
 
 #include <map>
-#include <string>
-
-#ifndef NAMESPDEF_H
-#include "../namespdef.h"
-#endif
-
-NAMESP_BEGIN
 
 /////////////////////////////////////////////////////////////
 ///@ class TFactory
-template<class T, class Initializer>
+template<class T, class TypeIdentifier, class Initializer>
 class TFactory
 {
-	typedef TFactory<T, Initializer> my_t;
+        typedef TFactory<T, TypeIdentifier, Initializer> my_t;
 
 public:
-	typedef std::map<std::string, my_t*> f_map_t;
+        typedef std::map<TypeIdentifier, my_t*> f_map_t;
 
 public:
 	static my_t& instance(){
@@ -34,7 +25,7 @@ public:
 		return self;
 	}
 
-	T* create(const std::string& type){
+        T* create(const TypeIdentifier& type){
 		typename f_map_t::iterator i;
 		if( (i=_factoris.find(type)) != _factoris.end()	)
 		{
@@ -56,15 +47,15 @@ private:
 	f_map_t _factoris;
 };
 
-template<class T, class Initializer>
-inline void TFactory<T, Initializer>::init(){
+template<class T,class TypeIdentifier, class Initializer>
+inline void TFactory<T, TypeIdentifier, Initializer>::init(){
 	if(_factoris.size() == 0)
 		_factoris = Initializer()();
 }
 
 
-template<class T, class Initializer>
-inline TFactory<T, Initializer>::~TFactory(){
+template<class T,class TypeIdentifier, class Initializer>
+inline TFactory<T, TypeIdentifier, Initializer>::~TFactory(){
 	typename f_map_t::iterator i = _factoris.begin();
 	for(; i!=_factoris.end(); ++i)
 		delete i->second;
@@ -72,8 +63,8 @@ inline TFactory<T, Initializer>::~TFactory(){
 
 
 ///////////////////////////////////////////
-template<class T, class Base, class Initializer>
-class TCreator: public TFactory<Base, Initializer>
+template<class T, class Base, class TypeIdentifier, class Initializer>
+class TCreator: public TFactory<Base, TypeIdentifier, Initializer>
 {
 public:
 	virtual Base* create()
@@ -82,7 +73,5 @@ public:
 		return t;
 	}
 };
-
-NAMESP_END
 
 #endif /*GENERIC_FACTORY_H*/
