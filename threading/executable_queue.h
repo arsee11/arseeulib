@@ -4,11 +4,10 @@
 #include <functional>
 #include <mutex>
 
-typedef std::founction<void()> exec_object_t;
+typedef std::function<void()> exec_object_t;
 
 class ExecutableQueue
 {
-
 public:
 	ExecutableQueue()
 	{
@@ -27,19 +26,19 @@ public:
 	}
   
  	void exec()
-  {
-        exec_object_t func = nullptr;
-        _mutex.lock();
-        if(_work_queue.size() > 0)
-        {
-          func = _work_queue.front();
-          _work_queue.pop();
-        }
-        _mutex.unlock();
+	{
+		exec_object_t func = nullptr;
+		_mutex.lock();
+		if(_work_queue.size() > 0)
+		{
+			func = _work_queue.front();
+		  	_work_queue.pop();
+		}
+		_mutex.unlock();
 
-        if(func != nullptr)
-          func();
-  }
+		if(func != nullptr)
+			func();
+	}
   
 private:
 	std::queue<exec_object_t> _exec_queue;
