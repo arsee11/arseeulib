@@ -26,6 +26,7 @@
 #if defined(__GNUC__)
 #include <sys/socket.h>
 #include <sys/types.h>
+#include <arpa/inet.h>
 #include <unistd.h>
 #endif
 
@@ -37,7 +38,6 @@ namespace net
 {
 
 #if defined(__GNUC__)
-typedef int SOCKET;
 #define SOCKET_ERROR -1
 #define INVALID_SOCKET -1
 #endif
@@ -58,23 +58,6 @@ private:
 	std::string _str;
 };
 
-class SockConfig
-{
-public:
-	SockConfig(unsigned short inlport, unsigned short inrport, std::string inlip, std::string inrip)
-		:lport(inlport)
-		, rport(inrport)
-		, lip(inlip)
-		, rip(inrip)
-	{
-	}
-	
-	
-	unsigned short lport;
-	unsigned short rport;
-	std::string 	 lip;
-	std::string 	 rip;	
-};
 
 struct AddrPair
 {
@@ -82,8 +65,16 @@ struct AddrPair
 	std::string 	ip;
 };
 
-inline bool SockInit()
-{
+inline std::string getip(sockaddr_in* addr){
+	char str[16] = {0};
+	return inet_ntop(AF_INET, (void*)&(addr->sin_addr), str, 16);
+}
+
+inline uint16_t getport(sockaddr_in* addr){
+	return ntohs(addr->sin_port);
+}
+
+inline bool sockInit(){
 #if defined(_MSC_VER)
 	WSADATA wsaData;
 	int r = WSAStartup(MAKEWORD(2, 2), &wsaData);
@@ -95,8 +86,7 @@ inline bool SockInit()
 	return true;
 }
 
-inline bool SockUninit()
-{
+inline bool sockUninit(){
 #if defined(_MSC_VER)
 	return WSACleanup()==0;
 #else

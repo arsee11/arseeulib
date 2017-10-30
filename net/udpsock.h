@@ -20,6 +20,10 @@
 #include "addr.h"
 #endif
 
+#ifndef FDDEF_H
+#include "fddef.h"
+#endif
+
 #include <functional>
 
 NAMESP_BEGIN
@@ -37,14 +41,14 @@ public:
 	const static int MAX_LEN = 65535;
 
 private:
-	UdpPeer(SOCKET s)
+	UdpPeer(fd_t s)
 		:_sock(s)
 		, _ip("")
 		, _port(0)
 	{
 	}
 
-	UdpPeer(SOCKET s, const std::string &lip, unsigned short lport)
+	UdpPeer(fd_t s, const std::string &lip, unsigned short lport)
 		:_sock(s)
 		,_ip(lip)
 		,_port(lport)
@@ -52,7 +56,7 @@ private:
 
 	}
 	
-	UdpPeer(SOCKET s, unsigned short lport)
+	UdpPeer(fd_t s, unsigned short lport)
 		:_sock(s)
 		,_ip("")
 		,_port(lport)
@@ -67,7 +71,7 @@ public:
 	int Read(byte_t *buf, int len);
 	int Write(const byte_t *buf, int len, const AddrPair &addr);
 		
-	SOCKET sock(){ return _sock; }
+	fd_t sock(){ return _sock; }
 
 	void Close()
 	{
@@ -80,7 +84,7 @@ public:
 	}
 
 private:
-	SOCKET _sock;
+	fd_t _sock;
 	std::string _ip;
 	unsigned short _port;
 
@@ -97,4 +101,5 @@ public:
 }//net
 NAMESP_END
 
-#endif /*UDPSOCK_H*/
+#endif
+

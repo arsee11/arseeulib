@@ -1,29 +1,23 @@
 //fddef.h
-//copyright	:Copyright (c) 2014 arsee.
-//license	:GNU GPL V2.
 
-#ifndef FD_DEF_H
-#define FD_DEF_H
+#ifndef FDDEF_H
+#define FDDEF_H
 
 #ifndef NAMESPDEF_H
 #include "../namespdef.h"
 #endif
 
-using namespace std;
-
 NAMESP_BEGIN
 namespace net
 {
 
-typedef int fd_t;
+#ifdef _MVC_VER
+typedef SOCKET fd_t;
+#endif
 
-enum EvtType{
-	EVT_IN =0 ,
-	EVT_OUT ,
-	EVT_CLOSE,
-	EVT_ACCEPT,
-	EVT_NULL
-};
+#ifdef __GNUC__
+typedef int fd_t;
+#endif
 
 }//net
 NAMESP_END

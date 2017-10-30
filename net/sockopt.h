@@ -16,7 +16,7 @@ namespace net
 //@Sock the socket class.
 struct SockOpt
 {
-	bool ReuseAddr()
+	bool reuseAddr()
 	{
 		sock.sock();
 	}
