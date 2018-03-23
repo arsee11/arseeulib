@@ -1,11 +1,8 @@
-mylib
+arseeulib
 =====
 
-smoe utilty codes
-needed c++11
+Smoe utilty codes.
 
-Build:
-	
-windows
+Needed c++11 supported.
 
-linux
+Tested on VS2010 g++ 4.9
