@@ -5,4 +5,4 @@ Smoe utilty codes.
 
 Needed c++11 supported.
 
-Tested on VS2010 g++ 4.9
+Tested on VS2015 g++ 4.9
