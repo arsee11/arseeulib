@@ -6,7 +6,15 @@
 #include <vector>
 #include <tuple>
 
+#ifndef NAMESPDEF_H
+#include "namespdef.h"
+#endif
+
+
 using std::size_t;
+
+NAMESP_BEGIN
+
 
 ///a flexible buffer.
 ///capacity can be increase or decrease dynamically.
@@ -110,5 +118,7 @@ private:
 	size_t _begin, _end;
 	
 };
+
+NAMESP_END/*namespace*/
 
 #endif/*FLEXIBLE_BUFFER_H*/
