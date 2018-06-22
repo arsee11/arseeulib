@@ -8,6 +8,13 @@
 #include <functional>
 #include <assert.h>
 
+#ifndef NAMESPDEF_H
+#include "../namespdef.h"
+#endif
+
+
+NAMESP_BEGIN
+
 template<class Queue, class Functor, class... Params>
 int dispatch_asyn(Queue* q, const Functor& f, Params... params)
 {
@@ -57,5 +64,7 @@ int dispatch_sync(Queue* q, const Functor& f, Params... params)
 	
     return 0;
 }
+
+NAMESP_END
 
 #endif /*DISPATCHER_H*/

@@ -4,6 +4,13 @@
 #include <thread>
 #include <memory>
 
+#ifndef NAMESPDEF_H
+#include "../namespdef.h"
+#endif
+
+
+NAMESP_BEGIN
+
 template<class Queue>
 class Thread
 {
@@ -38,4 +45,5 @@ private:
     bool _is_stop = false;
 };
 
+NAMESP_END
 #endif // THREAD_H

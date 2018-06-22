@@ -7,6 +7,13 @@
 #include <functional>
 #include <mutex>
 
+#ifndef NAMESPDEF_H
+#include "../namespdef.h"
+#endif
+
+
+NAMESP_BEGIN
+
 typedef std::function<void()> exec_object_t;
 
 class ExecutableQueue
@@ -48,4 +55,5 @@ private:
     std::mutex _mutex;
 };
 
+NAMESP_END
 #endif // EXECUTABLE_QUEUE_H

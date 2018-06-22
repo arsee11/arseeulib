@@ -5,6 +5,7 @@
 #include <iostream>
 
 using namespace std;
+using namespace arsee;
 
 void f(int i)
 {
