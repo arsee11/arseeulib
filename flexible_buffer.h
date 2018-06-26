@@ -63,7 +63,7 @@ public:
 	}
 	
 	///@param len the number of item to be consumed.
-	///@return if size() >= len return true,\
+	///@return if size() >= len return true,\n
 	///	else return false.
 	bool consume(size_t len){
 		if( size() < len )
@@ -114,8 +114,8 @@ private:
 	}
 	
 private:
-	std::vector<T> _buf;
 	size_t _begin, _end;
+	std::vector<T> _buf;
 	
 };
 
