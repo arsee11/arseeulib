@@ -27,24 +27,24 @@ public:
     {
         std::lock_guard<std::mutex> g(_mutex);
         _exec_queue.push(f);
+        _condv.notify_all();
     }
 
     void post(exec_object_t&& f)
     {
         std::lock_guard<std::mutex> g(_mutex);
         _exec_queue.push(f);
+        _condv.notify_all();
     }
 
     void exec()
     {
         exec_object_t func = nullptr;
-        _mutex.lock();
-        if(_exec_queue.size() > 0)
-        {
+        std::unique_lock<std::mutex> lock(_mutex);
+            _condv.wait(lock, [this]{ return _exec_queue.size()>0;});
             func = _exec_queue.front();
             _exec_queue.pop();
-        }
-        _mutex.unlock();
+        lock.unlock();
 
         if(func != nullptr)
             func();
@@ -53,7 +53,7 @@ public:
 private:
     std::queue<exec_object_t> _exec_queue;
     std::mutex _mutex;
+    std::condition_variable _condv;
 };
-
 NAMESP_END
 #endif // EXECUTABLE_QUEUE_H
