@@ -73,6 +73,8 @@ public:
 		std::copy(begin()+len, end(), _buf.begin() );
 		_begin=0;
 		_end = _begin+s;
+		
+		return true;
 	}
 	
 	void clear(){
