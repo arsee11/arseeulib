@@ -49,6 +49,11 @@ public:
         if(func != nullptr)
             func();
     }
+    
+    size_t size(){ 
+        std::lock_guard<std::mutex> g(_mutex);
+        return _exec_queue.size();
+    }
 
 private:
     std::queue<exec_object_t> _exec_queue;
