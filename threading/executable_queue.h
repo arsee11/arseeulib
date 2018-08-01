@@ -36,7 +36,8 @@ public:
         _exec_queue.push(f);
         _condv.notify_all();
     }
-
+    
+    void clear(){ post(nullptr); }
     void exec()
     {
         exec_object_t func = nullptr;
