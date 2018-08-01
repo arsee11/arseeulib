@@ -26,6 +26,7 @@ public:
 
     void stop(){
         _is_stop = true;
+        _queue->clear();
         _thread->join();
     }
 
