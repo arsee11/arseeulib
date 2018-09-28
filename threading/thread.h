@@ -26,7 +26,8 @@ public:
 
     void stop(){
         _is_stop = true;
-        _queue->clear();
+	_queue->clear();
+	cout<<"join.. "<<_queue->size()<<endl;
         _thread->join();
     }
 
@@ -43,7 +44,7 @@ private:
 private:
     Queue* _queue=nullptr;
     std::unique_ptr<std::thread> _thread;
-    bool _is_stop = false;
+    volatile bool _is_stop = false;
 };
 
 NAMESP_END
