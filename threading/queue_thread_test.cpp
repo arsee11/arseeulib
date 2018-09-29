@@ -33,6 +33,7 @@ int main()
 	getchar();
 	running = false;
 	th.join();
+	getchar();
 	eth.stop();
 	eth2.stop();
 	eth3.stop();
