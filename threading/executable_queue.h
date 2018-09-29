@@ -52,7 +52,9 @@ public:
     {
         exec_object_t func = nullptr;
         std::unique_lock<std::mutex> lock(_mutex);
-		_condv.wait(lock);
+	    	if(_exec_queue.size() == 0)
+			_condv.wait(lock);
+	    
 		if(_exec_queue.size()>0)
 		{
         		func = _exec_queue.front();
