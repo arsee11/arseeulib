@@ -1,7 +1,7 @@
-///@file threads.h
+///@file runable.h
 
-#ifndef THREADS_H
-#define THREADS_H
+#ifndef RUNABLE_H
+#define RUNABLE_H
 
 
 #include <string>
@@ -109,4 +109,4 @@ private:
 
 NAMESP_END/*namespace*/
 
-#endif /*THREADS_H*/
+#endif /*RUNABLE_H*/
