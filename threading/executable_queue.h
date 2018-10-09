@@ -13,6 +13,7 @@
 #endif
 
 #include <iostream>
+#include <chrono>
 using namespace std;
 
 NAMESP_BEGIN
@@ -53,7 +54,7 @@ public:
         exec_object_t func = nullptr;
         std::unique_lock<std::mutex> lock(_mutex);
 	    	if(_exec_queue.size() == 0)
-			_condv.wait(lock);
+			_condv.wait_for(lock, chrono::milliseconds(100));
 	    
 		if(_exec_queue.size()>0)
 		{
