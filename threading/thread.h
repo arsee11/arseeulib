@@ -11,6 +11,8 @@
 
 NAMESP_BEGIN
 
+using thread_id = std::thread::id;
+
 template<class Queue>
 class Thread
 {
@@ -33,6 +35,8 @@ public:
 
     void join(){ _thread->join(); }
 
+	thread_id getId(){ return _thread->get_id(); }
+	
 private:
     void exec(){
         while(!_is_stop)
