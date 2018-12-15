@@ -30,25 +30,31 @@ int dispatch_asyn(Queue* q, const Functor& f, Params... params)
 
 struct CallableWrapper
 {
-
     template<class Functor, class... Params >
     CallableWrapper(const Functor& f, Params... params){
         _func = std::bind(f, params...);
-	}
-	
+    }
+
     void exec(){
         _func();
+
+        {
+            std::lock_guard<std::mutex> lck(_mtx);
+            _has_called=true;
+        }
         _condv.notify_all();
     }
 
-	void wait(){
+    void wait(){
         std::unique_lock<std::mutex> lck(_mtx);
-        _condv.wait(lck);
-	}
-	
+        while(!_has_called) //if exec function called before wait function called, ths will be ok;
+            _condv.wait(lck);
+    }
+
 private:
     std::mutex _mtx;
     std::condition_variable _condv;
+    bool _has_called=false;
     std::function<void()> _func=nullptr;
 };
 
