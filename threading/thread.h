@@ -29,13 +29,15 @@ public:
     void stop(){
         _is_stop = true;
 	_queue->clear();
-	cout<<"join.. "<<_queue->size()<<endl;
         _thread->join();
     }
 
     void join(){ _thread->join(); }
 
 	thread_id getId(){ return _thread->get_id(); }
+	
+	//return current thread's id
+	static thread_id get_curid(){ return std::this_thread::get_id(); }
 	
 private:
     void exec(){
