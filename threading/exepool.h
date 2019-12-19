@@ -18,7 +18,7 @@ class TaskPool
 
 
 using scope_ptr = std::shared_ptr<Scope>; 
-using scope_list = std::list<Scope>; 
+using scope_list = std::list<scope_ptr>; 
 
 public:
 	TaskPool(int num_of_scopes=1){

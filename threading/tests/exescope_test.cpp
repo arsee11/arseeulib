@@ -1,37 +1,49 @@
 //executor_test.cpp
 
 
-#include "../exescope.h"
+#include "../executee.h"
+
 #include <iostream>
+#include <chrono>
 
 using namespace std;
 using namespace arsee;
 
-class Executee
+class ExecuteeImpl:public Executee_st<ExecuteeImpl>
 {
 public:
-	Executee(ExeScope* exc)
-		:_exc(exc)
+	ExecuteeImpl(ExeScope* exc)
+		:Executee(exc)
 	{}
 
-	void do(int a){
-		assert(_exc);
-		_exc->post( std::bind(&Executee::todo, this, _1), a);
+	~ExecuteeImpl(){ cout<<__FUNCTION__<<endl;}
+
+	void do_(int a){
+		post(&ExecuteeImpl::todo, a);
 	}
 
+	std::string n="hello";
 private:
+	void todo_2(){}
 	void todo(int a){
-		cout<< "todo in: "<< _exc->current_scope()<< "exc scope:"<<_exc->scope()<<endl;
+		std::this_thread::sleep_for(std::chrono::seconds(1));
+		cout<< "todo("<<a<<") in: "<<current_scope()<< ", exc scope:"<<scope()<<" "<<this->n<<endl;
+		post(&ExecuteeImpl::todo, a);
+		
 	}
 
-	Executor* _exc;
 };
 
 
 int main()
 {
 	ExeScope exc;
-	Executee ext(&exc);
+	cout<<"myid:"<<exc.current_scope()<<endl;
+		ExecuteeImpl ext(&exc);
+		ext.do_(123);
+		//ext.setScope(nullptr);
+	char ch;
+	cin>>ch;
 	
 	return 0;
 }

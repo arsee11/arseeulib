@@ -11,12 +11,12 @@
 
 NAMESP_BEGIN
 
-using thread_id = std::thread::id;
-
 template<class Queue>
 class Thread
 {
     typedef Thread<Queue> my_t;
+public:
+    using thread_id = std::thread::id;
 
 public:
     Thread(Queue* q)

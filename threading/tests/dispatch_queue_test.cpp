@@ -1,6 +1,6 @@
-#include "executable_queue.h"
-#include "thread.h"
-#include "dispatcher.h"
+#include "../executable_queue.h"
+#include "../thread.h"
+#include "../dispatcher.h"
 
 #include <iostream>
 
@@ -17,6 +17,11 @@ void g(int i, const char* a)
     cout<<"g:"<<"i="<<i<<",a="<<a<<endl;
 }
 
+void h(ExecutableQueue* q, int i, const char* a)
+{
+    dispatch_asyn(q, g, i, a);
+}
+
 int main(int argc, char *argv[])
 {
     ExecutableQueue q1, q2;
@@ -24,5 +29,6 @@ int main(int argc, char *argv[])
     Thread<ExecutableQueue> t2( &q2 );
     dispatch_sync(&q1, f, 10);
     dispatch_asyn(&q2, g, 11, "abc");
+    h(&q2, 12, "abd");
     t1.join();
 }

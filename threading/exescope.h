@@ -16,6 +16,9 @@ template<class Thread, class Queue>
 class ExeScopeBase
 {
 public:
+	using scope_id = typename Thread::thread_id; 
+
+public:
 	ExeScopeBase(){
 		_t = new Thread(&_q);
 		assert(_t);
@@ -26,13 +29,13 @@ public:
 		delete _t;
 	}
 
-	template<typename Executee, typename... Params>
-	void post(const Executee& e, Params... params){
-		dispatch_asyn( &_q, e, params...);
+	template<typename Callee, typename... Params>
+	void post(const Callee& e, Params... params){
+		dispatch_asyn(&_q, e, params...);
 	}
 
-	template<typename Executee, typename... Params>
-	void exec(const Executee& e, Params... params){
+	template<typename Callee, typename... Params>
+	void exec(const Callee& e, Params... params){
 		if( isInMyScope() )
 			e(params...);
 		else
@@ -43,13 +46,16 @@ public:
 
 	size_t queue_size(){ return _q.size(); }
 	
+	scope_id current_scope(){ return Thread::get_curid(); }
+	scope_id scope(){ return _t->getId(); }
+
 private:
 	bool isInMyScope(){
-		return _t.getId() == Thread::get_curid();
+		return _t->getId() == Thread::get_curid();
 	}
 		
 private:
-	Thread _t;
+	Thread* _t;
 	Queue _q;
 };
 
