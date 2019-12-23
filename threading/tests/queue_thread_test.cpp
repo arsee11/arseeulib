@@ -1,8 +1,8 @@
 #include <iostream>
 #include <thread>
 
-#include "executable_queue.h"
-#include "thread.h"
+#include "../executable_queue.h"
+#include "../thread.h"
 
 using namespace std;
 using namespace arsee;
