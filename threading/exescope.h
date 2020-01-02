@@ -25,9 +25,15 @@ public:
 	}
 
 	~ExeScopeBase(){
-		_t->stop();
+		try{
+			_t->stop();
+		}catch(...){
+		}
+
 		delete _t;
 	}
+
+	void stop(){ _t->stop(); }
 
 	template<typename Callee, typename... Params>
 	void post(const Callee& e, Params... params){

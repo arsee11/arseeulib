@@ -20,6 +20,9 @@ public:
 		:_exc(exc)
 	{}
 
+	Executee()
+	{}
+
 	virtual ~Executee(){ cout<<__FUNCTION__<<endl;}
 
 	void setScope(ExeScope* exc){ 
@@ -36,7 +39,6 @@ public:
 		else{
 			///warning no executor
 		}
-		_locker.unlock();
 	}
 
 
