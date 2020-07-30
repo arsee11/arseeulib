@@ -33,8 +33,21 @@ public:
     }
 
     void join(){ _thread->join(); }
-
-	thread_id getId(){ return _thread->get_id(); }
+	thread_id getId()const{ return _thread->get_id(); }
+    void setName(const std::string& name){ 
+#ifdef __GNUC__
+        pthread_setname_np(_thread->native_handle(), name.c_str());
+#endif
+    }
+    std::string getName()const{ 
+#ifdef __GNUC__
+        char buffer[16];
+        pthread_getname_np(_thread->native_handle(), buffer, 16);
+        return std::string(buffer);
+#else
+        return "";
+#endif
+    }
 	
 	//return current thread's id
 	static thread_id get_curid(){ return std::this_thread::get_id(); }

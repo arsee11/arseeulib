@@ -28,8 +28,7 @@ private:
 	void todo(int a){
 		std::this_thread::sleep_for(std::chrono::seconds(1));
 		cout<< "todo("<<a<<") in: "<<current_scope()<< ", exc scope:"<<scope()<<" "<<this->n<<endl;
-		post(&ExecuteeImpl::todo, a);
-		
+		do_(a);
 	}
 
 };
@@ -38,10 +37,13 @@ private:
 int main()
 {
 	ExeScope exc;
+    exc.name("exescope_1");
 	cout<<"myid:"<<exc.current_scope()<<endl;
-		ExecuteeImpl ext(&exc);
-		ext.do_(123);
-		//ext.setScope(nullptr);
+	cout<<"scope name:"<<exc.name()<<endl;
+    ExecuteeImpl ext(&exc);
+    ext.do_(123);
+    //ext.setScope(nullptr);
+
 	char ch;
 	cin>>ch;
 	

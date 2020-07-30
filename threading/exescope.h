@@ -52,8 +52,11 @@ public:
 
 	size_t queue_size(){ return _q.size(); }
 	
-	scope_id current_scope(){ return Thread::get_curid(); }
+	scope_id current_scope()const{ return Thread::get_curid(); }
 	scope_id scope(){ return _t->getId(); }
+
+    void name(const std::string& name){ _t->setName(name); }
+    std::string name()const{ return _t->getName(); }
 
 private:
 	bool isInMyScope(){
