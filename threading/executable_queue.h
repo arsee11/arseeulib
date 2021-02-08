@@ -32,8 +32,8 @@ public:
        	{
 	        std::lock_guard<std::mutex> g(_mutex);
         	_exec_queue.push(f);
-	}
-	_condv.notify_all();
+		}
+		_condv.notify_all();
     }
 
     void post(exec_object_t&& f)
@@ -41,12 +41,12 @@ public:
        	{
 	        std::lock_guard<std::mutex> g(_mutex);
         	_exec_queue.push(f);
-	}
-	_condv.notify_all();
+		}
+		_condv.notify_all();
     }
 
     void clear(){ 
-	_condv.notify_all(); 
+		_condv.notify_all(); 
 	}
 
     void exec()
@@ -63,14 +63,14 @@ public:
 		}
         lock.unlock();
 
-	//cout<<"exec_queue.size:"<<_exec_queue.size()<<endl;
+		//cout<<"exec_queue.size:"<<_exec_queue.size()<<endl;
         if(func != nullptr)
             func();
     }
 
     size_t size(){ 
         std::lock_guard<std::mutex> g(_mutex);
-	return _exec_queue.size(); 
+		return _exec_queue.size(); 
     }
 
 private:
