@@ -24,7 +24,7 @@ public:
 		assert(_t);
 	}
 
-	~ExeScopeBase(){
+	virtual ~ExeScopeBase(){
 		try{
 			_t->stop();
 		}catch(...){
@@ -63,7 +63,7 @@ private:
 		return _t->getId() == Thread::get_curid();
 	}
 		
-private:
+protected:
 	Thread* _t;
 	Queue _q;
 };
@@ -72,10 +72,21 @@ NAMESP_END
 
 #include "thread.h"
 #include "executable_queue.h"
+#include "executable_queue_polling.h"
 
 NAMESP_BEGIN
 
 using ExeScope = ExeScopeBase<Thread<ExecutableQueue>, ExecutableQueue>;
+
+template<class Poller>
+class ExeScope_p :public  ExeScopeBase<Thread<ExecutableQueuePolling<Poller>>, ExecutableQueuePolling<Poller>>
+{
+public:
+	ExeScope_p(Poller* p)
+    {
+        this->_q.setPoller(p); 
+	}
+};
 
 NAMESP_END
 

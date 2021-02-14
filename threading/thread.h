@@ -23,12 +23,13 @@ public:
         :_queue(q)
     {
         _thread = std::unique_ptr<std::thread>( new std::thread(
-                  std::bind(&my_t::exec, this)));
+                std::bind(&my_t::exec, this))
+        );
     }
 
     void stop(){
         _is_stop = true;
-	_queue->clear();
+	    _queue->clear();
         _thread->join();
     }
 
