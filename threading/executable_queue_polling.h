@@ -9,6 +9,10 @@
 #include <iostream>
 #include <atomic>
 
+#ifdef __GNUC__
+#include <unistd.h>
+#endif
+
 NAMESP_BEGIN
 
 
