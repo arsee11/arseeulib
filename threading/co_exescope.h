@@ -1,31 +1,44 @@
-#include <coroutine>
-#include <iostream>
-#include "exescope.h"
+#ifndef CO_EXESCOPE_H
+#define CO_EXESCOPE_H
 
+#include <coroutine>
+
+#ifndef NAMESPDEF_H
+#include "../namespdef.h"
+#endif
+
+NAMESP_BEGIN
+
+template<class Scope>
 class CoExeScope
 {
 	struct Awaitable {
-	    arsee::ExeScope* exe;
-	    ~Awaitable(){ std::cout<<__FUNCTION__<<endl; }
+	    Scope* exe;
 	    bool await_ready() { return false; }
 	    void await_suspend(std::coroutine_handle<> h) {
                 if(exe != nullptr ){
                     exe->post([h](){
-                        std::cout << "resume...\n";
                         h.resume();}
                     );
                 }
                 else{
                     h.resume();
                 }
-                std::cout<<"retun on "<<__FUNCTION__<<endl;
 	    }
 	    void await_resume() {}
 	};
 public:
+    CoExeScope()=default;
+
+    template<class Poller>
+    CoExeScope(Poller* p):_exe(p){}
+
     Awaitable schedule(){ return Awaitable{&_exe}; }
 
 private:
-    arsee::ExeScope _exe;
+    Scope _exe;
 };
 
+NAMESP_END
+
+#endif /*CO_EXESCOPE_H*/

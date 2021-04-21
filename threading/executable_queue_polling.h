@@ -1,6 +1,5 @@
 ﻿///event_queue.h
 //
-//
 
 #ifndef EXECUTABLE_QUEUE_POLLING_H
 #define EXECUTABLE_QUEUE_POLLING_H
@@ -37,6 +36,8 @@ public:
             _poller->bindInput(_pipe.fd[0], std::bind(&Pipe::read, &_pipe));
         }
 	}
+
+	ExecutableQueuePolling():_is_clear(false){}
 
 	~ExecutableQueuePolling()
 	{
@@ -92,7 +93,6 @@ public:
         }
 
         if(_poller != nullptr && !_is_clear){
-            printf("process...\n");
             _poller->process();
         }
     }

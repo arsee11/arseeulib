@@ -1,5 +1,9 @@
 #include <iostream>
 #include "co_exescope.h"
+#include "exescope.h"
+
+using namespace arsee;
+using Scope = CoExeScope<ExeScope>;
 
 struct task{
   struct promise_type {
@@ -10,8 +14,9 @@ struct task{
     void unhandled_exception() {}
   };
 };
+
  
-task resuming_on_scope(CoExeScope& scope) {
+task resuming_on_scope(Scope& scope) {
   std::cout << "Coroutine started on thread: " << std::this_thread::get_id() << '\n';
   co_await scope.schedule();
   // awaiter destroyed here
@@ -19,7 +24,7 @@ task resuming_on_scope(CoExeScope& scope) {
 }
  
 int main() {
-    CoExeScope scope;
+    Scope scope;
     std::cout<<"post the func schecudles in the scope\n"; 
     resuming_on_scope(scope);
     std::cout<<"the func will schecudles in the scope\n"; 
