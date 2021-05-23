@@ -1,9 +1,11 @@
 
 #include "../flexible_buffer.h"
 
+
 #include <iostream>
 
 using namespace std;
+using namespace arsee;
 
 int main()
 {
