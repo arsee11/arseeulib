@@ -33,7 +33,12 @@ public:
 		delete _t;
 	}
 
-	void stop(){ _t->stop(); }
+        void stop(){
+            try{
+                _t->stop();
+            }catch(...){
+            }
+        }
 
 	template<typename Callee, typename... Params>
 	void post(const Callee& e, Params... params){
