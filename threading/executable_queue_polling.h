@@ -37,6 +37,8 @@ public:
         }
 	}
 
+    Poller* getPoller(){ return _poller; }
+
 	ExecutableQueuePolling():_is_clear(false){}
 
 	~ExecutableQueuePolling()

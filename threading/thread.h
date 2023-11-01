@@ -33,7 +33,8 @@ public:
         _thread->join();
     }
 
-    void join(){ _thread->join(); }
+    bool is_running()const { return !_is_stop; }
+    void join(){try{_thread->join();}catch(...){} }
 	thread_id getId()const{ return _thread->get_id(); }
     void setName(const std::string& name){ 
 #ifdef __GNUC__
@@ -67,5 +68,35 @@ private:
     volatile bool _is_stop = false;
 };
 
+template<class Queue>
+class CurThread
+{
+public:
+    using thread_id = std::thread::id;
+
+public:
+    CurThread(Queue* q)
+        :_queue(q)
+    {
+    }
+
+    void stop(){
+        _is_stop = true;
+	    _queue->clear();
+    }
+
+	thread_id getId(){ return std::this_thread::get_id(); }
+	
+    void exec(){
+        while(!_is_stop)
+        {
+            _queue->exec();
+        }
+    }
+
+private:
+    Queue* _queue=nullptr;
+    volatile bool _is_stop = false;
+};
 NAMESP_END
 #endif // THREAD_H

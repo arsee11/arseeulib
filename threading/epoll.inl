@@ -2,9 +2,6 @@
 
 
 NAMESP_BEGIN
-namespace net
-{
-
 inline static bool setNoblocking(fd_t fd)
 {
 	int flag = fcntl(fd, F_GETFD, NULL);
@@ -36,11 +33,11 @@ bool Epoll<EventT>::addInput(fd_t fd, EventT* evt)
 }
 
 template<class EventT>
-typename Epoll<EventT>::event_list Epoll<EventT>::select()
+typename Epoll<EventT>::event_list Epoll<EventT>::select(int timeout_ms)
 {
 	event_list events;
 	epoll_event ehs[_max];
-        int nfds = epoll_wait(_efd, ehs, _max, 1000);
+    int nfds = epoll_wait(_efd, ehs, _max, timeout_ms);
 	if(nfds == -1)
 	{
 		perror("epoll_wait");
@@ -73,6 +70,4 @@ typename Epoll<EventT>::event_list Epoll<EventT>::select()
 	return events;
 
 }
-
-}//net
 NAMESP_END

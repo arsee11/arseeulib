@@ -7,20 +7,17 @@
 #include <fcntl.h>
 #include <exception>
 #include <unordered_map>
-#include "event.h"
 #include <vector>
 
-#include "namespdef.h"
+#include "../namespdef.h"
 
 
 NAMESP_BEGIN
-namespace net
-{
-
 
 template<class EventT>
 class Epoll
 {
+    using fd_t = int;
 	static constexpr int _max = 2048;
 
 	struct EventTSource{
@@ -44,7 +41,7 @@ public:
 			perror("epoll_ctl");
 	}
 
-        event_list select();
+        event_list select(int timeout_ms=0);
 
 	void postSend(fd_t fd){
 		epoll_event tmp;
@@ -75,7 +72,6 @@ private:
 	int _efd;
 };
 
-}//namespace net
 NAMESP_END
 
 #include "epoll.inl"

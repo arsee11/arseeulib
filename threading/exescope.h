@@ -33,12 +33,12 @@ public:
 		delete _t;
 	}
 
-        void stop(){
-            try{
-                _t->stop();
-            }catch(...){
-            }
-        }
+	void stop(){
+		try{
+			_t->stop();
+		}catch(...){
+		}
+	}
 
 	template<typename Callee, typename... Params>
 	void post(const Callee& e, Params... params){
@@ -51,7 +51,23 @@ public:
 			e(params...);
 		else
 		{
+            if(!_t->is_running()){
+                throw std::runtime_error("scope is stopped");
+            }
 			dispatch_sync( &_q, e, params...);
+		}
+	}
+
+	template<typename Callee, typename... Params>
+	auto invoke(const Callee& e, Params... params){
+		if( isInMyScope() )
+			return e(params...);
+		else
+		{
+            if(!_t->is_running()){
+                throw std::runtime_error("scope is stopped");
+            }
+			return dispatch_invoke(&_q, e, params...);
 		}
 	}
 
@@ -63,7 +79,6 @@ public:
     void name(const std::string& name){ _t->setName(name); }
     std::string name()const{ return _t->getName(); }
 
-private:
 	bool isInMyScope(){
 		return _t->getId() == Thread::get_curid();
 	}
@@ -83,16 +98,35 @@ NAMESP_BEGIN
 
 using ExeScope = ExeScopeBase<Thread<ExecutableQueue>, ExecutableQueue>;
 
-template<class Poller>
-class ExeScope_p :public  ExeScopeBase<Thread<ExecutableQueuePolling<Poller>>, ExecutableQueuePolling<Poller>>
+template<template<class> class ThreadP, class Poller>
+class ExeScope_p_T :public  ExeScopeBase<ThreadP<ExecutableQueuePolling<Poller>>, ExecutableQueuePolling<Poller>>
 {
 public:
-	ExeScope_p(Poller* p)
+	ExeScope_p_T(Poller* p)
     {
         this->_q.setPoller(p); 
 	}
+
+	Poller* poller(){ return this->_q.getPoller(); }
+
 };
 
+
+template<class Poller>
+using ExeScope_p = ExeScope_p_T<Thread, Poller>;
+
+template<class Poller>
+class CurExeScope :
+   public ExeScope_p_T<CurThread, Poller>
+{
+public:
+	CurExeScope (Poller* p)
+       :ExeScope_p_T<CurThread, Poller>(p)
+    {}
+    void run(){
+        this->_t->exec();
+    }
+};
 NAMESP_END
 
 #endif /*EXESCOPE_H*/

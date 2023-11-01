@@ -8,6 +8,7 @@
 #include <type_traits>
 #include <functional>
 #include <assert.h>
+#include <future>
 
 #ifndef NAMESPDEF_H
 #include "../namespdef.h"
@@ -17,7 +18,7 @@
 NAMESP_BEGIN
 
 template<class Queue, class Functor, class... Params>
-int dispatch_asyn(Queue* q, const Functor& f, Params... params)
+int dispatch_asyn(Queue* q, Functor f, Params... params)
 {
     assert(q != nullptr);
 	{
@@ -60,7 +61,7 @@ private:
 };
 
 template<class Queue, class Functor, class... Params >
-void dispatch_sync(Queue* q, const Functor& f, Params... params)
+void dispatch_sync(Queue* q, Functor f, Params... params)
 {
     assert(q != nullptr);
     CallableWrapper c(f, params...);
@@ -74,44 +75,32 @@ struct CallableState
     using result_t=typename std::result_of<Functor(Params...)>::type;
 
     CallableState(const Functor& f, Params... params){
-        _func = std::bind(f, params...);
+        _func = std::bind(f, params...);        
     }
 
-    result_t result()const{ return _result; }
+    result_t result(){ 
+        auto future = _promise.get_future();
+        return future.get();
+    }
 
     void exec(){
-        _result = _func();
-
-        {
-            std::lock_guard<std::mutex> lck(_mtx);
-            _has_called=true;
-        }
-        _condv.notify_all();
-    }
-
-    void wait(){
-        std::unique_lock<std::mutex> lck(_mtx);
-        while(!_has_called) //if exec function called before wait function called, ths will be ok;
-            _condv.wait(lck);
+        result_t result = _func();
+        _promise.set_value(result);
     }
 
 private:
-    std::mutex _mtx;
-    std::condition_variable _condv;
-    bool _has_called=false;
+    std::promise<result_t> _promise;
     std::function<result_t()> _func=nullptr;
-    result_t _result;
 };
 
 template<class Queue, class Functor, class... Params >
 typename std::result_of<Functor(Params...)>::type
-dispatch_invoke(Queue* q, const Functor& f, Params... params)
+dispatch_invoke(Queue* q,  Functor f, Params... params)
 {
     assert(q != nullptr);
     CallableState<Functor, Params...> c(f, params...);
     q->post( std::bind(&CallableState<Functor, Params...>::exec, &c) );
-    c.wait();
-	
+    
     return c.result();
 }
 
